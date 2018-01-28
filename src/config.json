@@ -5,6 +5,7 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
+  "version": "0.0.1",
   "methods": [
     {
       "name": "createInstance",
