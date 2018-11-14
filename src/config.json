@@ -24,7 +24,7 @@
         {
           "name": "REGION",
           "viewName": "Region",
-          "type": "collection",
+          "type": "options",
           "options": [
             {
               "id": "us-east-1",
@@ -67,7 +67,7 @@
         {
           "name": "IMAGE_ID",
           "viewName": "Image id",
-          "type": "collection",
+          "type": "options",
           "options": [
             {
               "id": "ami-60b6c60a",
@@ -166,7 +166,7 @@
         {
           "name": "INSTANCE_TYPE",
           "viewName": "instance type",
-          "type": "collection",
+          "type": "options",
           "options": [
             {
               "name": "t2.micro",
@@ -356,7 +356,7 @@
         {
           "name": "REGION",
           "viewName": "Region",
-          "type": "collection",
+          "type": "options",
           "options": [
             {
               "id": "us-east-1",
@@ -420,7 +420,7 @@
         {
           "name": "REGION",
           "viewName": "Region",
-          "type": "collection",
+          "type": "options",
           "options": [
             {
               "id": "us-east-1",
@@ -484,7 +484,7 @@
         {
           "name": "REGION",
           "viewName": "Region",
-          "type": "collection",
+          "type": "options",
           "options": [
             {
               "id": "us-east-1",
@@ -548,7 +548,7 @@
         {
           "name": "REGION",
           "viewName": "Region",
-          "type": "collection",
+          "type": "options",
           "options": [
             {
               "id": "us-east-1",
@@ -607,7 +607,7 @@
         {
           "name": "REGION",
           "viewName": "Region",
-          "type": "collection",
+          "type": "options",
           "options": [
             {
               "id": "us-east-1",
@@ -671,7 +671,7 @@
         {
           "name": "REGION",
           "viewName": "Region",
-          "type": "collection",
+          "type": "options",
           "options": [
             {
               "id": "us-east-1",
