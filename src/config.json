@@ -323,6 +323,21 @@
           ]
         },
         {
+          "name": "KEY_NAME",
+          "viewName": "Key name",
+          "type": "string"
+        },
+        {
+          "name": "SECURITY_GROUP_IDS",
+          "viewName": "Security groups IDs",
+          "type": "string"
+        },
+        {
+          "name": "USER_DATA",
+          "viewName": "User data",
+          "type": "string"
+        },
+        {
           "name": "MIN_COUNT",
           "viewName": "minimum of instances",
           "type": "string"

@@ -12,7 +12,10 @@ function createInstance(action) {
             ImageId: action.params.IMAGE_ID,
             InstanceType: action.params.INSTANCE_TYPE,
             MinCount: parseInt(action.params.MIN_COUNT),
-            MaxCount: parseInt(action.params.MAX_COUNT)
+            MaxCount: parseInt(action.params.MAX_COUNT),
+            KeyName : action.params.INSTANCE_TYPE,
+            SecurityGroupIds: action.params.SECURITY_GROUP_IDS,
+            UserData : action.params.USER_DATA
         };
 
         let ec2 = new aws.EC2();
