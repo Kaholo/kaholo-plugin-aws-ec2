@@ -185,6 +185,10 @@
               "id": "t2.large"
             },
             {
+              "name": "t3.micro",
+              "id": "t3.micro"
+            },
+            {
               "name": "m4.large",
               "id": "m4.large"
             },

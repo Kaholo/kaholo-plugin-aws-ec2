@@ -11,9 +11,9 @@ function createInstance(action) {
         let params = {
             ImageId: action.params.IMAGE_ID,
             InstanceType: action.params.INSTANCE_TYPE,
-            MinCount: parseInt(action.params.MIN_COUNT),
-            MaxCount: parseInt(action.params.MAX_COUNT),
-            KeyName : action.params.INSTANCE_TYPE,
+            MinCount: parseInt(action.params.MIN_COUNT || 1),
+            MaxCount: parseInt(action.params.MAX_COUNT || 1),
+            KeyName : action.params.KEY_NAME,
             SecurityGroupIds: action.params.SECURITY_GROUP_IDS,
             UserData : action.params.USER_DATA
         };
