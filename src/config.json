@@ -352,9 +352,9 @@
           "type": "string"
         },
         {
-          "name": "TAGS",
-          "viewName": "Tags",
-          "type": "text"
+          "name": "TAGS_SPECIFICATION",
+          "viewName": "Tags Specification",
+          "type": "string"
         }
       ]
     },
@@ -736,6 +736,333 @@
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "allocateAddress",
+      "viewName": "Allocate an address",
+      "params":[
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access key",
+          "type": "string"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret key",
+          "type": "string"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "options",
+          "options": [
+            {
+              "id": "us-east-1",
+              "name": "US East (N. Virginia)"
+            },
+            {
+              "id": "us-west-1",
+              "name": "US West (N. California)"
+            },
+            {
+              "id": "us-west-2",
+              "name": "US West (Oregon)"
+            },
+            {
+              "id": "ap-southeast-1",
+              "name": "Asia Pacific (Singapore)"
+            },
+            {
+              "id": "ap-southeast-2",
+              "name": "Asia Pacific (Sydney)"
+            },
+            {
+              "id": "ap-northeast-1",
+              "name": "Asia Pacific (Tokyo)"
+            },
+            {
+              "id": "eu-west-1",
+              "name": "EU (Ireland)"
+            },
+            {
+              "id": "sa-east-1",
+              "name": "South America (São Paulo)"
+            },
+            {
+              "id": "eu-central-1",
+              "name": "EU (Frankfurt)"
+            }
+          ]
+        },
+        
+        {
+          "name": "DOMAIN",
+          "viewName": "Domain",
+          "type": "string"
+        },
+        {
+          "name": "ADDRESS",
+          "viewName": "Address",
+          "type": "string"
+        },
+        {
+          "name": "PUBLICIPV4POOL",
+          "viewName": "PublicIpv4Pool",
+          "type": "string"
+        },
+        {
+          "name": "DRYRUN",
+          "viewName": "DryRun",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "name": "associateAddress",
+      "viewName": "Associate an address",
+      "params":[
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access key",
+          "type": "string"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret key",
+          "type": "string"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "options",
+          "options": [
+            {
+              "id": "us-east-1",
+              "name": "US East (N. Virginia)"
+            },
+            {
+              "id": "us-west-1",
+              "name": "US West (N. California)"
+            },
+            {
+              "id": "us-west-2",
+              "name": "US West (Oregon)"
+            },
+            {
+              "id": "ap-southeast-1",
+              "name": "Asia Pacific (Singapore)"
+            },
+            {
+              "id": "ap-southeast-2",
+              "name": "Asia Pacific (Sydney)"
+            },
+            {
+              "id": "ap-northeast-1",
+              "name": "Asia Pacific (Tokyo)"
+            },
+            {
+              "id": "eu-west-1",
+              "name": "EU (Ireland)"
+            },
+            {
+              "id": "sa-east-1",
+              "name": "South America (São Paulo)"
+            },
+            {
+              "id": "eu-central-1",
+              "name": "EU (Frankfurt)"
+            }
+          ]
+        },
+        {
+          "name": "ALLOCATION_ID",
+          "viewName": "Allocation Id",
+          "type": "string"
+        },
+        {
+          "name": "INSTANCE_ID",
+          "viewName": "Instance Id",
+          "type": "string"
+        },
+        {
+          "name": "PUBLIC_IP",
+          "viewName": "Public Ip",
+          "type": "string"
+        },
+        {
+          "name": "ALLOW_REASSOCIATION",
+          "viewName": "Allow Reassociation",
+          "type": "boolean"
+        },
+        {
+          "name": "DRYRUN",
+          "viewName": "DryRun",
+          "type": "boolean"
+        },
+        {
+          "name": "NETWORK_INTERFACE_ID",
+          "viewName": "Network Interface Id",
+          "type": "string"
+        },
+        {
+          "name": "PRIVATE_IP_ADDRESS",
+          "viewName": "Private Ip Address",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "releaseAddress",
+      "viewName": "Release an address",
+      "params":[
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access key",
+          "type": "string"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret key",
+          "type": "string"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "options",
+          "options": [
+            {
+              "id": "us-east-1",
+              "name": "US East (N. Virginia)"
+            },
+            {
+              "id": "us-west-1",
+              "name": "US West (N. California)"
+            },
+            {
+              "id": "us-west-2",
+              "name": "US West (Oregon)"
+            },
+            {
+              "id": "ap-southeast-1",
+              "name": "Asia Pacific (Singapore)"
+            },
+            {
+              "id": "ap-southeast-2",
+              "name": "Asia Pacific (Sydney)"
+            },
+            {
+              "id": "ap-northeast-1",
+              "name": "Asia Pacific (Tokyo)"
+            },
+            {
+              "id": "eu-west-1",
+              "name": "EU (Ireland)"
+            },
+            {
+              "id": "sa-east-1",
+              "name": "South America (São Paulo)"
+            },
+            {
+              "id": "eu-central-1",
+              "name": "EU (Frankfurt)"
+            }
+          ]
+        },
+        {
+          "name": "ALLOCATION_ID",
+          "viewName": "Allocation Id",
+          "type": "string"
+        },
+        {
+          "name": "PUBLIC_IP",
+          "viewName": "Public Ip",
+          "type": "string"
+        },
+        {
+          "name": "DRYRUN",
+          "viewName": "DryRun",
+          "type": "boolean"
+        }
+      ]
+    },
+    {
+      "name": "describeInstances",
+      "viewName": "Describe an instances",
+      "params":[
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access key",
+          "type": "string"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret key",
+          "type": "string"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "options",
+          "options": [
+            {
+              "id": "us-east-1",
+              "name": "US East (N. Virginia)"
+            },
+            {
+              "id": "us-west-1",
+              "name": "US West (N. California)"
+            },
+            {
+              "id": "us-west-2",
+              "name": "US West (Oregon)"
+            },
+            {
+              "id": "ap-southeast-1",
+              "name": "Asia Pacific (Singapore)"
+            },
+            {
+              "id": "ap-southeast-2",
+              "name": "Asia Pacific (Sydney)"
+            },
+            {
+              "id": "ap-northeast-1",
+              "name": "Asia Pacific (Tokyo)"
+            },
+            {
+              "id": "eu-west-1",
+              "name": "EU (Ireland)"
+            },
+            {
+              "id": "sa-east-1",
+              "name": "South America (São Paulo)"
+            },
+            {
+              "id": "eu-central-1",
+              "name": "EU (Frankfurt)"
+            }
+          ]
+        },
+        {
+          "name": "INSTANCE_IDS",
+          "viewName": "Instance Ids",
+          "type": "string"
+        },
+        {
+          "name": "DRYRUN",
+          "viewName": "DryRun",
+          "type": "boolean"
+        },
+        {
+          "name": "MAX_RESULTS",
+          "viewName": "Max Results",
+          "type": "int"
+        },
+        {
+          "name": "NEXT_TOKEN",
+          "viewName": "Next Token",
+          "type": "string"
+        }
+      ] 
     }
   ]
 }
