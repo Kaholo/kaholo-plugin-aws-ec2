@@ -32,7 +32,6 @@ function createInstance(action) {
     });
 }
 
-
 function manageInstances(action) {
     return new Promise((resolve, reject) => {
         aws.config.update({
@@ -230,14 +229,6 @@ function releaseAddress(action){
     })
 }
 
-function _handleParams(PARAM){
-	if (typeof PARAM == 'string')
-		return JSON.parse(PARAM);
-	else 
-		return PARAM;
-}
-
-
 function describeInstances(action){
     return new Promise((resolve,reject) => {
         aws.config.update({
@@ -265,6 +256,13 @@ function describeInstances(action){
             else     resolve(data);           
           });
     })
+}
+
+function _handleParams(param){
+	if (typeof param == 'string')
+		return JSON.parse(param);
+	else 
+		return param;
 }
 
 module.exports = {
