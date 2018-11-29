@@ -19,31 +19,19 @@ function createInstance(action) {
         };
 
         let ec2 = new aws.EC2();
-
+        if(action.params.TAGS_SPECIFICATION){
+            let tags = _handleParams(action.params.TAGS_SPECIFICATION);
+            params.TagSpecifications = [{ResourceType: "instance", Tags: tags}]
+        }
         ec2.runInstances(params, function (err, data) {
             if (err) {
                 return reject("Could not create instance: " + err);
             }
-            let instanceId = data.Instances[0].InstanceId;
-            console.log("Created instance", instanceId);
-            // Add tags to the instance
-            if (action.params.TAGS) {
-                try {
-                    let tags = JSON.parse(action.params.TAGS);
-                    let tagsParams = { Resources: [instanceId], Tags: tags };
-
-                    ec2.createTags(tagsParams, function (err) {
-                        console.log("Tagging instance", err ? "failure" : "success");
-                    });
-                } catch (e) {
-                    console.log("Error tagging instance");
-                }
-            }
-
             return resolve(data);
         });
     });
 }
+
 
 function manageInstances(action) {
     return new Promise((resolve, reject) => {
@@ -175,6 +163,109 @@ function manageKeyPairs(action) {
     });
 }
 
+function allocateAddress(action) {
+    return new Promise((resolve,reject) => {
+        aws.config.update({
+            region: action.params.REGION,
+            accessKeyId: action.params.AWS_ACCESS_KEY_ID,
+            secretAccessKey: action.params.AWS_SECRET_ACCESS_KEY
+        });
+        let params = {
+            Domain: action.params.DOMAIN,
+            Address: action.params.ADDRESS,
+            PublicIpv4Pool: action.params.PUBLICIPV4POOL,
+            DryRun: action.params.DRYRUN
+        };
+        let ec2 = new aws.EC2();
+
+        ec2.allocateAddress(params, function(err, data) {
+            if (err) reject(err, err.stack); 
+            else     resolve(data);           
+          });
+    })
+}
+
+function associateAddress(action) {
+    return new Promise((resolve,reject) => {
+        aws.config.update({
+            region: action.params.REGION,
+            accessKeyId: action.params.AWS_ACCESS_KEY_ID,
+            secretAccessKey: action.params.AWS_SECRET_ACCESS_KEY
+        });
+        let params = {
+            AllocationId : action.params.ALLOCATION_ID,
+            InstanceId: action.params.INSTANCE_ID,
+            PublicIp: action.params.PUBLIC_IP,
+            AllowReassociation: action.params.ALLOWREASSOCIATION,
+            DryRun: action.params.DRYRUN,
+            NetworkInterfaceId: action.params.NETWORK_INTERFACE_ID,
+            PrivateIpAddress: action.params.PRIVATE_IP_ADDRESS
+        }
+        let ec2 = new aws.EC2();
+
+        ec2.associateAddress(params, function(err, data) {
+            if (err) reject(err, err.stack);
+            else     resolve(data);        
+          });
+    })
+}
+
+function releaseAddress(action){
+    return new Promise((resolve,reject) => {
+        aws.config.update({
+            region: action.params.REGION,
+            accessKeyId: action.params.AWS_ACCESS_KEY_ID,
+            secretAccessKey: action.params.AWS_SECRET_ACCESS_KEY
+        });
+        let params = {
+            AllocationId: action.params.ALLOCATION_ID,
+            PublicIp:action.params.PUBLIC_IP,
+            DryRun: action.params.DRYRUN
+        }
+        let ec2 = new aws.EC2();
+        ec2.releaseAddress(params, function(err, data) {
+            if (err) reject(err, err.stack); 
+            else     resolve(data);           
+          });
+    })
+}
+
+function _handleParams(PARAM){
+	if (typeof PARAM == 'string')
+		return JSON.parse(PARAM);
+	else 
+		return PARAM;
+}
+
+
+function describeInstances(action){
+    return new Promise((resolve,reject) => {
+        aws.config.update({
+            region: action.params.REGION,
+            accessKeyId: action.params.AWS_ACCESS_KEY_ID,
+            secretAccessKey: action.params.AWS_SECRET_ACCESS_KEY
+        });
+        let params = {
+            DryRun: action.params.DRYRUN,
+            MaxResults: action.params.MAX_RESULTS,
+            NextToken: action.params.NEXT_TOKEN
+        }
+
+        if(action.params.INSTANCE_IDS){
+			try{
+				params.InstanceIds = _handleParams(action.params.INSTANCE_IDS);
+			} catch (err) {
+				return reject(new Error("Error parsing instances ids : " + err.message))
+			}
+        }
+        
+        let ec2 = new aws.EC2();
+        ec2.describeInstances(params, function(err, data) {
+            if (err) reject(err, err.stack);
+            else     resolve(data);           
+          });
+    })
+}
 
 module.exports = {
     createInstance: createInstance,
@@ -183,5 +274,9 @@ module.exports = {
     rebootInstances: manageInstances,
     describeKeyPairs: manageKeyPairs,
     createKeyPair: manageKeyPairs,
-    deleteKeyPair: manageKeyPairs
+    deleteKeyPair: manageKeyPairs,
+    allocateAddress: allocateAddress,
+    associateAddress: associateAddress,
+    releaseAddress: releaseAddress,
+    describeInstances: describeInstances
 };
