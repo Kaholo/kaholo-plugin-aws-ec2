@@ -1,12 +1,5 @@
 const aws = require("aws-sdk");
 
-function _handleParams2(TAGS){
-	if (typeof TAGS == 'string')
-		return JSON.parse(TAGS);
-	else 
-		return TAGS;
-}
-
 function createInstance(action) {
     return new Promise((resolve, reject) => {
         aws.config.update({
@@ -27,7 +20,7 @@ function createInstance(action) {
 
         let ec2 = new aws.EC2();
         if(action.params.TAGS_SPECIFICATION){
-            let tags = _handleParams2(action.params.TAGS_SPECIFICATION);
+            let tags = _handleParams(action.params.TAGS_SPECIFICATION);
             params.TagSpecifications = [{ResourceType: "instance", Tags: tags}]
         }
         ec2.runInstances(params, function (err, data) {
@@ -237,11 +230,11 @@ function releaseAddress(action){
     })
 }
 
-function _handleParams(INSTANCE_IDS){
-	if (typeof INSTANCE_IDS == 'string')
-		return JSON.parse(INSTANCE_IDS);
+function _handleParams(PARAM){
+	if (typeof PARAM == 'string')
+		return JSON.parse(PARAM);
 	else 
-		return INSTANCE_IDS;
+		return PARAM;
 }
 
 
