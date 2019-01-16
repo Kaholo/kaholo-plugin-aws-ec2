@@ -13,6 +13,7 @@ function createInstance(action) {
             InstanceType: action.params.INSTANCE_TYPE,
             MinCount: parseInt(action.params.MIN_COUNT || 1),
             MaxCount: parseInt(action.params.MAX_COUNT || 1),
+			SubnetId : action.params.SUBNET_ID,
             KeyName : action.params.KEY_NAME,
             SecurityGroupIds: action.params.SECURITY_GROUP_IDS,
             UserData : action.params.USER_DATA
@@ -172,9 +173,11 @@ function allocateAddress(action) {
         let params = {
             Domain: action.params.DOMAIN,
             Address: action.params.ADDRESS,
-            PublicIpv4Pool: action.params.PUBLICIPV4POOL,
             DryRun: action.params.DRYRUN
         };
+		if (action.params.PUBLICIPV4POOL)
+			params["PublicIpv4Pool"]=action.params.PUBLICIPV4POOL;
+		
         let ec2 = new aws.EC2();
 
         ec2.allocateAddress(params, function(err, data) {
@@ -192,18 +195,34 @@ function associateAddress(action) {
             secretAccessKey: action.params.AWS_SECRET_ACCESS_KEY
         });
         let params = {
-            AllocationId : action.params.ALLOCATION_ID,
             InstanceId: action.params.INSTANCE_ID,
-            PublicIp: action.params.PUBLIC_IP,
-            AllowReassociation: action.params.ALLOWREASSOCIATION,
-            DryRun: action.params.DRYRUN,
-            NetworkInterfaceId: action.params.NETWORK_INTERFACE_ID,
-            PrivateIpAddress: action.params.PRIVATE_IP_ADDRESS
         }
+		
+		if (action.params.ALLOCATION_ID)
+			params["AllocationId"]=action.params.ALLOCATION_ID;
+		
+		if (action.params.PUBLIC_IP)
+			params["PublicIp"]=action.params.PUBLIC_IP;
+		
+		if (action.params.ALLOWREASSOCIATION)
+			params["AllowReassociation"]=action.params.ALLOWREASSOCIATION;
+
+		if (action.params.DRYRUN)
+			params["DryRun"]=action.params.DRYRUN;
+
+		if (action.params.NETWORK_INTERFACE_ID)
+			params["NetworkInterfaceId"]=action.params.NETWORK_INTERFACE_ID;		
+		
+		if (action.params.PRIVATE_IP_ADDRESS)
+			params["PrivateIpAddress"]=action.params.PRIVATE_IP_ADDRESS
+		
         let ec2 = new aws.EC2();
 
         ec2.associateAddress(params, function(err, data) {
-            if (err) reject(err, err.stack);
+            if (err){
+				console.log("error",err);
+				reject(err, err.stack);
+			}
             else     resolve(data);        
           });
     })
