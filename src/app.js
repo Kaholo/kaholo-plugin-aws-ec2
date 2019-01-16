@@ -13,6 +13,7 @@ function createInstance(action) {
             InstanceType: action.params.INSTANCE_TYPE,
             MinCount: parseInt(action.params.MIN_COUNT || 1),
             MaxCount: parseInt(action.params.MAX_COUNT || 1),
+			SubnetIid : action.params.SUBNET_ID,
             KeyName : action.params.KEY_NAME,
             SecurityGroupIds: action.params.SECURITY_GROUP_IDS,
             UserData : action.params.USER_DATA

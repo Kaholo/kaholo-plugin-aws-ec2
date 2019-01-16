@@ -79,6 +79,10 @@
           "viewName": "Key name",
           "type": "string"
         },
+          "name": "SUBNET_ID",
+          "viewName": "Subnet ID",
+          "type": "string"
+        },		
         {
           "name": "SECURITY_GROUP_IDS",
           "viewName": "Security groups IDs",
