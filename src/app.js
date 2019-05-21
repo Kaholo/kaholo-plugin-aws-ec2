@@ -32,6 +32,7 @@ function createInstance(action) {
     });
 }
 
+
 function manageInstances(action) {
     return new Promise((resolve, reject) => {
         aws.config.update({
@@ -40,21 +41,17 @@ function manageInstances(action) {
             secretAccessKey: action.params.AWS_SECRET_ACCESS_KEY
         });
 
-        let ids;
-        try {
-            ids = JSON.parse(action.params.INSTANCE_IDS);
-        }
-        catch (e) {
-            return reject("Error parsing instance ids: ", e);
-        }
-
+        let ids = _handleParams(action.params.INSTANCE_IDS);
+        if (!Array.isArray(ids))
+            return reject("Instance ids must be an array");
+        
         let params = {
             InstanceIds: ids,
             DryRun: true // se the DryRun parameter to test whether you have permission before actually attempting to start or stop the selected instances.
         };
 
         // Create EC2 service object
-        ec2 = new AWS.EC2();
+        ec2 = new aws.EC2();
 
         if (action.method.name === "startInstances") {
             // call EC2 to start the selected instances
@@ -65,7 +62,7 @@ function manageInstances(action) {
                         if (err) {
                             return reject("Error while trying to start instances: " + err);
                         } else if (data) {
-                            return resolve("Success: " + data.StartingInstances);
+                            return resolve(data.StartingInstances);
                         } else {
                             console.log("Finish without data");
                         }
@@ -83,7 +80,7 @@ function manageInstances(action) {
                         if (err) {
                             return reject("Error while trying to stop instances: " + err);
                         } else if (data) {
-                            return resolve("Success: " + data.StoppingInstances);
+                            return resolve(data.StoppingInstances);
                         } else {
                             console.log("Finish without data");
                         }
@@ -243,11 +240,10 @@ function describeInstances(action){
         }
 
         if(action.params.INSTANCE_IDS){
-			try{
-				params.InstanceIds = _handleParams(action.params.INSTANCE_IDS);
-			} catch (err) {
-				return reject(new Error("Error parsing instances ids : " + err.message))
-			}
+            let ids = _handleParams(action.params.INSTANCE_IDS);
+            if (!Array.isArray(ids))
+                return reject("Instance ids must be an array");
+			params.InstanceIds = ids;
         }
         
         let ec2 = new aws.EC2();
@@ -259,8 +255,13 @@ function describeInstances(action){
 }
 
 function _handleParams(param){
-	if (typeof param == 'string')
-		return JSON.parse(param);
+	if (typeof param == 'string'){
+        try {
+            return JSON.parse(param);
+        } catch(err){
+            return param;
+        }
+    }
 	else 
 		return param;
 }
