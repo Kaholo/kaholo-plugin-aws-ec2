@@ -5,7 +5,19 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "1.3.0",
+  "version": "2.0.0",
+  "settings" : [
+    {
+      "name": "AWS_ACCESS_KEY_ID",
+      "viewName": "Access key",
+      "type": "vault"
+    },
+    {
+      "name": "AWS_SECRET_ACCESS_KEY",
+      "viewName": "Secret key",
+      "type": "vault"
+    }
+  ],
   "methods": [
     {
       "name": "createInstance",
@@ -14,12 +26,12 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "REGION",
@@ -113,12 +125,12 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "REGION",
@@ -177,12 +189,12 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "REGION",
@@ -241,12 +253,12 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "REGION",
@@ -305,12 +317,12 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "REGION",
@@ -364,12 +376,12 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "REGION",
@@ -428,12 +440,12 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "REGION",
@@ -492,12 +504,12 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "REGION",
@@ -572,12 +584,12 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "REGION",
@@ -666,12 +678,12 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "REGION",
@@ -740,12 +752,12 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "string"
+          "type": "vault"
         },
         {
           "name": "REGION",

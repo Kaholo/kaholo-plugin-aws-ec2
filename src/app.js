@@ -1,27 +1,31 @@
 const aws = require("aws-sdk");
 
-function createInstance(action) {
+function setAwsConfig(action, settings) {
+    aws.config.update({
+        region: action.params.REGION,
+        accessKeyId: action.params.AWS_ACCESS_KEY_ID || settings.AWS_ACCESS_KEY_ID,
+        secretAccessKey: action.params.AWS_SECRET_ACCESS_KEY || settings.AWS_SECRET_ACCESS_KEY
+    });
+}
+
+function createInstance(action, settings) {
     return new Promise((resolve, reject) => {
-        aws.config.update({
-            region: action.params.REGION,
-            accessKeyId: action.params.AWS_ACCESS_KEY_ID,
-            secretAccessKey: action.params.AWS_SECRET_ACCESS_KEY
-        });
+        setAwsConfig(action, settings);
 
         let params = {
             ImageId: action.params.IMAGE_ID,
             InstanceType: action.params.INSTANCE_TYPE,
             MinCount: parseInt(action.params.MIN_COUNT || 1),
             MaxCount: parseInt(action.params.MAX_COUNT || 1),
-            KeyName : action.params.KEY_NAME,
+            KeyName: action.params.KEY_NAME,
             SecurityGroupIds: action.params.SECURITY_GROUP_IDS,
-            UserData : action.params.USER_DATA
+            UserData: action.params.USER_DATA
         };
 
         let ec2 = new aws.EC2();
-        if(action.params.TAGS_SPECIFICATION){
+        if (action.params.TAGS_SPECIFICATION) {
             let tags = _handleParams(action.params.TAGS_SPECIFICATION);
-            params.TagSpecifications = [{ResourceType: "instance", Tags: tags}]
+            params.TagSpecifications = [{ ResourceType: "instance", Tags: tags }]
         }
         ec2.runInstances(params, function (err, data) {
             if (err) {
@@ -33,18 +37,14 @@ function createInstance(action) {
 }
 
 
-function manageInstances(action) {
+function manageInstances(action, settings) {
     return new Promise((resolve, reject) => {
-        aws.config.update({
-            region: action.params.REGION,
-            accessKeyId: action.params.AWS_ACCESS_KEY_ID,
-            secretAccessKey: action.params.AWS_SECRET_ACCESS_KEY
-        });
+        setAwsConfig(action, settings);
 
         let ids = _handleParams(action.params.INSTANCE_IDS);
         if (!Array.isArray(ids))
             return reject("Instance ids must be an array");
-        
+
         let params = {
             InstanceIds: ids,
             DryRun: true // se the DryRun parameter to test whether you have permission before actually attempting to start or stop the selected instances.
@@ -111,13 +111,9 @@ function manageInstances(action) {
     });
 }
 
-function manageKeyPairs(action) {
+function manageKeyPairs(action, settings) {
     return new Promise((resolve, reject) => {
-        aws.config.update({
-            region: action.params.REGION,
-            accessKeyId: action.params.AWS_ACCESS_KEY_ID,
-            secretAccessKey: action.params.AWS_SECRET_ACCESS_KEY
-        });
+        setAwsConfig(action, settings);
 
         // Create EC2 service object
         let ec2 = new aws.EC2({ apiVersion: '2016-11-15' });
@@ -159,13 +155,9 @@ function manageKeyPairs(action) {
     });
 }
 
-function allocateAddress(action) {
-    return new Promise((resolve,reject) => {
-        aws.config.update({
-            region: action.params.REGION,
-            accessKeyId: action.params.AWS_ACCESS_KEY_ID,
-            secretAccessKey: action.params.AWS_SECRET_ACCESS_KEY
-        });
+function allocateAddress(action, settings) {
+    return new Promise((resolve, reject) => {
+        setAwsConfig(action, settings);
         let params = {
             Domain: action.params.DOMAIN,
             Address: action.params.ADDRESS,
@@ -174,22 +166,18 @@ function allocateAddress(action) {
         };
         let ec2 = new aws.EC2();
 
-        ec2.allocateAddress(params, function(err, data) {
-            if (err) reject(err, err.stack); 
-            else     resolve(data);           
-          });
+        ec2.allocateAddress(params, function (err, data) {
+            if (err) reject(err, err.stack);
+            else resolve(data);
+        });
     })
 }
 
-function associateAddress(action) {
-    return new Promise((resolve,reject) => {
-        aws.config.update({
-            region: action.params.REGION,
-            accessKeyId: action.params.AWS_ACCESS_KEY_ID,
-            secretAccessKey: action.params.AWS_SECRET_ACCESS_KEY
-        });
+function associateAddress(action, settings) {
+    return new Promise((resolve, reject) => {
+        setAwsConfig(action, settings);
         let params = {
-            AllocationId : action.params.ALLOCATION_ID,
+            AllocationId: action.params.ALLOCATION_ID,
             InstanceId: action.params.INSTANCE_ID,
             PublicIp: action.params.PUBLIC_IP,
             AllowReassociation: action.params.ALLOWREASSOCIATION,
@@ -199,71 +187,63 @@ function associateAddress(action) {
         }
         let ec2 = new aws.EC2();
 
-        ec2.associateAddress(params, function(err, data) {
+        ec2.associateAddress(params, function (err, data) {
             if (err) reject(err, err.stack);
-            else     resolve(data);        
-          });
+            else resolve(data);
+        });
     })
 }
 
-function releaseAddress(action){
-    return new Promise((resolve,reject) => {
-        aws.config.update({
-            region: action.params.REGION,
-            accessKeyId: action.params.AWS_ACCESS_KEY_ID,
-            secretAccessKey: action.params.AWS_SECRET_ACCESS_KEY
-        });
+function releaseAddress(action, settings) {
+    return new Promise((resolve, reject) => {
+        setAwsConfig(action, settings);
         let params = {
             AllocationId: action.params.ALLOCATION_ID,
-            PublicIp:action.params.PUBLIC_IP,
+            PublicIp: action.params.PUBLIC_IP,
             DryRun: action.params.DRYRUN
         }
         let ec2 = new aws.EC2();
-        ec2.releaseAddress(params, function(err, data) {
-            if (err) reject(err, err.stack); 
-            else     resolve(data);           
-          });
+        ec2.releaseAddress(params, function (err, data) {
+            if (err) reject(err, err.stack);
+            else resolve(data);
+        });
     })
 }
 
-function describeInstances(action){
-    return new Promise((resolve,reject) => {
-        aws.config.update({
-            region: action.params.REGION,
-            accessKeyId: action.params.AWS_ACCESS_KEY_ID,
-            secretAccessKey: action.params.AWS_SECRET_ACCESS_KEY
-        });
+function describeInstances(action, settings) {
+    return new Promise((resolve, reject) => {
+        setAwsConfig(action, settings);
         let params = {
             DryRun: action.params.DRYRUN,
             MaxResults: action.params.MAX_RESULTS,
             NextToken: action.params.NEXT_TOKEN
         }
 
-        if(action.params.INSTANCE_IDS){
+        if (action.params.INSTANCE_IDS) {
             let ids = _handleParams(action.params.INSTANCE_IDS);
             if (!Array.isArray(ids))
                 return reject("Instance ids must be an array");
-			params.InstanceIds = ids;
+            params.InstanceIds = ids;
         }
-        
+
         let ec2 = new aws.EC2();
-        ec2.describeInstances(params, function(err, data) {
+        ec2.describeInstances(params, function (err, data) {
             if (err) reject(err, err.stack);
-            else     resolve(data);           
-          });
+            else resolve(data);
+        });
     })
 }
 
-function _handleParams(param){
-	if (typeof param == 'string'){
+function _handleParams(param) {
+    if (typeof param == 'string') {
         try {
             return JSON.parse(param);
-        } catch(err){
+        } catch (err) {
             return param;
         }
     }
-	else 
-		return param;
+    else
+        return param;
 }
 
 module.exports = {
