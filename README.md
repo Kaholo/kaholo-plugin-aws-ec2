@@ -32,11 +32,99 @@ This method calls ec2 [startinstance](https://docs.aws.amazon.com/AWSJavaScriptS
 3. Region - The region which you want to launch the instance.
 4. Instances Ids - The IDs of the instances. Can be an array of instances.
 
-## Stop Instance
+## Method: Stop Instance
 
 **Description**
+
 Stops an Amazon EBS-backed instance. This method calls ec2 [stopInstance](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#stopInstances-property)
 
 **Parameters**
-1. 
+1. Access Key - This is a parameter taken from the vault to access AWS
+2. Secret Key - This is a paramer taken from the vault to access AWS
+3. Region
+4. Instances Ids - The IDs of the instances. Can be an array of instances.
+
+## Method: Reboot Instance
+
+**Description**
+
+Requests a reboot of the specified instances. This operation is asynchronous; it only queues a request to reboot the specified instances. This method calls ec2 [rebootInstance](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#rebootInstances-property)
+
 **Parameters**
+1. Access Key - This is a parameter taken from the vault to access AWS
+2. Secret Key - This is a paramer taken from the vault to access AWS
+3. Region
+4. Instances Ids - The IDs of the instances. Can be an array of instances.
+
+## Describe Key Pair
+
+**Description**
+
+Describes the specified key pairs or all of your key pairs.. This method calls ec2 [describeKeyPair](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeKeyPairs-property)
+
+**Parameters**
+1. Access Key - This is a parameter taken from the vault to access AWS
+2. Secret Key - This is a paramer taken from the vault to access AWS
+3. Region
+
+## Method: Create Key Pair
+
+**Description**
+
+This methods will create a new Key Pair This method calls ec2 [createKeyPair](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createKeyPair-property)
+
+**Parameters**
+1. Access Key - This is a parameter taken from the vault to access AWS
+2. Secret Key - This is a paramer taken from the vault to access AWS
+3. Region
+4. Key Pair name - the name for the new key-pair
+
+## Method: Delete Key Pair
+
+**Description**
+
+This method will delete a Key Pair. This method calls ec2 [deleteKeyPair](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#deleteKeyPair-property)
+
+**Parameters**
+1. Access Key - This is a parameter taken from the vault to access AWS
+2. Secret Key - This is a paramer taken from the vault to access AWS
+3. Region
+4. Key Pair name - the name of the key-pair
+
+## Method: Allocate an address
+
+**Desciption**
+
+Allocates an Elastic IP address to your AWS account. This method calls ec2 [allocateAddress](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#allocateAddress-property)
+
+**Parameters**
+1. Access Key - This is a parameter taken from the vault to access AWS
+2. Secret Key - This is a paramer taken from the vault to access AWS
+3. Region
+4. Domain 
+&ensp;Set to vpc to allocate the address for use with instances in a VPC\
+&ensp;Default: The address is for use with instances in EC2-Classic.\
+&ensp;Possible values include:\
+&ensp;&ensp;- "vpc"\
+&ensp;&ensp;- "standard"
+5. Address - (string) The Elastic IP address to recover or an IPv4 address from an address pool.
+6. PublicPV4Pool - The ID of an address pool that you own. Use this parameter to let Amazon EC2 select an address from the address pool. To specify a specific ```address``` from the address pool, use the Address parameter instead.
+7. DryRun - (Boolean) Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.
+
+## Method: Associate an Address
+
+**Desciption**
+
+Associates an Elastic IP address with an instance or a network interface. Before you can use an Elastic IP address, you must allocate it to your account. This method calls ec2 [associateAddress](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#associateAddress-property)
+
+**Parameters**
+1. Access Key - This is a parameter taken from the vault to access AWS
+2. Secret Key - This is a paramer taken from the vault to access AWS
+3. Region
+4. Allocation ID
+5. Instance ID
+6. Public IP
+7. Allow Reassociation (Boolean) - 
+8. DryRun (Boolean) - 
+9. Network InterfaceID
+10. Private IP Address
