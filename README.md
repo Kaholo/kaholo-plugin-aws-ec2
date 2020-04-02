@@ -15,7 +15,7 @@ This method will create a new AWS instance. This method calls ec2 [runInstance](
 4. Image ID - If you already have an AMI ready for launch
 5. Instance type - The machine type you want to launce for example: t2.micro
 6. Key name - Add a key-pair in order to connect to the new server.
-7. Security Group ID - connect this instance to a security group
+7. Security Group ID (array) - connect this instance to a security group. You will have to use a code (code or configuration) to transfer array to the api.
 8. User data - The user data to make available to the instance. 
 9. Minimum of instances - The minimum number of instances to launch (by default 1).
 10. Maximum of instances - The maximum number of instances to launch (by default 1).
