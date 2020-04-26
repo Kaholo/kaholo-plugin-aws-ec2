@@ -46,6 +46,18 @@ Stops an Amazon EBS-backed instance. This method calls ec2 [stopInstance](https:
 3. Region
 4. Instances Ids - The IDs of the instances. Can be an array of instances.
 
+## Method: Terminate Instances
+
+**Description**
+
+Terminate EC2 instances. This method calls ec2 [terminateInstance](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#terminateInstances-property)
+
+**Parameters**
+1. Access Key - This is a parameter taken from the vault to access AWS
+2. Secret Key - This is a paramer taken from the vault to access AWS
+3. Region
+4. Instances Ids - Array of Instance IDs.
+
 ## Method: Reboot Instance
 
 **Description**
@@ -157,7 +169,8 @@ Describes the specified instances or all of AWS account's instances. This method
 1. Access Key - This is a parameter taken from the vault to access AWS
 2. Secret Key - This is a paramer taken from the vault to access AWS
 3. Region 
-4. Instance ID - The instance IDs.
-5. DryRun (boolean) - hecks whether you have the required permissions for the action, without actually making the request, and provides an error response.
-6. Max Results - The maximum number of results to return in a single call. To retrieve the remaining results, make another call with the returned ```NextToken``` value.
-7. Next Token - The token to request the next page of results
+4. Instance IDs - Array of instance IDs.
+5. Filters - Array of filters
+6. DryRun (boolean) - hecks whether you have the required permissions for the action, without actually making the request, and provides an error response.
+7. Max Results - The maximum number of results to return in a single call. To retrieve the remaining results, make another call with the returned ```NextToken``` value.
+8. Next Token - The token to request the next page of results

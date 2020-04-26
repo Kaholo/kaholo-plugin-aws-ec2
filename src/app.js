@@ -22,11 +22,12 @@ function createInstance(action, settings) {
             UserData: action.params.USER_DATA
         };
 
-        let ec2 = new aws.EC2();
         if (action.params.TAGS_SPECIFICATION) {
             let tags = _handleParams(action.params.TAGS_SPECIFICATION);
             params.TagSpecifications = [{ ResourceType: "instance", Tags: tags }]
         }
+
+        let ec2 = new aws.EC2();
         ec2.runInstances(params, function (err, data) {
             if (err) {
                 return reject("Could not create instance: " + err);
@@ -36,6 +37,25 @@ function createInstance(action, settings) {
     });
 }
 
+function terminateInstances(action, settings) {
+    return new Promise((resolve, reject) => {
+        if (action.params.INSTANCE_IDS){
+            return reject("You must specify instance IDs");
+        }
+        
+        setAwsConfig(action, settings);
+
+        let ids = _handleParams(action.params.INSTANCE_IDS);
+        if (!Array.isArray(ids))
+            return reject("Instance ids must be an array");
+        
+        let ec2 = new aws.EC2();
+        ec2.terminateInstances({InstanceIds : ids}), function (err, data) {
+            if (err) reject(err, err.stack);
+            else resolve(data);
+        };
+    });
+}
 
 function manageInstances(action, settings) {
     return new Promise((resolve, reject) => {
@@ -226,6 +246,12 @@ function describeInstances(action, settings) {
             params.InstanceIds = ids;
         }
 
+        if (action.params.filters) {
+            if (!Array.isArray(action.params.filters))
+                return reject("Filters ids must be an array");
+            params.Filters = action.params.filters;
+        }
+
         let ec2 = new aws.EC2();
         ec2.describeInstances(params, function (err, data) {
             if (err) reject(err, err.stack);
@@ -257,5 +283,6 @@ module.exports = {
     allocateAddress: allocateAddress,
     associateAddress: associateAddress,
     releaseAddress: releaseAddress,
-    describeInstances: describeInstances
+    describeInstances: describeInstances,
+    terminateInstances: terminateInstances
 };
