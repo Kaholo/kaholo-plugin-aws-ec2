@@ -159,10 +159,10 @@ function createVpc(action, settings) {
     return new Promise((resolve, reject) => {
         const ec2 = helpers.getEc2(action, settings);
         let params = {
-            CidrBlock = action.params.cidrBlock,
-            AmazonProvidedIpv6CidrBlock = action.params.amazonProvidedIpv6CidrBlock,
-            DryRun = action.params.dryRun,
-            InstanceTenancy = action.params.instanceTenancy,
+            CidrBlock: action.params.cidrBlock,
+            AmazonProvidedIpv6CidrBlock: action.params.amazonProvidedIpv6CidrBlock,
+            DryRun: action.params.dryRun,
+            InstanceTenancy: action.params.instanceTenancy,
         }
 
         ec2.createVpc(params, helpers.operationCallback(resolve,reject));
@@ -184,6 +184,30 @@ function createSubnet(action, settings) {
     })
 }
 
+function deleteVpc(action, settings) {
+    return new Promise((resolve, reject) => {
+        const ec2 = helpers.getEc2(action, settings);
+        let params = {
+            VpcId: action.params.vpcId,
+            DryRun: action.params.dryRun
+        }
+
+        ec2.deleteVpc(params, helpers.operationCallback(resolve,reject));
+    })
+}
+
+function deleteSubnet(action, settings) {
+    return new Promise((resolve, reject) => {
+        const ec2 = helpers.getEc2(action, settings);
+        let params = {
+            SubnetId: action.params.subnetId,
+            DryRun: action.params.dryRun,
+        }
+
+        ec2.deleteSubnet(params, helpers.operationCallback(resolve,reject));
+    })
+}
+
 module.exports = {
     createInstance: createInstance,
     startInstances: manageInstances,
@@ -198,5 +222,7 @@ module.exports = {
     describeInstances: describeInstances,
     terminateInstances: terminateInstances,
     createVpc: createVpc,
-    createSubnet: createSubnet
+    createSubnet: createSubnet,
+    deleteSubnet: deleteSubnet,
+    deleteVpc: deleteVpc
 };
