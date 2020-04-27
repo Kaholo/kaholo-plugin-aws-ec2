@@ -174,3 +174,60 @@ Describes the specified instances or all of AWS account's instances. This method
 6. DryRun (boolean) - hecks whether you have the required permissions for the action, without actually making the request, and provides an error response.
 7. Max Results - The maximum number of results to return in a single call. To retrieve the remaining results, make another call with the returned ```NextToken``` value.
 8. Next Token - The token to request the next page of results
+
+## Method: Cerate VPC
+
+**Description**
+
+Creates a VPC with the specified IPv4 CIDR block. This method calls ec2 [createVpc](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createVpc-property)
+
+**Parameters**
+1. Access Key - This is a parameter taken from the vault to access AWS
+2. Secret Key - This is a paramer taken from the vault to access AWS
+3. Region 
+4. CIDR Block - The IPv4 network range for the VPC, in CIDR notation. For example, 10.0.0.0/16.
+5. Amazon Provided Blocks (Boolean)- Requests an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC. You cannot specify the range of IP addresses, or the size of the CIDR block.
+6. DryRun (Boolean) - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
+7. Instance Tenancy - The tenancy options for instances launched into the VPC. options: "default"|"dedicated"|"host"|string
+
+## Method: Delete VPC
+
+**Description**
+
+Deletes the specified VPC. You must detach or delete all gateways and resources that are associated with the VPC before you can delete it. This method calls ec2 [deleteVpc](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#deleteVpc-property)
+
+**Parameters**
+1. Access Key - This is a parameter taken from the vault to access AWS
+2. Secret Key - This is a paramer taken from the vault to access AWS
+3. Region 
+4. VPC ID - The ID of the VPC.
+6. DryRun (boolean) - hecks whether you have the required permissions for the action, without actually making the request, and provides an error response.
+
+## Method: Create Subnet
+
+**Description**
+
+Describes the specified instances or all of AWS account's instances. This method calls ec2 [createSubnet](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createSubnet-property)
+
+**Parameters**
+1. Access Key - This is a parameter taken from the vault to access AWS
+2. Secret Key - This is a paramer taken from the vault to access AWS
+3. Region 
+4. Availability Zone (Optional) - The Availability Zone for the subnet. Default: AWS selects one for you.
+5. CIDR Block - The IPv4 network range for the subnet, in CIDR notation. For example, 10.0.0.0/24.
+6. IPv6 CIDR Block (Optional) - The IPv6 network range for the subnet, in CIDR notation. The subnet size must use a /64 prefix length.
+7. VPC ID - The ID of the VPC.
+6. DryRun (boolean) - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.
+
+## Method: Delete Subnet
+
+**Description**
+
+Deletes the specified subnet. You must terminate all running instances in the subnet before you can delete the subnet. This method calls ec2 [deleteSubnet](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#deleteSubnet-property)
+
+**Parameters**
+1. Access Key - This is a parameter taken from the vault to access AWS
+2. Secret Key - This is a paramer taken from the vault to access AWS
+3. Region 
+4. Subnet ID - The ID of the subnet.
+5. DryRun (boolean) - hecks whether you have the required permissions for the action, without actually making the request, and provides an error response.
