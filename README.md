@@ -231,3 +231,18 @@ Deletes the specified subnet. You must terminate all running instances in the su
 3. Region 
 4. Subnet ID - The ID of the subnet.
 5. DryRun (boolean) - hecks whether you have the required permissions for the action, without actually making the request, and provides an error response.
+
+## Method: Modify Instance Type
+
+**Description**
+
+Modify the instance type of the instance(s) specified. You must stop all instance(s) specified before you can modify their instance type. This method calls ec2 [ModifyInstanceAttribute](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#modifyInstanceAttribute-property)
+
+**Parameters**
+1. Access Key - This is a parameter taken from the vault to access AWS
+2. Secret Key - This is a paramer taken from the vault to access AWS
+3. Region 
+4. Instance IDs - Instance IDs of all instances you want to modify. Accecpts either a string with one or multiple instance IDs, each seperated with a new line,
+    or an Array of instance IDs strings passed from code.
+5. instanceType - The new [Instance Type](https://aws.amazon.com/ec2/instance-types/) to modify all specified instances to. 
+

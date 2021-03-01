@@ -1,4 +1,5 @@
 const helpers = require('./helpers');
+const { getInstanceTypes, getRegions } = require('./autocomplete')
 
 function createInstance(action, settings) {
     return new Promise((resolve, reject) => {
@@ -208,6 +209,47 @@ function deleteSubnet(action, settings) {
     })
 }
 
+async function modifyInstanceType(action, settings){
+    
+        const ec2 = helpers.getEc2(action, settings);
+        const instanceIds = action.params.instanceIds || "";
+        if (!instanceIds){
+            throw "Not given instance IDs";
+        }
+        let instanceIdsArr = [];
+        if (typeof instanceIds === "string"){
+            instanceIds.split('\n').forEach(function(id){
+                const fixedId = id.trim();
+                if (fixedId){
+                    instanceIdsArr.push(fixedId);
+                }
+            });
+        }
+        else if (Array.isArray(instanceIds)){
+            instanceIdsArr = instanceIds;
+        }
+        else {
+            throw "Instance IDs supposed to be a string/array";
+        }
+        const instanceType = action.params.instanceType;
+        if (!instanceType) {
+            throw "Not given instance type";
+        }
+        
+        return Promise.all(instanceIdsArr.map(function(instanceId){
+            const params = {
+                InstanceId : instanceId,
+                InstanceType: {
+                    Value: instanceType.id
+                }
+            };
+            
+            return new Promise((resolve, reject) => {
+                ec2.modifyInstanceAttribute(params, helpers.operationCallback(resolve,reject));
+            })  
+        }));
+}
+
 module.exports = {
     createInstance: createInstance,
     startInstances: manageInstances,
@@ -224,5 +266,8 @@ module.exports = {
     createVpc: createVpc,
     createSubnet: createSubnet,
     deleteSubnet: deleteSubnet,
-    deleteVpc: deleteVpc
+    deleteVpc: deleteVpc,
+    modifyInstanceType: modifyInstanceType,
+    getInstanceTypes: getInstanceTypes,
+    getRegions: getRegions
 };

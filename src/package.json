@@ -1,6 +1,6 @@
 {
   "name": "kaholo-plugin-aws-ec2",
-  "version": "2.0.0",
+  "version": "2.3.1",
   "description": "AWS EC2 plugin for Kaholo",
   "main": "app.js",
   "scripts": {
@@ -9,6 +9,6 @@
   "author": "Kaholo team (Matan Kadosh)",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "2.162.0"
+    "aws-sdk": "2.853.0"
   }
 }

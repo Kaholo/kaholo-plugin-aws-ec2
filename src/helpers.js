@@ -1,14 +1,19 @@
 const aws = require("aws-sdk");
+const parsers = require("./parsers")
 
-module.exports.getEc2 = function(action, settings) {
+function getEc2(action, settings) {
+    return getEc2FromParams(action.params, settings);
+}
+
+function getEc2FromParams(params, settings) {
     return new aws.EC2({
-        region: action.params.REGION,
-        accessKeyId: action.params.AWS_ACCESS_KEY_ID || settings.AWS_ACCESS_KEY_ID,
-        secretAccessKey: action.params.AWS_SECRET_ACCESS_KEY || settings.AWS_SECRET_ACCESS_KEY
+        region: parsers.autocomplete(params.REGION),
+        accessKeyId: params.AWS_ACCESS_KEY_ID || settings.AWS_ACCESS_KEY_ID,
+        secretAccessKey: params.AWS_SECRET_ACCESS_KEY || settings.AWS_SECRET_ACCESS_KEY
     });
 }
 
-module.exports.handleParams = function (param) {
+function handleParams(param) {
     if (typeof param == 'string') {
         try {
             return JSON.parse(param);
@@ -20,9 +25,16 @@ module.exports.handleParams = function (param) {
         return param;
 }
 
-module.exports.operationCallback = function (resolve,reject) {
+function operationCallback(resolve,reject) {
     return function(err,result){
         if (err) reject(err);
         else resolve(result);
     }
+}
+
+module.exports = {
+    getEc2,
+    getEc2FromParams,
+    handleParams,
+    operationCallback
 }
