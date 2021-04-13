@@ -240,7 +240,7 @@ async function modifyInstanceType(action, settings){
             const params = {
                 InstanceId : instanceId,
                 InstanceType: {
-                    Value: instanceType.id
+                    Value: instanceType.id ? instanceType.id: instanceType
                 }
             };
             
