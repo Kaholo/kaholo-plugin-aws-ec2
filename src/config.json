@@ -5,7 +5,8 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "2.3.1",
+  "version": "2.4.0",
+  "description":"Integration with AWS EC2 API",
   "settings" : [
     {
       "name": "AWS_ACCESS_KEY_ID",
@@ -910,45 +911,9 @@
         {
           "name": "REGION",
           "viewName": "Region",
-          "type": "options",
-          "options": [
-            {
-              "id": "us-east-1",
-              "name": "US East (N. Virginia)"
-            },
-            {
-              "id": "us-west-1",
-              "name": "US West (N. California)"
-            },
-            {
-              "id": "us-west-2",
-              "name": "US West (Oregon)"
-            },
-            {
-              "id": "ap-southeast-1",
-              "name": "Asia Pacific (Singapore)"
-            },
-            {
-              "id": "ap-southeast-2",
-              "name": "Asia Pacific (Sydney)"
-            },
-            {
-              "id": "ap-northeast-1",
-              "name": "Asia Pacific (Tokyo)"
-            },
-            {
-              "id": "eu-west-1",
-              "name": "EU (Ireland)"
-            },
-            {
-              "id": "sa-east-1",
-              "name": "South America (São Paulo)"
-            },
-            {
-              "id": "eu-central-1",
-              "name": "EU (Frankfurt)"
-            }
-          ]
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "getRegions"
         },
         {
           "name": "cidrBlock",
@@ -957,18 +922,58 @@
         },
         {
           "name": "amazonProvidedIpv6CidrBlock",
-          "viewName": "Amazon Provided Block",
-          "type": "boolean"
-        },
-        {
-          "name": "dryRun",
-          "viewName": "Dry Run",
+          "viewName": "Amazon Provided IPV6 Block",
           "type": "boolean"
         },
         {
           "name": "instanceTenancy",
           "viewName": "Instance Tenancy",
+          "type": "options",
+          "options": [
+            {
+              "id": "default",
+              "name": "default"
+            },
+            {
+              "id": "dedicated",
+              "name": "dedicated"
+            }
+          ]
+        },
+        {
+          "name": "subnetCidrBlock",
+          "viewName": "Subnet CIDR Block",
           "type": "string"
+        },
+        {
+          "name": "allocationId",
+          "viewName": "Subnet Nat Gateway Allocation ID",
+          "type": "string"
+        },
+        {
+          "name": "createInternetGateway",
+          "viewName": "Create Internet Gateway",
+          "type": "boolean"
+        },
+        {
+          "name": "createExternalRoute",
+          "viewName": "Create External Route",
+          "type": "boolean"
+        },
+        {
+          "name": "createSecurityGroup",
+          "viewName": "Create Security Group",
+          "type": "boolean"
+        },
+        {
+          "name": "tags",
+          "viewName": "Tags",
+          "type": "string"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean"
         }
       ] 
     },
@@ -989,59 +994,13 @@
         {
           "name": "REGION",
           "viewName": "Region",
-          "type": "options",
-          "options": [
-            {
-              "id": "us-east-1",
-              "name": "US East (N. Virginia)"
-            },
-            {
-              "id": "us-west-1",
-              "name": "US West (N. California)"
-            },
-            {
-              "id": "us-west-2",
-              "name": "US West (Oregon)"
-            },
-            {
-              "id": "ap-southeast-1",
-              "name": "Asia Pacific (Singapore)"
-            },
-            {
-              "id": "ap-southeast-2",
-              "name": "Asia Pacific (Sydney)"
-            },
-            {
-              "id": "ap-northeast-1",
-              "name": "Asia Pacific (Tokyo)"
-            },
-            {
-              "id": "eu-west-1",
-              "name": "EU (Ireland)"
-            },
-            {
-              "id": "sa-east-1",
-              "name": "South America (São Paulo)"
-            },
-            {
-              "id": "eu-central-1",
-              "name": "EU (Frankfurt)"
-            }
-          ]
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "getRegions"
         },
         {
           "name": "availabilityZone",
           "viewName": "Availability Zone",
-          "type": "string"
-        },
-        {
-          "name": "cidrBlock",
-          "viewName": "CIDR Block",
-          "type": "string"
-        },
-        {
-          "name": "ipv6CidrBlock",
-          "viewName": "IPv6 CIDR Block",
           "type": "string"
         },
         {
@@ -1050,9 +1009,35 @@
           "type": "string"
         },
         {
+          "name": "cidrBlock",
+          "viewName": "CIDR Block",
+          "type": "string"
+        },
+        
+        {
+          "name": "ipv6CidrBlock",
+          "viewName": "IPv6 CIDR Block",
+          "type": "string"
+        },
+        {
+          "name": "outpostArn",
+          "viewName": "Outpost Arn",
+          "type": "string"
+        },
+        {
+          "name": "allocationId",
+          "viewName": "Nat Gateway Allocation ID",
+          "type": "boolean"
+        },
+        {
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean"
+        },
+        {
+          "name": "tags",
+          "viewName": "Tags",
+          "type": "text"
         }
       ] 
     },
@@ -1226,6 +1211,259 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "getInstanceTypes"
+        }
+      ] 
+    },
+    {
+      "name": "createInternetGateway",
+      "viewName": "Create Internet Gateway",
+      "params":[
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access key",
+          "type": "vault"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret key",
+          "type": "vault"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "getRegions"
+        },
+        {
+          "name": "vpcId",
+          "viewName": "VPC ID",
+          "type": "string"
+        },
+        {
+          "name": "tags",
+          "viewName": "Tags",
+          "type": "string"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean"
+        }
+      ] 
+    },
+    {
+      "name": "createRouteTable",
+      "viewName": "Create Route Table",
+      "params":[
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access key",
+          "type": "vault"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret key",
+          "type": "vault"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "getRegions"
+        },
+        {
+          "name": "vpcId",
+          "viewName": "VPC ID",
+          "type": "string"
+        },
+        {
+          "name": "subnetId",
+          "viewName": "Subnet ID",
+          "type": "string"
+        },
+        {
+          "name": "gatewayId",
+          "viewName": "Gateway ID",
+          "type": "string"
+        },
+        {
+          "name": "tags",
+          "viewName": "tags",
+          "type": "text"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean"
+        }
+      ] 
+    },
+    {
+      "name": "createNatGateway",
+      "viewName": "Create NAT Gateway",
+      "params":[
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access key",
+          "type": "vault"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret key",
+          "type": "vault"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "getRegions"
+        },
+        {
+          "name": "subnetId",
+          "viewName": "Subnet ID",
+          "type": "string"
+        },
+        {
+          "name": "allocationId",
+          "viewName": "Allocation ID",
+          "type": "string"
+        },
+        {
+          "name": "tags",
+          "viewName": "Tags",
+          "type": "text"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean"
+        }
+      ] 
+    },
+    {
+      "name": "createSecurityGroup",
+      "viewName": "Create Security Group",
+      "params":[
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access key",
+          "type": "vault"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret key",
+          "type": "vault"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "getRegions"
+        },
+        {
+          "name": "name",
+          "viewName": "Name",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "viewName": "Description",
+          "type": "text"
+        },
+        {
+          "name": "vpcId",
+          "viewName": "VPC ID",
+          "type": "string"
+        },
+        {
+          "name": "tags",
+          "viewName": "Tags",
+          "type": "text"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean"
+        }
+      ] 
+    },
+    {
+      "name": "associateRouteTable",
+      "viewName": "Associate Route Table",
+      "params":[
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access key",
+          "type": "vault"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret key",
+          "type": "vault"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "getRegions"
+        },
+        {
+          "name": "routeTableId",
+          "viewName": "Route Table ID",
+          "type": "string"
+        },
+        {
+          "name": "subnetId",
+          "viewName": "Subnet ID",
+          "type": "string"
+        },
+        {
+          "name": "gatewayId",
+          "viewName": "Gateway ID",
+          "type": "string"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean"
+        }
+      ] 
+    },
+    {
+      "name": "attachInternetGateway",
+      "viewName": "Attach Internet Gateway",
+      "params":[
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access key",
+          "type": "vault"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret key",
+          "type": "vault"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "getRegions"
+        },
+        {
+          "name": "gatewayId",
+          "viewName": "Gateway ID",
+          "type": "string"
+        },
+        {
+          "name": "vpcId",
+          "viewName": "VPC ID",
+          "type": "string"
         }
       ] 
     }
