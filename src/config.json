@@ -982,9 +982,9 @@
           "type": "string"
         },
         {
-          "name": "createSubnetNat",
-          "viewName": "Create Nat Gateway",
-          "type": "boolean"
+          "name": "allocationId",
+          "viewName": "Nat Gateway Allocation ID",
+          "type": "string"
         },
         {
           "name": "createInternetGateway",
@@ -1071,13 +1071,13 @@
           ]
         },
         {
-          "name": "availabilityZone",
-          "viewName": "Availability Zone",
+          "name": "vpcId",
+          "viewName": "VPC ID",
           "type": "string"
         },
         {
-          "name": "vpcId",
-          "viewName": "VPC ID",
+          "name": "availabilityZone",
+          "viewName": "Availability Zone",
           "type": "string"
         },
         {
@@ -1097,19 +1097,19 @@
           "type": "string"
         },
         {
-          "name": "createSubnetNat",
-          "viewName": "Create Nat Gateway",
-          "type": "boolean"
-        },
-        {
-          "name": "dryRun",
-          "viewName": "Dry Run",
-          "type": "boolean"
+          "name": "allocationId",
+          "viewName": "Nat Gateway Allocation ID",
+          "type": "string"
         },
         {
           "name": "tags",
           "viewName": "Tags",
           "type": "text"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean"
         }
       ] 
     },
