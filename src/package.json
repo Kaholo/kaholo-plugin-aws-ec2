@@ -1,6 +1,6 @@
 {
   "name": "kaholo-plugin-aws-ec2",
-  "version": "2.3.1",
+  "version": "2.4.1",
   "description": "AWS EC2 plugin for Kaholo",
   "main": "app.js",
   "scripts": {
