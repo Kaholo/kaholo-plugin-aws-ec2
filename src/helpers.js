@@ -1,11 +1,7 @@
 const aws = require("aws-sdk");
 const parsers = require("./parsers")
 
-function getEc2(action, settings) {
-    return getEc2FromParams(action.params, settings);
-}
-
-function getEc2FromParams(params, settings) {
+function getEc2(params, settings) {
     return new aws.EC2({
         region: parsers.autocomplete(params.REGION),
         accessKeyId: params.AWS_ACCESS_KEY_ID || settings.AWS_ACCESS_KEY_ID,
@@ -13,28 +9,31 @@ function getEc2FromParams(params, settings) {
     });
 }
 
-function handleParams(param) {
-    if (typeof param == 'string') {
-        try {
-            return JSON.parse(param);
-        } catch (err) {
-            return param;
-        }
-    }
-    else
-        return param;
+async function runEc2Func(action, settings, params, funcName){
+    const ec2 = action.params.ec2 ? action.params.ec2 : getEc2(action.params, settings);
+    const resultPromise = new Promise((resolve, reject) => {
+        ec2[funcName](params, (err, result) => {
+            if (err) reject(err);
+            else resolve(result);
+        });
+    });
+    const result = {};
+    result[funcName] = await resultPromise;
+    return result;
 }
 
-function operationCallback(resolve,reject) {
-    return function(err,result){
-        if (err) reject(err);
-        else resolve(result);
+function parseLegacyParam(param, parseFunc) {
+    try {
+        if (typeof param == 'string') return JSON.parse(param);
+    } 
+    catch (err) {}
+    finally {
+        return parseFunc(param);
     }
 }
 
 module.exports = {
     getEc2,
-    getEc2FromParams,
-    handleParams,
-    operationCallback
+    runEc2Func,
+    parseLegacyParam
 }

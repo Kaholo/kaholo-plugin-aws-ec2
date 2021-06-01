@@ -1,4 +1,4 @@
-const helpers = require('./helpers');
+const { getEc2 } = require('./helpers');
 
 function paramsMapper(pluginSettings,actionParams){
     const settings = {};
@@ -21,7 +21,7 @@ function paramsMapper(pluginSettings,actionParams){
 
 async function getInstanceTypes(query, pluginSettings, actionParams){
     const {settings, params} = paramsMapper(pluginSettings,actionParams);
-    const ec2 = helpers.getEc2FromParams(params, settings);
+    const ec2 = getEc2(params, settings);
         
     let ec2Params = {
         MaxResults: "10",

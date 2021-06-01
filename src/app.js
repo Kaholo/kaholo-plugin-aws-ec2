@@ -1,273 +1,341 @@
-const helpers = require('./helpers');
+const { runEc2Func, parseLegacyParam } = require('./helpers');
+const parsers = require('./parsers');
 const { getInstanceTypes, getRegions } = require('./autocomplete')
 
-function createInstance(action, settings) {
-    return new Promise((resolve, reject) => {
-        const ec2 = helpers.getEc2(action, settings);
-
-        let params = {
-            ImageId: action.params.IMAGE_ID,
-            InstanceType: action.params.INSTANCE_TYPE,
-            MinCount: parseInt(action.params.MIN_COUNT || 1),
-            MaxCount: parseInt(action.params.MAX_COUNT || 1),
-            KeyName: action.params.KEY_NAME,
-            SecurityGroupIds: action.params.SECURITY_GROUP_IDS,
-            UserData: action.params.USER_DATA
-        };
-
-        if (action.params.TAGS_SPECIFICATION) {
-            let tags = helpers.handleParams(action.params.TAGS_SPECIFICATION);
-            params.TagSpecifications = [{ ResourceType: "instance", Tags: tags }]
+async function createInstance(action, settings) {
+    const params = {
+        ImageId: action.params.IMAGE_ID,
+        InstanceType: action.params.INSTANCE_TYPE,
+        MinCount: parseInt(action.params.MIN_COUNT || 1),
+        KeyName: action.params.KEY_NAME,
+        SecurityGroupIds: action.params.SECURITY_GROUP_IDS,
+        UserData: action.params.USER_DATA
+    };
+    if (action.params.MAX_COUNT){
+        const max = parseInt(action.params.MAX_COUNT | 1);
+        if (max < params.MinCount){
+            throw "Max Count must be bigger or equal to Min Count";
         }
+        params.MaxCount = max;
+    }
 
-        ec2.runInstances(params, helpers.operationCallback(resolve,reject));
-    });
+    if (action.params.TAGS_SPECIFICATION) {
+        params.TagSpecifications = [{ 
+            ResourceType: "instance", 
+            Tags: parseLegacyParam(action.params.TAGS_SPECIFICATION, parsers.tags)
+        }]
+    }
+
+    return runEc2Func(action, settings, params, "runInstances");
 }
 
-function terminateInstances(action, settings) {
-    return new Promise((resolve, reject) => {
-        if (action.params.INSTANCE_IDS){
-            return reject("You must specify instance IDs");
-        }
-        
-        const ec2 = helpers.getEc2(action, settings);
-
-        let ids = helpers.handleParams(action.params.INSTANCE_IDS);
-        if (!Array.isArray(ids))
-            return reject("Instance ids must be an array");
-        
-        ec2.terminateInstances({InstanceIds : ids}, helpers.operationCallback(resolve,reject));
-    });
+async function manageInstances(action, settings) {
+    const params = {
+        InstanceIds: parseLegacyParam(action.params.INSTANCE_IDS, parsers.array)
+    };
+    if (params.InstanceIds.length === 0){
+        throw "You must provide at least one Instance ID";
+    }
+    return runEc2Func(action, settings, params, action.method.name);
 }
 
-function manageInstances(action, settings) {
-    return new Promise((resolve, reject) => {
-        const ec2 = helpers.getEc2(action, settings);
-        const callback = helpers.operationCallback(resolve,reject);
-        let ids = helpers.handleParams(action.params.INSTANCE_IDS);
-        
-        if (!Array.isArray(ids))
-            return reject("Instance ids must be an array");
-
-        let params = {
-            InstanceIds: ids
-        };
-
-        if (action.method.name === "startInstances") {
-            // call EC2 to start the selected instances
-            ec2.startInstances(params, callback);
-        } else if (action.method.name === "stopInstances") {
-            // call EC2 to stop the selected instances
-            ec2.stopInstances(params, callback);
-        } else if (action.method.name === "rebootInstances") {
-            // call EC2 to reboot instances
-            ec2.rebootInstances(params, callback);
-        }
-    });
+async function callAwsNoParams(action, settings){
+    return runEc2Func(action, settings, {}, action.method.name);
 }
 
-function manageKeyPairs(action, settings) {
-    return new Promise((resolve, reject) => {
-        const ec2 = helpers.getEc2(action, settings);
-        const callback = helpers.operationCallback(resolve,reject);
-        if (action.method.name === "describeKeyPairs") {
-            // Retrieve key pair descriptions; no params needed
-            ec2.describeKeyPairs(callback);
-        }
-        let params = {
-            KeyName: action.params.KEY_PAIR_NAME
-        };
-        if (action.method.name === "createKeyPair") {
-            // Create the key pair
-            ec2.createKeyPair(params, callback);
-        } else if (action.method.name === "deleteKeyPair") {
-            ec2.deleteKeyPair(params, callback);
-        }
-
-    });
+async function manageKeyPairs(action, settings) {
+    const params = {
+        KeyName: action.params.KEY_PAIR_NAME
+    };
+    if (!params.KeyName){
+        throw "Must provide Key Name";
+    }
+    return runEc2Func(action, settings, params, action.method.name);
 }
 
-function allocateAddress(action, settings) {
-    return new Promise((resolve, reject) => {
-        const ec2 = helpers.getEc2(action, settings);
-        let params = {
-            Domain: action.params.DOMAIN,
-            Address: action.params.ADDRESS,
-            PublicIpv4Pool: action.params.PUBLICIPV4POOL,
-            DryRun: action.params.DRYRUN
-        };
-
-        ec2.allocateAddress(params, helpers.operationCallback(resolve,reject));
-    })
+async function allocateAddress(action, settings) {
+    const params = {
+        Domain: action.params.DOMAIN,
+        Address: action.params.ADDRESS,
+        PublicIpv4Pool: action.params.PUBLICIPV4POOL,
+        DryRun: action.params.DRYRUN
+    };
+    return runEc2Func(action, settings, params, "allocateAddress");
 }
 
-function associateAddress(action, settings) {
-    return new Promise((resolve, reject) => {
-        const ec2 = helpers.getEc2(action, settings);
-        let params = {
-            AllocationId: action.params.ALLOCATION_ID,
-            InstanceId: action.params.INSTANCE_ID,
-            PublicIp: action.params.PUBLIC_IP,
-            AllowReassociation: action.params.ALLOWREASSOCIATION,
-            DryRun: action.params.DRYRUN,
-            NetworkInterfaceId: action.params.NETWORK_INTERFACE_ID,
-            PrivateIpAddress: action.params.PRIVATE_IP_ADDRESS
-        }
-
-        ec2.associateAddress(params, helpers.operationCallback(resolve,reject));
-    })
+async function associateAddress(action, settings) {
+    const params = {
+        AllocationId: action.params.ALLOCATION_ID,
+        InstanceId: action.params.INSTANCE_ID,
+        PublicIp: action.params.PUBLIC_IP,
+        AllowReassociation: action.params.ALLOWREASSOCIATION,
+        DryRun: action.params.DRYRUN,
+        NetworkInterfaceId: action.params.NETWORK_INTERFACE_ID,
+        PrivateIpAddress: action.params.PRIVATE_IP_ADDRESS
+    }
+    return runEc2Func(action, settings, params, "associateAddress");
 }
 
-function releaseAddress(action, settings) {
-    return new Promise((resolve, reject) => {
-        const ec2 = helpers.getEc2(action, settings);
-        let params = {
-            AllocationId: action.params.ALLOCATION_ID,
-            PublicIp: action.params.PUBLIC_IP,
-            DryRun: action.params.DRYRUN
-        }
-        ec2.releaseAddress(params, helpers.operationCallback(resolve,reject));
-    })
+async function releaseAddress(action, settings) {
+    const params = {
+        AllocationId: action.params.ALLOCATION_ID,
+        PublicIp: action.params.PUBLIC_IP,
+        DryRun: action.params.DRYRUN
+    }
+    return runEc2Func(action, settings, params, "releaseAddress");
 }
 
-function describeInstances(action, settings) {
-    return new Promise((resolve, reject) => {
-        const ec2 = helpers.getEc2(action, settings);
-        let params = {
-            DryRun: action.params.DRYRUN,
-            MaxResults: action.params.MAX_RESULTS,
-            NextToken: action.params.NEXT_TOKEN
-        }
-
-        if (action.params.INSTANCE_IDS) {
-            let ids = helpers.handleParams(action.params.INSTANCE_IDS);
-            if (!Array.isArray(ids))
-                return reject("Instance ids must be an array");
-            params.InstanceIds = ids;
-        }
-
-        if (action.params.filters) {
-            if (!Array.isArray(action.params.filters))
-                return reject("Filters ids must be an array");
-            params.Filters = action.params.filters;
-        }
-
-        ec2.describeInstances(params, helpers.operationCallback(resolve,reject));
-    })
+async function describeInstances(action, settings) {
+    const params = {
+        DryRun: action.params.DRYRUN,
+        MaxResults: action.params.MAX_RESULTS,
+        NextToken: action.params.NEXT_TOKEN
+    }
+    if (action.params.INSTANCE_IDS) {
+        params.InstanceIds = parseLegacyParam(action.params.INSTANCE_IDS, parsers.array)
+    }
+    if (action.params.filters) {
+        if (!Array.isArray(action.params.filters))
+            return reject("Filters ids must be an array");
+        params.Filters = action.params.filters;
+    }
+    return runEc2Func(action, settings, params, "describeInstances");
 }
 
-function createVpc(action, settings) {
-    return new Promise((resolve, reject) => {
-        const ec2 = helpers.getEc2(action, settings);
-        let params = {
-            CidrBlock: action.params.cidrBlock,
-            AmazonProvidedIpv6CidrBlock: action.params.amazonProvidedIpv6CidrBlock,
-            DryRun: action.params.dryRun,
-            InstanceTenancy: action.params.instanceTenancy,
-        }
-
-        ec2.createVpc(params, helpers.operationCallback(resolve,reject));
-    })
+async function createVpc(action, settings) {
+    const params = {
+        CidrBlock: action.params.cidrBlock,
+        AmazonProvidedIpv6CidrBlock: action.params.amazonProvidedIpv6CidrBlock || false,
+        InstanceTenancy: action.params.instanceTenancy || "default",
+        DryRun: action.params.dryRun || false
+    }
+    if (!params.CidrBlock && !params.AmazonProvidedIpv6CidrBlock){
+        throw "Must provide CIDR Block or select AmazonProvidedIpv6CidrBlock";
+    }
+    if (action.params.tags){
+        params.TagSpecifications = [{ResourceType: "vpc", Tags: parsers.tags(action.params.tags)}];
+    }
+    let result = await runEc2Func(action, settings, params, "createVpc");
+    action.params.vpcId = result.createVpc.Vpc.VpcId; // for later use
+    if (action.params.subnetCidrBlock){ // than create subnet
+        action.params.cidrBlock = action.params.subnetCidrBlock;
+        // we use '...' since createSubnet can return multiple action results
+        result = {...result, ...(await createSubnet(action, settings))};
+        action.params.subnetId = result.createSubnet.Subnet.SubnetId;
+    }
+    if (action.params.createInternetGateway){
+        // we use '...' since createInternetGateway can return multiple action results
+        result = {...result, ...(await createInternetGateway(action, settings))};
+        action.params.gatewayId = result.createInternetGateway.InternetGateway.InternetGatewayId;
+    }
+    if (action.params.createRouteTable){
+        // we use '...' since createRouteTable can return multiple action results
+        result = {...result, ...(await createRouteTable(action, settings))};
+    }
+    if (action.params.createSecurityGroup){
+        action.params.name = `${action.params.vpcId}-dedicated-security-group`;
+        action.params.description = `A security group dedicated only for ${action.params.vpcId}`;
+        result = {...result, ...(await createSecurityGroup(action, settings))};
+    }
+    return result;
 }
 
-function createSubnet(action, settings) {
-    return new Promise((resolve, reject) => {
-        const ec2 = helpers.getEc2(action, settings);
-        let params = {
-            AvailabilityZone: action.params.availabilityZone,
-            CidrBlock: action.params.cidrBlock,
-            Ipv6CidrBlock: action.params.ipv6CidrBlock,
-            VpcId: action.params.vpcId,
-            DryRun: action.params.dryRun,
-        }
+async function createSubnet(action, settings) {
+    const params = {
+        AvailabilityZone: action.params.availabilityZone,
+        CidrBlock: action.params.cidrBlock,
+        Ipv6CidrBlock: action.params.ipv6CidrBlock,
+        VpcId: action.params.vpcId,
+        OutpostArn: action.params.outpostArn,
+        DryRun: action.params.dryRun || false,
+    }
+    if (!(params.CidrBlock || params.Ipv6CidrBlock)){
+        throw "Must provide CIDR Block or IPv6 CIDR Block";
+    }
+    if (action.params.tags){
+        params.TagSpecifications = [{ResourceType: "subnet", Tags: parsers.tags(action.params.tags)}];
+    }
 
-        ec2.createSubnet(params, helpers.operationCallback(resolve,reject));
-    })
+    let result = await runEc2Func(action, settings, params, "createSubnet");
+
+    if (action.params.allocationId){ // indicates that nat gateway is needed
+        action.params.subnetId = result.createSubnet.Subnet.SubnetId;
+        result = {...result, ...(await createNatGateway(action, settings))};
+    }
+    return result;
 }
 
-function deleteVpc(action, settings) {
-    return new Promise((resolve, reject) => {
-        const ec2 = helpers.getEc2(action, settings);
-        let params = {
-            VpcId: action.params.vpcId,
-            DryRun: action.params.dryRun
-        }
-
-        ec2.deleteVpc(params, helpers.operationCallback(resolve,reject));
-    })
+async function deleteVpc(action, settings) {
+    const params = {
+        VpcId: action.params.vpcId,
+        DryRun: action.params.dryRun
+    }
+    return runEc2Func(action, settings, params, "deleteVpc");
 }
 
-function deleteSubnet(action, settings) {
-    return new Promise((resolve, reject) => {
-        const ec2 = helpers.getEc2(action, settings);
-        let params = {
-            SubnetId: action.params.subnetId,
-            DryRun: action.params.dryRun,
-        }
-
-        ec2.deleteSubnet(params, helpers.operationCallback(resolve,reject));
-    })
+async function deleteSubnet(action, settings) {
+    const params = {
+        SubnetId: action.params.subnetId,
+        DryRun: action.params.dryRun,
+    }
+    return runEc2Func(action, settings, params, "deleteSubnet");
 }
 
 async function modifyInstanceType(action, settings){
+    const instanceIds = parsers.array(action.params.instanceIds);
+    const instanceType = parsers.autocomplete(action.params.instanceType);
+    return Promise.all(instanceIds.map((instanceId) => {
+        const params = {
+            InstanceId : instanceId,
+            InstanceType: instanceType
+        };
+        return runEc2Func(action, settings, params, "modifyInstanceAttribute", true);  
+    }));
+}
+
+async function createInternetGateway(action, settings) {
+    const params = {
+        DryRun: action.params.dryRun
+    }
+    if (action.params.tags){
+        params.TagSpecifications = [{ResourceType: "internet-gateway", Tags: parsers.tags(action.params.tags)}];
+    }
+    const vpcId = parsers.string(action.params.vpcId);
+    let result = await runEc2Func(action, settings, params, "createInternetGateway");
+    if (vpcId){
+        action.params.gatewayId = result.createInternetGateway.InternetGateway.InternetGatewayId;
+        result = {...result, ...(await attachInternetGateway(action, settings))};
+    }
+    return result;
+}
+
+
+async function createRouteTable(action, settings) {
+    const params = {
+        VpcId: (action.params.vpcId || "").trim(), 
+        DryRun: action.params.dryRun || false
+    };
+    if (!params.VpcId){
+        throw "Didn't provide VPC ID!";
+    }
+    if (action.params.tags){
+        params.TagSpecifications = [{ResourceType: "route-table", Tags: parsers.tags(action.params.tags)}];
+    }
     
-        const ec2 = helpers.getEc2(action, settings);
-        const instanceIds = action.params.instanceIds || "";
-        if (!instanceIds){
-            throw "Not given instance IDs";
+    let result = await runEc2Func(action, settings, params, "createRouteTable");
+    if (action.params.subnetId || action.params.gatewayId){
+        action.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
+        result = {...result, ...(await associateRouteTable(action, settings))};
+    }
+    return result;
+}
+
+async function createNatGateway(action, settings) {
+    const params = {
+        SubnetId: (action.params.subnetId || "").trim(),
+        AllocationId: action.params.allocationId,
+        DryRun: action.params.dryRun || false
+    };
+    if (!params.SubnetId){
+        throw "One of the required parameters was not given!";
+    }
+    if (action.params.tags){
+        params.TagSpecifications = [{ResourceType: "natgateway", Tags: parsers.tags(action.params.tags)}];
+    }
+    return runEc2Func(action, settings, params, "createNatGateway");
+}
+
+async function createSecurityGroup(action, settings) {
+    const params = {
+        GroupName: (action.params.name || "").trim(),
+        Description: (action.params.description || "").trim(),
+        VpcId: action.params.vpcId,
+        DryRun: action.params.dryRun || false
+    };
+    if (!params.GroupName || !params.Description){
+        throw "One of the required parameters was not given!";
+    }
+    if (action.params.tags){
+        params.TagSpecifications = [{ResourceType: "security-group", Tags: parsers.tags(action.params.tags)}];
+    }
+    return runEc2Func(action, settings, params, "createSecurityGroup");
+}
+
+async function associateRouteTable(action, settings) {
+    const params = {
+        RouteTableId: (action.params.routeTableId || "").trim(),
+        DryRun: action.params.dryRun || false
+    };
+    if (!params.RouteTableId){
+        throw "Route Table ID was not given!";
+    }
+    if (!action.params.subnetId && !action.params.gatewayId){
+        throw "You need to provide a Subnet ID or a Gateway ID!";
+    }
+    let result;
+    if (action.params.subnetId){ // we need to associate subnet and gateway in seperate functions - otherwise fails...
+        const subParams = { 
+            ...params,
+            SubnetId: (action.params.subnetId || "").trim()
         }
-        let instanceIdsArr = [];
-        if (typeof instanceIds === "string"){
-            instanceIds.split('\n').forEach(function(id){
-                const fixedId = id.trim();
-                if (fixedId){
-                    instanceIdsArr.push(fixedId);
-                }
-            });
+        result = await runEc2Func(action, settings, subParams, "associateRouteTable");
+    }
+    if (action.params.gatewayId){
+        const subParams = { 
+            ...params,
+            GatewayId: (action.params.gatewayId || "").trim()
         }
-        else if (Array.isArray(instanceIds)){
-            instanceIdsArr = instanceIds;
+        if (result){
+            const gatewayResult = await runEc2Func(action, settings, subParams, "associateRouteTable")
+            result = {
+                "associateRouteTableToSubnet": result.associateRouteTable,
+                "associateRouteTableToGateway": gatewayResult.associateRouteTable
+            }
         }
         else {
-            throw "Instance IDs supposed to be a string/array";
+            result = await runEc2Func(action, settings, subParams, "associateRouteTable");
         }
-        const instanceType = action.params.instanceType;
-        if (!instanceType) {
-            throw "Not given instance type";
-        }
-        
-        return Promise.all(instanceIdsArr.map(function(instanceId){
-            const params = {
-                InstanceId : instanceId,
-                InstanceType: {
-                    Value: instanceType.id ? instanceType.id: instanceType
-                }
-            };
-            
-            return new Promise((resolve, reject) => {
-                ec2.modifyInstanceAttribute(params, helpers.operationCallback(resolve,reject));
-            })  
-        }));
+    }
+    return result;
+}
+
+async function attachInternetGateway(action, settings) {
+    const params = {
+        InternetGatewayId: (action.params.gatewayId || "").trim(),
+        VpcId: (action.params.vpcId || "").trim(),
+        DryRun: action.params.dryRun || false
+    };
+    if (!action.params.vpcId || !action.params.gatewayId){
+        throw "You need to provide a Subnet ID or a Gateway ID!";
+    }
+    return runEc2Func(action, settings, params, "attachInternetGateway");
 }
 
 module.exports = {
-    createInstance: createInstance,
+    createInstance,
     startInstances: manageInstances,
     stopInstances: manageInstances,
     rebootInstances: manageInstances,
-    describeKeyPairs: manageKeyPairs,
+    describeKeyPairs: callAwsNoParams,
     createKeyPair: manageKeyPairs,
     deleteKeyPair: manageKeyPairs,
-    allocateAddress: allocateAddress,
-    associateAddress: associateAddress,
-    releaseAddress: releaseAddress,
-    describeInstances: describeInstances,
-    terminateInstances: terminateInstances,
-    createVpc: createVpc,
-    createSubnet: createSubnet,
-    deleteSubnet: deleteSubnet,
-    deleteVpc: deleteVpc,
-    modifyInstanceType: modifyInstanceType,
-    getInstanceTypes: getInstanceTypes,
-    getRegions: getRegions
+    allocateAddress,
+    associateAddress,
+    releaseAddress,
+    describeInstances,
+    terminateInstances: manageInstances,
+    createVpc,
+    createSubnet,
+    deleteSubnet,
+    deleteVpc,
+    modifyInstanceType,
+    createInternetGateway,
+    createRouteTable,
+    createNatGateway,
+    createSecurityGroup,
+    associateRouteTable,
+    attachInternetGateway,
+    // auto complete
+    getInstanceTypes,
+    getRegions
 };
