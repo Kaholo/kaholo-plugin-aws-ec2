@@ -946,9 +946,9 @@
           "type": "string"
         },
         {
-          "name": "allocationId",
-          "viewName": "Subnet Nat Gateway Allocation ID",
-          "type": "string"
+          "name": "createSubnetNat",
+          "viewName": "Create Nat Gateway",
+          "type": "boolean"
         },
         {
           "name": "createInternetGateway",
@@ -1025,8 +1025,8 @@
           "type": "string"
         },
         {
-          "name": "allocationId",
-          "viewName": "Nat Gateway Allocation ID",
+          "name": "createSubnetNat",
+          "viewName": "Create Nat Gateway",
           "type": "boolean"
         },
         {

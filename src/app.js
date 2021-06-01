@@ -125,9 +125,9 @@ async function createVpc(action, settings) {
         result = {...result, ...(await createInternetGateway(action, settings))};
         action.params.gatewayId = result.createInternetGateway.InternetGateway.InternetGatewayId;
     }
-    if (action.params.createExternalRoute){
-        // we use '...' since createExternalRoute can return multiple action results
-        result = {...result, ...(await createExternalRoute(action, settings))};
+    if (action.params.createRouteTable){
+        // we use '...' since createRouteTable can return multiple action results
+        result = {...result, ...(await createRouteTable(action, settings))};
     }
     if (action.params.createSecurityGroup){
         result = {...result, ...(await createSecurityGroup(action, settings))};
@@ -141,7 +141,7 @@ async function createSubnet(action, settings) {
         CidrBlock: action.params.cidrBlock,
         Ipv6CidrBlock: action.params.ipv6CidrBlock,
         VpcId: action.params.vpcId,
-        OutpostArn: daction.params.outpostArn,
+        OutpostArn: action.params.outpostArn,
         DryRun: action.params.dryRun || false,
     }
     if (!(params.CidrBlock || params.Ipv6CidrBlock)){
@@ -195,7 +195,7 @@ async function createInternetGateway(action, settings) {
     if (action.params.tags){
         params.TagSpecifications = [{ResourceType: "internet-gateway", Tags: parsers.tags(action.params.tags)}];
     }
-    const vpcId = (action.params.vpcId || "").trim();
+    const vpcId = parsers.string(action.params.vpcId);
     let result = await runEc2Func(action, settings, params, "createInternetGateway");
     if (vpcId){
         action.params.gatewayId = result.createInternetGateway.InternetGateway.InternetGatewayId;
@@ -228,10 +228,10 @@ async function createRouteTable(action, settings) {
 async function createNatGateway(action, settings) {
     const params = {
         SubnetId: (action.params.subnetId || "").trim(),
-        AllocationId: (action.params.allocationId || "").trim(),
+        AllocationId: action.params.allocationId,
         DryRun: action.params.dryRun || false
     };
-    if (!params.SubnetId || !params.AllocationId){
+    if (!params.SubnetId){
         throw "One of the required parameters was not given!";
     }
     if (action.params.tags){
@@ -244,7 +244,7 @@ async function createSecurityGroup(action, settings) {
     const params = {
         GroupName: (action.params.name || "").trim(),
         Description: (action.params.description || "").trim(),
-        VpcId: (action.params.vpcId || "").trim(),
+        VpcId: action.params.vpcId,
         DryRun: action.params.dryRun || false
     };
     if (!params.GroupName || !params.Description){

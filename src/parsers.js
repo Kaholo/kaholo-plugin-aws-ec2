@@ -54,5 +54,10 @@ module.exports = {
             }
             return { Key: key, Value: val };
         });
+    },
+    string: (value)=>{
+        if (!value) return undefined;
+        if (typeof(value) === "string") return value.trim();
+        return String(value);
     }
 }

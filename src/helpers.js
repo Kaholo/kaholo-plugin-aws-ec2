@@ -17,7 +17,9 @@ async function runEc2Func(action, settings, params, funcName){
             else resolve(result);
         });
     });
-    return { funcName: await resultPromise };
+    const result = {};
+    result[funcName] = await resultPromise;
+    return result;
 }
 
 module.exports = {
