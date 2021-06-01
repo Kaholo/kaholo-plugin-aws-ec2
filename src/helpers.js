@@ -22,7 +22,18 @@ async function runEc2Func(action, settings, params, funcName){
     return result;
 }
 
+function parseLegacyParam(param, parseFunc) {
+    try {
+        if (typeof param == 'string') return JSON.parse(param);
+    } 
+    catch (err) {}
+    finally {
+        return parseFunc(param);
+    }
+}
+
 module.exports = {
     getEc2,
-    runEc2Func
+    runEc2Func,
+    parseLegacyParam
 }

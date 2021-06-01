@@ -1,4 +1,4 @@
-const { runEc2Func } = require('./helpers');
+const { runEc2Func, parseLegacyParam } = require('./helpers');
 const parsers = require('./parsers');
 const { getInstanceTypes, getRegions } = require('./autocomplete')
 
@@ -20,7 +20,10 @@ async function createInstance(action, settings) {
     }
 
     if (action.params.TAGS_SPECIFICATION) {
-        params.TagSpecifications = [{ ResourceType: "instance", Tags: parsers.tags(action.params.TAGS_SPECIFICATION) }]
+        params.TagSpecifications = [{ 
+            ResourceType: "instance", 
+            Tags: parseLegacyParam(action.params.TAGS_SPECIFICATION, parsers.tags)
+        }]
     }
 
     return runEc2Func(action, settings, params, "runInstances");
@@ -28,7 +31,7 @@ async function createInstance(action, settings) {
 
 async function manageInstances(action, settings) {
     const params = {
-        InstanceIds: parsers.array(action.params.INSTANCE_IDS)
+        InstanceIds: parseLegacyParam(action.params.INSTANCE_IDS, parsers.array)
     };
     if (params.InstanceIds.length === 0){
         throw "You must provide at least one Instance ID";
@@ -89,7 +92,7 @@ async function describeInstances(action, settings) {
         NextToken: action.params.NEXT_TOKEN
     }
     if (action.params.INSTANCE_IDS) {
-        params.InstanceIds = parsers.array(action.params.INSTANCE_IDS);
+        params.InstanceIds = parseLegacyParam(action.params.INSTANCE_IDS, parsers.array)
     }
     if (action.params.filters) {
         if (!Array.isArray(action.params.filters))
@@ -130,6 +133,8 @@ async function createVpc(action, settings) {
         result = {...result, ...(await createRouteTable(action, settings))};
     }
     if (action.params.createSecurityGroup){
+        action.params.name = `${action.params.vpcId}-dedicated-security-group`;
+        action.params.description = `A security group dedicated only for ${action.params.vpcId}`;
         result = {...result, ...(await createSecurityGroup(action, settings))};
     }
     return result;
@@ -267,13 +272,31 @@ async function associateRouteTable(action, settings) {
     if (!action.params.subnetId && !action.params.gatewayId){
         throw "You need to provide a Subnet ID or a Gateway ID!";
     }
-    if (action.params.subnetId){
-        params.SubnetId = (action.params.subnetId || "").trim();
+    let result;
+    if (action.params.subnetId){ // we need to associate subnet and gateway in seperate functions - otherwise fails...
+        const subParams = { 
+            ...params,
+            SubnetId: (action.params.subnetId || "").trim()
+        }
+        result = await runEc2Func(action, settings, subParams, "associateRouteTable");
     }
     if (action.params.gatewayId){
-        params.GatewayId = (action.params.gatewayId || "").trim();
+        const subParams = { 
+            ...params,
+            GatewayId: (action.params.gatewayId || "").trim()
+        }
+        if (result){
+            const gatewayResult = await runEc2Func(action, settings, subParams, "associateRouteTable")
+            result = {
+                "associateRouteTableToSubnet": result.associateRouteTable,
+                "associateRouteTableToGateway": gatewayResult.associateRouteTable
+            }
+        }
+        else {
+            result = await runEc2Func(action, settings, subParams, "associateRouteTable");
+        }
     }
-    return runEc2Func(action, settings, params, "associateRouteTable");
+    return result;
 }
 
 async function attachInternetGateway(action, settings) {
