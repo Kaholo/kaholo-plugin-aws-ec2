@@ -1,3 +1,31 @@
+function parseArray(value){
+    if (!value) return [];
+    if (Array.isArray(value)) return value;
+    if (typeof(value) === "string") return value.split("/n").map(line=>line.trim()).filter(line=>line);
+    throw "Unsupprted array format";
+}
+
+function parseTags(value){
+    if (!value) return [];
+    if (Array.isArray(value)){
+        if (!value.every(tag => tag.Key)){
+            throw "Bad AWS Tags Format";
+        }
+        return value;
+    }
+    value = parseArray(value);
+    return value.map(line => {
+        let [key, ...val] = line.split("=");
+        if (!val){
+            return { Key: key };
+        }
+        if (Array.isArray(val)){
+            val = val.join("=");
+        }
+        return { Key: key, Value: val };
+    });
+}
+
 module.exports = {
     boolean : (value) =>{
         if (value === undefined || value === null || value === '') return undefined;
@@ -29,35 +57,11 @@ module.exports = {
         if (value.id) return value.id;
         return value;
     },
-    array: (value)=>{
-        if (!value) return [];
-        if (Array.isArray(value)) return value;
-        if (typeof(value) === "string") return value.split("/n").map(line=>line.trim()).filter(line=>line);
-        throw "Unsupprted array format"
-    },
-    tags: (value)=>{
-        if (!value) return [];
-        if (Array.isArray(value)){
-            if (!value.every(tag => tag.Key)){
-                throw "Bad AWS Tags Format";
-            }
-            return value;
-        }
-        value = parseArr(value);
-        return value.map(line => {
-            let [key, ...val] = line.split("=");
-            if (!val){
-                return { Key: key };
-            }
-            if (Array.isArray(val)){
-                val = val.join("=");
-            }
-            return { Key: key, Value: val };
-        });
-    },
     string: (value)=>{
         if (!value) return undefined;
         if (typeof(value) === "string") return value.trim();
-        return String(value);
-    }
+        throw `Value ${value} is not a valid string`;
+    },
+    array: parseArray,
+    tags: parseTags
 }
