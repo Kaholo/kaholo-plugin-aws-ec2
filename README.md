@@ -9,17 +9,18 @@ This plugin is based on [aws-sdk API](https://www.npmjs.com/package/aws-sdk) and
 This method will create a new AWS instance. This method calls ec2 [runInstance](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#runInstances-property)
 
 **Parameters**
-1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a paramer taken from the vault to access AWS
-3. Region - Select a region from the appeard list.
-4. Image ID - If you already have an AMI ready for launch
-5. Instance type - The machine type you want to launce for example: t2.micro
-6. Key name - Add a key-pair in order to connect to the new server.
-7. Security Group ID (array) - connect this instance to a security group. You will have to use a code (code or configuration) to transfer array to the api.
-8. User data - The user data to make available to the instance. 
-9. Minimum of instances - The minimum number of instances to launch (by default 1).
-10. Maximum of instances - The maximum number of instances to launch (by default 1).
-11. Tags specifications - The tags to apply to the resources during launch. 
+1. Access Key (Vault) **Optional** - This is a parameter taken from the vault to access AWS
+2. Secret Key  (Vault) **Optional** - This is a paramer taken from the vault to access AWS
+3. Region (Options) **Required** - Select a region from the appeard list.
+4. Image ID (String) **Required** - If you already have an AMI ready for launch
+5. Instance type (String) **Required** - The machine type you want to launce for example: t2.micro
+6. Key name (String) **Optional** - Add a key-pair in order to connect to the new server.
+7. Security Group ID (Text/Array) **Required** - connect this instance to a security group. You will have to use a code (code or configuration) to transfer array to the api.
+8. User data (String) **Optional** - Schell script to run on the instance on start.
+9. Minimum of instances (Int) **Optional** - The minimum number of instances to launch (by default 1).
+10. Maximum of instances (Int) **Optional**- The maximum number of instances to launch (by default 1).
+11. Subnet ID (String) **Optional**- If specified, host the instance on the specified Subnet.
+12. Tags specifications (Text/Object) **Optional** - The tags to apply to the resources during launch. 
 
 ## Method: Start Instance
 
@@ -188,13 +189,11 @@ Creates a VPC with the specified IPv4 CIDR block. This method calls ec2 [createV
 4. CIDR Block (String) **Optional** - The IPv4 network range for the VPC, in CIDR notation. For example, 10.0.0.0/16.
 5. Amazon Provided Blocks (Boolean) **Optional** - Requests an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC. You cannot specify the range of IP addresses, or the size of the CIDR block.
 6. Instance Tenancy (Options) **Optional** - The tenancy options for instances launched into the VPC. value can be "default" or ."dedicated".
-7. Subnet CIDR Block (String) **Optional** - If specified create a simple subnet within the VPC with the provided IP addresses. Value should ne IPv4 address range, in CIDR notation. The Ip address range must be included within the range of ip addresses for the VPC.
-8. Nat Gateway Allocation ID (String) **Optional** - Only relevent if Subnet CIDR Block was provided. If specified, create a NAT Gateway within the subnet created in the VPC, with the Elastic IP address of the specified Allocation.
-9. Create Internet Gateway (Boolean) **Optional** - If true, create an Internet gateway and attach it to the specified VPC. Default value is false.
-10. Create Route Table (Boolean) **Optional** - If true, create a Route Table inside this VPC. If a subnet or an internet gateway were also created automatically, associate the route table with whoever was created. Default value is false.
-11. Create Security Group (Boolean) **Optional** - If true, create a VPC-Security group, for this VPC. Default value is false.
-12. Tags (Array of objects/Text) **Optional** - If specified, tag all resources created(At least the VPC, more if checked the create box for any other resource) with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. 
-13. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
+7. Create Internet Gateway (Boolean) **Optional** - If true, create an Internet gateway and attach it to the specified VPC. Default value is false.
+8. Create Route Table (Boolean) **Optional** - If true, create a Route Table inside this VPC. If a subnet or an internet gateway were also created automatically, associate the route table with whoever was created. Default value is false.
+9. Create Security Group (Boolean) **Optional** - If true, create a VPC-Security group, for this VPC. Default value is false.
+10. Tags (Array of objects/Text) **Optional** - If specified, tag all resources created(At least the VPC, more if checked the create box for any other resource) with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. 
+11. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
 * **Please Notice!** It is required to pass either the 'CIDR Block' parameter or to pass true in the 'Amazon Provided Blocks' parameter
 
 ## Method: Delete VPC
@@ -221,14 +220,18 @@ Create a subnet within a VPC. This method calls ec2 [createSubnet](https://docs.
 2. Secret Key (Vault) **Optional** - Used to authenticate to AWS.
 3. Region (Options) **Required** - The region to create this Subnet in.
 4. VPC ID (String) **Required** - The ID of the VPC of the subnet to create.
-5. Availability Zone (String) **Optional** - The Availability Zone or Local Zone for the subnet. **Default(if not provided):** AWS selects one for you. If you create more than one subnet in your VPC, AWS does not necessarily select a different zone for each subnet.
+5. Route Table ID (String) **Optional** - If specified, assoicate the subnet with the specified Route Table. **Doesn't work together with the parameter 'Create Private Route Table'**.
+6. Availability Zone (String) **Optional** - The Availability Zone or Local Zone for the subnet. **Default(if not provided):** AWS selects one for you. If you create more than one subnet in your VPC, AWS does not necessarily select a different zone for each subnet.
 To create a subnet in a Local Zone, set this value to the Local Zone ID, for example us-west-2-lax-1a. For information about the Regions that support Local Zones, see Available Regions in the Amazon Elastic Compute Cloud User Guide. To create a subnet in an Outpost, set this value to the Availability Zone for the Outpost and specify the Outpost ARN.
-6. CIDR Block (String) **Optional** - The IPv4 network range for the subnet, in CIDR notation. For example, 10.0.0.0/24.
-7. IPv6 CIDR Block (String) **Optional** - The IPv6 network range for the subnet, in CIDR notation. The subnet size must use a /64 prefix length.
-8. Outpost Arn (String) **Optional** - The Amazon Resource Name (ARN) of the Outpost. If you specify an Outpost ARN, you must also specify the Availability Zone of the Outpost subnet.
-9. Nat Gateway Allocation ID (String) **Optional** - If specified, create a NAT Gateway within the subnet created, with the Elastic IP address of the specified Allocation.
-10. Tags (Array of objects/Text) **Optional** - If specified, tag all resources created(Subnet and maybe Nat Gateway) with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. 
-11. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
+7. CIDR Block (String) **Optional** - The IPv4 network range for the subnet, in CIDR notation. For example, 10.0.0.0/24.
+8. IPv6 CIDR Block (String) **Optional** - The IPv6 network range for the subnet, in CIDR notation. The subnet size must use a /64 prefix length.
+9. Outpost Arn (String) **Optional** - The Amazon Resource Name (ARN) of the Outpost. If you specify an Outpost ARN, you must also specify the Availability Zone of the Outpost subnet.
+10. Nat Gateway Allocation ID (String) **Optional** - If specified, create a NAT Gateway within the subnet created, with the Elastic IP address of the specified Allocation.
+11. Create Private Route Table (Boolean) **Optional** - If specified create a new route table and connect it to the subnet.
+In case a NAT Gateway was also created from this function, also create a default route from the route table to the NAT Gateway. This proccess needs to wait for the NAT Gateway to be available which **might take a couple of minutes!**
+12. Map Public IP On Launch (Boolean) **Optional** - If specified modify the attribute 'Map Public IP On Launch' on the subnet to true, using this command: [documentaion](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.Ifhtml#modifySubnetAttribute-property). The subnet will map a public ip address to any instance launched from it.
+13. Tags (Array of objects/Text) **Optional** - If specified, tag all resources created(Subnet and maybe Nat Gateway) with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. 
+14. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
 
 ## Method: Delete Subnet
 
@@ -346,3 +349,48 @@ Attach the specified Internet Gateway with a VPC. This method calls ec2 [attachI
 4. Gateway ID (String) **Required** - The ID of the internet gateway to attach to the VPC.
 5. VPC ID (String) **Required** - The ID of the VPC to attach the internet gateway to.
 6. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
+
+## Method: Add Security Group Rules
+
+**Description**
+
+Creates new rules for the specified security group. Can be either Ingress/Egrass type rule and also either Authorize\Revoke type. This method calls one of the following ec2 methods:
+* [authorizeSecurityGroupIngress](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#authorizeSecurityGroupIngress-property)
+* [authorizeSecurityGroupEgress](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#authorizeSecurityGroupEgress-property)
+* [revokeSecurityGroupIngress](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#revokeSecurityGroupIngress-property)
+* [revokeSecurityGroupEgress](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#revokeSecurityGroupEgress-property)
+
+**Parameters**
+1. Access Key (Vault) **Optional** - Used to authenticate to AWS.
+2. Secret Key (Vault) **Optional** - Used to authenticate to AWS.
+3. Region (AutoComplete) **Required** - The region to create this Security Group in.
+4. Group ID (String) **Required** - The ID of security group to add the rules to.
+5. Rule Type (Options) **Optional** - The type of rules to create.
+Possible Values are: Ingress-Authorize/Egress-Authorize/Ingress-Revoke/Egress-Revoke. Default Value is Ingress-Authorize.
+6. CIDR IPv4 Blocks (Text) **Optional** - The IP v4 ranges in CIDR notation to apply to the rule(To autorize\revoke). To enter multiple values seperate each with a new line.
+7. CIDR IPv4 Blocks (Text) **Optional** - The IP v6 ranges in CIDR notation to apply to the rule(To autorize\revoke). To enter multiple values seperate each with a new line.
+6. From Ports (Text) **Required** - The source ports to apply the rule to. To enter multiple values seperate each with a new line.
+7. To Ports (Text) **Required** - The target ports to apply the rule to. To enter multiple values seperate each with a new line.
+If specified the same number of ports as 'From Ports' map each port in 'From Ports' to a port specified here. If not, map each port on 'From Ports' to all ports specified here. **For example**: 
+* From Ports: 22, 80. To Ports: 22, 80. => 2 rules, 22->22, 80->80.
+* From Ports: 80, 8080. To Ports: 80. => 2 rules, 80->80, 8080->80.
+8. Ip Protocol (String) **Required** - The IP Protocol to apply to this rule(either authrize\revoke access for this protocol).
+9. Description (Text) **Optional** - The description of the rules created.
+10. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
+
+## Method: Create Route
+
+**Description**
+
+Create a new route inside the specified Route Table. This method calls ec2 [createRoute](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createRoute-property).
+
+**Parameters**
+1. Access Key (Vault) **Optional** - Used to authenticate to AWS.
+2. Secret Key (Vault) **Optional** - Used to authenticate to AWS.
+3. Region (AutoComplete) **Required** - The region to create this Security Group in.
+4. Route Table ID (String) **Required** - The ID of the route table to create the route in.
+5. Gateway ID (String) **Optional** - ID of an internet gateway. If specified make the Internet Gateway specified the target of the route.
+6. NAT Gateway ID (String) **Optional** - ID of a NAT gateway. If specified make the NAT Gateway specified the target of the route.
+7. Instance ID (String) **Optional** - ID of an Instance. If specified make the Instance specified the target of the route.
+8. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
+**Can only accepot one of paramaters 5-7**

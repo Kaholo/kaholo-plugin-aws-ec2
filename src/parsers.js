@@ -1,29 +1,34 @@
 function parseArray(value){
     if (!value) return [];
     if (Array.isArray(value)) return value;
-    if (typeof(value) === "string") return value.split("/n").map(line=>line.trim()).filter(line=>line);
+    if (typeof(value) === "string") return value.split("\n").map(line=>line.trim()).filter(line=>line);
     throw "Unsupprted array format";
 }
 
 function parseTags(value){
-    if (!value) return [];
+    if (!value) return undefined;
     if (Array.isArray(value)){
         if (!value.every(tag => tag.Key)){
             throw "Bad AWS Tags Format";
         }
         return value;
     }
-    value = parseArray(value);
-    return value.map(line => {
-        let [key, ...val] = line.split("=");
-        if (!val){
-            return { Key: key };
-        }
-        if (Array.isArray(val)){
-            val = val.join("=");
-        }
-        return { Key: key, Value: val };
-    });
+    if (typeof(value) === "string"){
+        value = value.split("\n").map(line=>line.trim()).filter(line=>line);
+        return value.map((line) => {
+            let [key, ...val] = line.split("=");
+            if (Array.isArray(val)){
+                val = val.join("=");
+            }
+            return { Key: key, Value: val };
+        });
+    }
+    if (typeof(value) === "object"){
+        return Object.entries(value).map(([key, val])=>{
+            return { Key: key, Value: val };
+        });
+    }
+    throw "Unsupported tags format!";
 }
 
 module.exports = {

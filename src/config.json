@@ -5,7 +5,7 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "2.4.2",
+  "version": "2.5.0",
   "description":"Integration with AWS EC2 API",
   "settings" : [
     {
@@ -110,6 +110,11 @@
         {
           "name": "MAX_COUNT",
           "viewName": "maximum of instances",
+          "type": "string"
+        },
+        {
+          "name": "subnetId",
+          "viewName": "Subnet ID",
           "type": "string"
         },
         {
@@ -977,16 +982,6 @@
           ]
         },
         {
-          "name": "subnetCidrBlock",
-          "viewName": "Subnet CIDR Block",
-          "type": "string"
-        },
-        {
-          "name": "allocationId",
-          "viewName": "Nat Gateway Allocation ID",
-          "type": "string"
-        },
-        {
           "name": "createInternetGateway",
           "viewName": "Create Internet Gateway",
           "type": "boolean"
@@ -1076,6 +1071,11 @@
           "type": "string"
         },
         {
+          "name": "routeTableId",
+          "viewName": "Route Table ID",
+          "type": "string"
+        },
+        {
           "name": "availabilityZone",
           "viewName": "Availability Zone",
           "type": "string"
@@ -1098,8 +1098,18 @@
         },
         {
           "name": "allocationId",
-          "viewName": "Nat Gateway Allocation ID",
+          "viewName": "NAT Gateway Allocation ID",
           "type": "string"
+        },
+        {
+          "name": "createPrivateRouteTable",
+          "viewName": "Create Private Route Table",
+          "type": "boolean"
+        },
+        {
+          "name": "mapPublicIpOnLaunch",
+          "viewName": "Map Public IP On Launch",
+          "type": "boolean"
         },
         {
           "name": "tags",
@@ -1536,6 +1546,145 @@
           "name": "vpcId",
           "viewName": "VPC ID",
           "type": "string"
+        }
+      ] 
+    },
+    {
+      "name": "addSecurityGroupRules",
+      "viewName": "Add Security Group Rules",
+      "params":[
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access key",
+          "type": "vault"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret key",
+          "type": "vault"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "getRegions"
+        },
+        {
+          "name": "groupId",
+          "viewName": "Group ID",
+          "type": "string"
+        },
+        {
+          "name": "ruleType",
+          "viewName": "Rule Type",
+          "type": "options",
+          "options": [
+            {
+             "id": "Ingress-Authorize",
+             "name": "Ingress-Authorize" 
+            },
+            {
+              "id": "Egress-Authorize",
+              "name": "Egress-Authorize" 
+            },
+            {
+              "id": "Ingress-Revoke",
+              "name": "Ingress-Revoke" 
+            },
+            {
+              "id": "Egress-Revoke",
+              "name": "Egress-Revoke" 
+            }
+          ]
+        },
+        {
+          "name": "cidrIps",
+          "viewName": "CIDR IPv4 Blocks",
+          "type": "text"
+        },
+        {
+          "name": "cidrIps6",
+          "viewName": "CIDR IPv6 Blocks",
+          "type": "text"
+        },
+        {
+          "name": "fromPorts",
+          "viewName": "From Ports",
+          "type": "text"
+        },
+        {
+          "name": "toPorts",
+          "viewName": "To Ports",
+          "type": "text"
+        },
+        {
+          "name": "ipProtocol",
+          "viewName": "Ip Protocol",
+          "type": "string"
+        },
+        {
+          "name": "description",
+          "viewName": "Description",
+          "type": "text"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean"
+        }
+      ] 
+    },
+    {
+      "name": "createRoute",
+      "viewName": "Create Route",
+      "params":[
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access key",
+          "type": "vault"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret key",
+          "type": "vault"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "getRegions"
+        },
+        {
+          "name": "routeTableId",
+          "viewName": "Route Table ID",
+          "type": "string"
+        },
+        {
+          "name": "gatewayId",
+          "viewName": "Gateway ID",
+          "type": "string"
+        },
+        {
+          "name": "natGatewayId",
+          "viewName": "NAT Gateway ID",
+          "type": "string"
+        },
+        {
+          "name": "instanceId",
+          "viewName": "Instance ID",
+          "type": "string"
+        },
+        {
+          "name": "destinationCidrBlock",
+          "viewName": "Destination CIDR Block",
+          "type": "string"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean"
         }
       ] 
     }
