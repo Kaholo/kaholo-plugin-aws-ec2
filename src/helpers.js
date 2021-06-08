@@ -32,8 +32,39 @@ function parseLegacyParam(param, parseFunc) {
     }
 }
 
+function getPortObj(fromPort, toPort, ipProtocol, cidrIps, cidrIps6, description){
+    const obj = {
+        FromPort: fromPort,
+        ToPort: toPort,
+        IpProtocol: ipProtocol
+    };
+    if (cidrIps6.length > 0){
+        obj.Ipv6Ranges = cidrIps6.map((CidrIpv6) => ({
+            CidrIpv6,
+            Description: description
+        }));
+    }
+    if (cidrIps.length > 0){
+        obj.IpRanges = cidrIps.map((CidrIp) => ({
+            CidrIp,
+            Description: description
+        }));
+    }
+    return obj;
+}
+
+async function waitForNatGateway(action, settings){
+    const params = {NatGatewayIds: [action.params.natGatewayId]};
+    let result;
+    while (!result || result.describeNatGateways.NatGateways[0].State !== "available"){
+        result = await runEc2Func(action, settings, params, "describeNatGateways");
+    }
+}
+
 module.exports = {
     getEc2,
     runEc2Func,
-    parseLegacyParam
+    parseLegacyParam,
+    getPortObj,
+    waitForNatGateway
 }

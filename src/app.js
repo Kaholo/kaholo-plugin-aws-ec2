@@ -1,22 +1,24 @@
-const { runEc2Func, parseLegacyParam } = require('./helpers');
+const { runEc2Func, parseLegacyParam, getPortObj, waitForNatGateway } = require('./helpers');
 const parsers = require('./parsers');
 const { getInstanceTypes, getRegions } = require('./autocomplete')
 
 async function createInstance(action, settings) {
     const params = {
-        ImageId: action.params.IMAGE_ID,
-        InstanceType: action.params.INSTANCE_TYPE,
+        ImageId: parsers.string(action.params.IMAGE_ID),
+        InstanceType: parsers.string(action.params.INSTANCE_TYPE),
         MinCount: parseInt(action.params.MIN_COUNT || 1),
-        KeyName: action.params.KEY_NAME,
-        SecurityGroupIds: action.params.SECURITY_GROUP_IDS,
-        UserData: action.params.USER_DATA
+        MaxCount: parseInt(action.params.MAX_COUNT | 1),
+        KeyName: parsers.string(action.params.KEY_NAME),
+        SecurityGroupIds: parsers.array(action.params.SECURITY_GROUP_IDS),
+        SubnetId: parsers.string(action.params.subnetId)
     };
-    if (action.params.MAX_COUNT){
-        const max = parseInt(action.params.MAX_COUNT | 1);
-        if (max < params.MinCount){
-            throw "Max Count must be bigger or equal to Min Count";
-        }
-        params.MaxCount = max;
+    const userData = parsers.string(action.params.userData);
+    if (userData){
+        const buffer = new Buffer(userData);
+        params.UserData = buffer.toString("base64");
+    }
+    if (params.MaxCount < params.MinCount){
+        throw "Max Count must be bigger or equal to Min Count";
     }
 
     if (action.params.TAGS_SPECIFICATION) {
@@ -117,20 +119,19 @@ async function createVpc(action, settings) {
     }
     let result = await runEc2Func(action, settings, params, "createVpc");
     action.params.vpcId = result.createVpc.Vpc.VpcId; // for later use
-    if (action.params.subnetCidrBlock){ // than create subnet
-        action.params.cidrBlock = action.params.subnetCidrBlock;
-        // we use '...' since createSubnet can return multiple action results
-        result = {...result, ...(await createSubnet(action, settings))};
-        action.params.subnetId = result.createSubnet.Subnet.SubnetId;
-    }
     if (action.params.createInternetGateway){
         // we use '...' since createInternetGateway can return multiple action results
         result = {...result, ...(await createInternetGateway(action, settings))};
-        action.params.gatewayId = result.createInternetGateway.InternetGateway.InternetGatewayId;
     }
     if (action.params.createRouteTable){
-        // we use '...' since createRouteTable can return multiple action results
+        action.params.gatewayId = undefined;
         result = {...result, ...(await createRouteTable(action, settings))};
+        if (action.params.createInternetGateway){
+            action.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
+            action.params.destinationCidrBlock = "0.0.0.0/0";
+            action.params.gatewayId = result.createInternetGateway.InternetGateway.InternetGatewayId;
+            result = {...result, ...(await createRoute(action, settings))};
+        }
     }
     if (action.params.createSecurityGroup){
         action.params.name = `${action.params.vpcId}-dedicated-security-group`;
@@ -142,11 +143,11 @@ async function createVpc(action, settings) {
 
 async function createSubnet(action, settings) {
     const params = {
-        AvailabilityZone: action.params.availabilityZone,
-        CidrBlock: action.params.cidrBlock,
-        Ipv6CidrBlock: action.params.ipv6CidrBlock,
-        VpcId: action.params.vpcId,
-        OutpostArn: action.params.outpostArn,
+        AvailabilityZone: parsers.string(action.params.availabilityZone),
+        CidrBlock: parsers.string(action.params.cidrBlock),
+        Ipv6CidrBlock: parsers.string(action.params.ipv6CidrBlock),
+        VpcId: parsers.string(action.params.vpcId),
+        OutpostArn: parsers.string(action.params.outpostArn),
         DryRun: action.params.dryRun || false,
     }
     if (!(params.CidrBlock || params.Ipv6CidrBlock)){
@@ -157,10 +158,32 @@ async function createSubnet(action, settings) {
     }
 
     let result = await runEc2Func(action, settings, params, "createSubnet");
-
+    action.params.subnetId = result.createSubnet.Subnet.SubnetId;
+    
     if (action.params.allocationId){ // indicates that nat gateway is needed
-        action.params.subnetId = result.createSubnet.Subnet.SubnetId;
         result = {...result, ...(await createNatGateway(action, settings))};
+    }
+    if (action.params.routeTableId){
+        result = {...result, ...(await associateRouteTable(action, settings))};
+    }
+    else if (action.params.createPrivateRouteTable){
+        result = {...result, ...(await createRouteTable(action, settings))};
+        if (result.createNatGateway){ 
+            // if nat gateway also was created, connect to correct route
+            action.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
+            action.params.natGatewayId = result.createNatGateway.NatGateway.NatGatewayId;
+            action.params.destinationCidrBlock = "0.0.0.0/0";
+            // wait for nat gateway to be available than create route
+            await waitForNatGateway(action, settings);
+            result = {...result, ...(await createRoute(action, settings))};
+        }
+    }
+    if (action.params.mapPublicIpOnLaunch){
+        const chagneAttrParams = {
+            SubnetId: action.params.subnetId,
+            MapPublicIpOnLaunch: {Value: true}
+        }
+        result = {...result, ...(await runEc2Func(action, settings, chagneAttrParams, "modifySubnetAttribute"))};
     }
     return result;
 }
@@ -311,6 +334,54 @@ async function attachInternetGateway(action, settings) {
     return runEc2Func(action, settings, params, "attachInternetGateway");
 }
 
+async function addSecurityGroupRules(action, settings) {
+    const params = {
+        GroupId: parsers.string(action.params.groupId)
+    };
+    if (!params.GroupId){
+        throw "Must provide Group ID";
+    }
+
+    const arrays = ["cidrIps", "cidrIps6", "fromPorts", "toPorts"]
+    arrays.forEach(arrayName => {
+        action.params[arrayName] = parsers.array((action.params[arrayName]));
+    })
+    const {cidrIps, cidrIps6, fromPorts, toPorts, ipProtocol, description, ruleType} = action.params;
+    
+    let params;
+    if (fromPorts.length === 0) fromPorts.push(undefined); // for mapping
+    if (toPorts.length === 0) toPorts.push(undefined); // for mapping
+    if (fromPorts.length === toPorts.length){
+        // one to one port assign 
+        params = fromPorts.map((fromPort, index) => getPortObj(fromPort, toPorts[index], ipProtocol, cidrIps, cidrIps6, description));
+    }
+    else{
+        params = fromPorts.map(fromPort => toPorts.map(toPort => getPortObj(fromPort, toPort, ipProtocol, cidrIps, cidrIps6, description))).flat();
+    }
+
+    const funcName = ruleType === "Egress-Authorize" ? "authorizeSecurityGroupEgress" : 
+        ruleType === "Ingress-Revoke" ? "revokeSecurityGroupIngress" : 
+        ruleType === "Egress-Revoke" ? "revokeSecurityGroupEgress" : 
+        "authorizeSecurityGroupIngress"; // default
+    
+    return runEc2Func(action, settings, params, funcName);
+}
+
+async function createRoute(action, settings) {
+    const params = {
+        RouteTableId: parsers.string(action.params.routeTableId),
+        GatewayId: parsers.string(action.params.gatewayId),
+        NatGatewayId: parsers.string(action.params.natGatewayId),
+        InstanceId: parsers.string(action.params.instanceId),
+        DestinationCidrBlock: parsers.string(action.params.destinationCidrBlock),
+        DryRun: action.params.dryRun
+    };
+    if (!params.RouteTableId || !params.DestinationCidrBlock){
+        throw "One of the required parameters was not given";
+    }
+    return runEc2Func(action, settings, params, "createRoute");
+}
+
 module.exports = {
     createInstance,
     startInstances: manageInstances,
@@ -335,7 +406,9 @@ module.exports = {
     createSecurityGroup,
     associateRouteTable,
     attachInternetGateway,
+    addSecurityGroupRules,
+    createRoute,
     // auto complete
     getInstanceTypes,
     getRegions
-};
+};        
