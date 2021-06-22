@@ -335,30 +335,23 @@ async function attachInternetGateway(action, settings) {
 }
 
 async function addSecurityGroupRules(action, settings) {
-    const params = {
-        GroupId: parsers.string(action.params.groupId)
-    };
-    if (!params.GroupId){
-        throw "Must provide Group ID";
-    }
-
     const arrays = ["cidrIps", "cidrIps6", "fromPorts", "toPorts"]
     arrays.forEach(arrayName => {
         action.params[arrayName] = parsers.array((action.params[arrayName]));
     })
     const {cidrIps, cidrIps6, fromPorts, toPorts, ipProtocol, description, ruleType} = action.params;
-    
-    let params;
-    if (fromPorts.length === 0) fromPorts.push(undefined); // for mapping
-    if (toPorts.length === 0) toPorts.push(undefined); // for mapping
-    if (fromPorts.length === toPorts.length){
-        // one to one port assign 
-        params = fromPorts.map((fromPort, index) => getPortObj(fromPort, toPorts[index], ipProtocol, cidrIps, cidrIps6, description));
-    }
-    else{
-        params = fromPorts.map(fromPort => toPorts.map(toPort => getPortObj(fromPort, toPort, ipProtocol, cidrIps, cidrIps6, description))).flat();
-    }
+    if (fromPorts.length === 0 || toPorts.length === 0) throw "Must provide from and to ports!";
+    if (fromPorts.length !== toPorts.length) throw "From Ports and To Ports must be the same length";
 
+    const params = {
+        GroupId: parsers.string(action.params.groupId),
+        IpPermissions: fromPorts.map((fromPort, index) => 
+            getPortObj(fromPort, toPorts[index], ipProtocol, cidrIps, cidrIps6, description))
+    };
+    if (!params.GroupId){
+        throw "Must provide Group ID";
+    }
+    
     const funcName = ruleType === "Egress-Authorize" ? "authorizeSecurityGroupEgress" : 
         ruleType === "Ingress-Revoke" ? "revokeSecurityGroupIngress" : 
         ruleType === "Egress-Revoke" ? "revokeSecurityGroupEgress" : 
