@@ -5,7 +5,7 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "2.5.2",
+  "version": "2.5.4",
   "description":"Integration with AWS EC2 API",
   "settings" : [
     {
@@ -42,6 +42,10 @@
             {
               "id": "us-east-1",
               "name": "us-east-1"
+            },
+            {
+              "id": "us-east-2",
+              "name": "us-east-2"
             },
             {
               "id": "us-west-1",
@@ -148,6 +152,10 @@
               "name": "us-east-1"
             },
             {
+              "id": "us-east-2",
+              "name": "us-east-2"
+            },
+            {
               "id": "us-west-1",
               "name": "us-west-1"
             },
@@ -210,6 +218,10 @@
             {
               "id": "us-east-1",
               "name": "us-east-1"
+            },
+            {
+              "id": "us-east-2",
+              "name": "us-east-2"
             },
             {
               "id": "us-west-1",
@@ -276,6 +288,10 @@
               "name": "us-east-1"
             },
             {
+              "id": "us-east-2",
+              "name": "us-east-2"
+            },
+            {
               "id": "us-west-1",
               "name": "us-west-1"
             },
@@ -338,6 +354,10 @@
             {
               "id": "us-east-1",
               "name": "us-east-1"
+            },
+            {
+              "id": "us-east-2",
+              "name": "us-east-2"
             },
             {
               "id": "us-west-1",
@@ -404,6 +424,10 @@
               "name": "us-east-1"
             },
             {
+              "id": "us-east-2",
+              "name": "us-east-2"
+            },
+            {
               "id": "us-west-1",
               "name": "us-west-1"
             },
@@ -461,6 +485,10 @@
             {
               "id": "us-east-1",
               "name": "us-east-1"
+            },
+            {
+              "id": "us-east-2",
+              "name": "us-east-2"
             },
             {
               "id": "us-west-1",
@@ -527,6 +555,10 @@
               "name": "us-east-1"
             },
             {
+              "id": "us-east-2",
+              "name": "us-east-2"
+            },
+            {
               "id": "us-west-1",
               "name": "us-west-1"
             },
@@ -589,6 +621,10 @@
             {
               "id": "us-east-1",
               "name": "us-east-1"
+            },
+            {
+              "id": "us-east-2",
+              "name": "us-east-2"
             },
             {
               "id": "us-west-1",
@@ -669,6 +705,10 @@
             {
               "id": "us-east-1",
               "name": "us-east-1"
+            },
+            {
+              "id": "us-east-2",
+              "name": "us-east-2"
             },
             {
               "id": "us-west-1",
@@ -765,6 +805,10 @@
               "name": "us-east-1"
             },
             {
+              "id": "us-east-2",
+              "name": "us-east-2"
+            },
+            {
               "id": "us-west-1",
               "name": "us-west-1"
             },
@@ -837,6 +881,10 @@
             {
               "id": "us-east-1",
               "name": "us-east-1"
+            },
+            {
+              "id": "us-east-2",
+              "name": "us-east-2"
             },
             {
               "id": "us-west-1",
@@ -921,6 +969,10 @@
             {
               "id": "us-east-1",
               "name": "us-east-1"
+            },
+            {
+              "id": "us-east-2",
+              "name": "us-east-2"
             },
             {
               "id": "us-west-1",
@@ -1030,6 +1082,10 @@
             {
               "id": "us-east-1",
               "name": "us-east-1"
+            },
+            {
+              "id": "us-east-2",
+              "name": "us-east-2"
             },
             {
               "id": "us-west-1",
@@ -1147,6 +1203,10 @@
               "name": "us-east-1"
             },
             {
+              "id": "us-east-2",
+              "name": "us-east-2"
+            },
+            {
               "id": "us-west-1",
               "name": "us-west-1"
             },
@@ -1214,6 +1274,10 @@
             {
               "id": "us-east-1",
               "name": "us-east-1"
+            },
+            {
+              "id": "us-east-2",
+              "name": "us-east-2"
             },
             {
               "id": "us-west-1",
@@ -1621,7 +1685,25 @@
         {
           "name": "ipProtocol",
           "viewName": "Ip Protocol",
-          "type": "string"
+          "type": "options",
+          "options": [
+            {
+              "id": "All",
+              "name": "All"
+            },
+            {
+              "id": "TCP",
+              "name": "TCP"
+            },
+            {
+              "id": "UDP",
+              "name": "UDP"
+            },
+            {
+              "id": "ICMP",
+              "name": "ICMP"
+            }
+          ]
         },
         {
           "name": "description",
