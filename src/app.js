@@ -206,7 +206,8 @@ async function deleteSubnet(action, settings) {
 
 async function modifyInstanceType(action, settings){
     const instanceIds = parsers.array(action.params.instanceIds);
-    const instanceType = parsers.autocomplete(action.params.instanceType);
+    const instanceType = {Value: parsers.autocomplete(action.params.instanceType)};
+    if (!instanceType.Value || !instanceIds || !instanceIds.length) throw "Didn't provide one of the required fields";
     return Promise.all(instanceIds.map((instanceId) => {
         const params = {
             InstanceId : instanceId,
