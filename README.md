@@ -394,3 +394,40 @@ Create a new route inside the specified Route Table. This method calls ec2 [crea
 7. Instance ID (String) **Optional** - ID of an Instance. If specified make the Instance specified the target of the route.
 8. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
 **Can only accepot one of paramaters 5-7**
+
+## Method: Create Volume
+Create a new volume in the specified availability zone or outpost.
+
+## Parameters
+1. Access key (Vault) **Required if not in settings** - The Access Key ID to use to authenticate to AWS for this request.
+2. Secret key (Vault) **Required if not in settings** - The Access Key Secret to use to authenticate to AWS for this request.
+3. Region (Autocomplete) **Required** - The region to execute the request in.
+4. Availability Zone (String) **Required if no outpost specified** - The Availability Zone to execute the requestin which to create the volume.
+5. Volume Type (Options) **Required** - The volume type. Possible values: **Standard | io1 | io2 | gp2 | sc1 | st1 | gp3**.
+Volume types are:
+* General Purpose SSD: gp2 | gp3
+* Provisioned IOPS SSD: io1 | io2
+* Throughput Optimized HDD: st1
+* Cold HDD: sc1
+* Magnetic: standard
+6. Size(In GBs) (String) **Required if no snapshot specified** - The size of the volume, in GBs. You must specify either a snapshot ID or a volume size. If you specify a snapshot, the default is the snapshot size. You can specify a volume size that is equal to or larger than the snapshot size.
+7. IOPS (String) **Optional** - The number of I/O operations per second (IOPS). Only for volume types io1, io2 and gp3.
+8. Create From Snapshot(ID) (String) **Optional** - If specified create the volume from the snapshot specified.
+9. Outpost ARN (String) **Optional** - If specified create the volume on the outpost specified.
+10. Throughput (String) **Optional** - This parameter is valid only for gp3 volumes. The throughput to provision for the volume, with a maximum of 1,000 MiB/s.
+11. Is Encrypted (Boolean) **Optional** - Indicates Whether to encrypt the volume or not. Encryption type depends on the volume origin (new or from a snapshot), starting encryption state, ownership, and whether encryption by default is enabled.
+12. KMS Key ID (String) **Optional** - The identifier of the Key Management Service (KMS) KMS key to use for Amazon EBS encryption. If this parameter is not specified, your KMS key for Amazon EBS is used. If KmsKeyId is specified, the encrypted state must be true. You can specify the KMS key using any of the following: Key ID | Key alias | Key ARN | Alias ARN
+13. Multi Attach Enabled (Boolean) **Optional** - Indicates whether to enable Amazon EBS Multi-Attach. If you enable Multi-Attach, you can attach the volume to up to 16 Instances built on the Nitro System in the same Availability Zone. This parameter is supported with io1 and io2 volumes only.
+14. Dry Run (Boolean) **Optional** - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
+
+## Method: Create Snapshot
+Create a new snapshot of the specified volume.
+
+## Parameters
+1. Access key (Vault) **Required if not in settings** - The Access Key ID to use to authenticate to AWS for this request.
+2. Secret key (Vault) **Required if not in settings** - The Access Key Secret to use to authenticate to AWS for this request.
+3. Region (Autocomplete) **Required** - The region to execute the request in.
+4. Volume ID (String) **Required** - The ID of the volume to create the snapshot of.
+5. Description (Text) **Optional** - A description for the snapshot.
+6. Outpost ARN (String) **Optional** - If specified, create the snapshot on the outpost specified. Not related to the outpost the volume is stored on.
+7. Dry Run (Boolean) **Optional** - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.

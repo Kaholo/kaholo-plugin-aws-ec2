@@ -5,18 +5,20 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "2.5.4",
+  "version": "2.5.5",
   "description":"Integration with AWS EC2 API",
   "settings" : [
     {
       "name": "AWS_ACCESS_KEY_ID",
       "viewName": "Access key",
-      "type": "vault"
+      "type": "vault",
+      "description": "The default Access Key ID to use to authenticate to AWS for this request."
     },
     {
       "name": "AWS_SECRET_ACCESS_KEY",
       "viewName": "Secret key",
-      "type": "vault"
+      "type": "vault",
+      "description": "The default Access Key Secret to use to authenticate to AWS for this request."
     }
   ],
   "methods": [
@@ -27,12 +29,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -79,7 +83,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         },
         {
           "name": "IMAGE_ID",
@@ -135,12 +140,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -187,7 +194,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         },
         {
           "name": "INSTANCE_IDS",
@@ -203,12 +211,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -255,7 +265,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         },
         {
           "name": "INSTANCE_IDS",
@@ -271,12 +282,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -323,7 +336,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         },
         {
           "name": "INSTANCE_IDS",
@@ -339,12 +353,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -391,7 +407,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         },
         {
           "name": "INSTANCE_IDS",
@@ -407,12 +424,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -459,7 +478,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         }
       ]
     },
@@ -470,12 +490,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -522,7 +544,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         },
         {
           "name": "KEY_PAIR_NAME",
@@ -538,12 +561,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -590,7 +615,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         },
         {
           "name": "KEY_PAIR_NAME",
@@ -606,12 +632,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -658,7 +686,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         },
         
         {
@@ -690,12 +719,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -742,7 +773,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         },
         {
           "name": "ALLOCATION_ID",
@@ -788,12 +820,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -840,7 +874,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         },
         {
           "name": "ALLOCATION_ID",
@@ -866,12 +901,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -918,7 +955,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         },
         {
           "name": "INSTANCE_IDS",
@@ -954,12 +992,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -1006,7 +1046,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         },
         {
           "name": "cidrBlock",
@@ -1067,12 +1108,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -1119,7 +1162,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         },
         {
           "name": "vpcId",
@@ -1186,12 +1230,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -1238,7 +1284,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         },
         {
           "name": "vpcId",
@@ -1259,12 +1306,14 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
@@ -1311,7 +1360,8 @@
               "id": "eu-central-1",
               "name": "eu-central-1"
             }
-          ]
+          ],
+          "description": "The region to execute the request in."
         },
         {
           "name": "subnetId",
@@ -1332,19 +1382,22 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
-          "functionName": "getRegions"
+          "functionName": "getRegions",
+          "description": "The region to execute the request in."
         },
         {
           "name": "instanceIds",
@@ -1367,19 +1420,22 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
-          "functionName": "getRegions"
+          "functionName": "getRegions",
+          "description": "The region to execute the request in."
         },
         {
           "name": "vpcId",
@@ -1405,19 +1461,22 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
-          "functionName": "getRegions"
+          "functionName": "getRegions",
+          "description": "The region to execute the request in."
         },
         {
           "name": "vpcId",
@@ -1453,19 +1512,22 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
-          "functionName": "getRegions"
+          "functionName": "getRegions",
+          "description": "The region to execute the request in."
         },
         {
           "name": "subnetId",
@@ -1496,19 +1558,22 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
-          "functionName": "getRegions"
+          "functionName": "getRegions",
+          "description": "The region to execute the request in."
         },
         {
           "name": "name",
@@ -1544,19 +1609,22 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
-          "functionName": "getRegions"
+          "functionName": "getRegions",
+          "description": "The region to execute the request in."
         },
         {
           "name": "routeTableId",
@@ -1587,19 +1655,22 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
-          "functionName": "getRegions"
+          "functionName": "getRegions",
+          "description": "The region to execute the request in."
         },
         {
           "name": "gatewayId",
@@ -1620,19 +1691,22 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
-          "functionName": "getRegions"
+          "functionName": "getRegions",
+          "description": "The region to execute the request in."
         },
         {
           "name": "groupId",
@@ -1724,19 +1798,22 @@
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
         },
         {
           "name": "AWS_SECRET_ACCESS_KEY",
           "viewName": "Secret key",
-          "type": "vault"
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
         },
         {
           "name": "REGION",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
-          "functionName": "getRegions"
+          "functionName": "getRegions",
+          "description": "The region to execute the request in."
         },
         {
           "name": "routeTableId",
@@ -1767,6 +1844,186 @@
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean"
+        }
+      ] 
+    },
+    {
+      "name": "createVolume",
+      "viewName": "Create Volume",
+      "params":[
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access key",
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret key",
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "getRegions",
+          "description": "The region to execute the request in."
+        },
+        {
+          "name": "availabilityZone",
+          "viewName": "Availability Zone",
+          "type": "string",
+          "description": "The Availability Zone in which to create the volume."
+        },
+        {
+          "name": "volumeType",
+          "viewName": "Volume Type",
+          "type": "options",
+          "options": [
+            {
+              "id": "standard",
+              "name": "Standard"
+            },
+            {
+              "id": "io1",
+              "name": "io1"
+            },
+            {
+              "id": "io2",
+              "name": "io2"
+            },
+            {
+              "id": "gp2",
+              "name": "gp2"
+            },
+            {
+              "id": "sc1",
+              "name": "sc1"
+            },
+            {
+              "id": "st1",
+              "name": "st1"
+            },
+            {
+              "id": "gp3",
+              "name": "gp3"
+            }
+          ],
+          "description": "The volume type.",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html"
+        },
+        {
+          "name": "size",
+          "viewName": "Size(In GBs)",
+          "type": "string",
+          "description": "The size of the volume, in GBs. You must specify either a snapshot ID or a volume size. If you specify a snapshot, the default is the snapshot size. You can specify a volume size that is equal to or larger than the snapshot size."
+        },
+        {
+          "name": "iops",
+          "viewName": "IOPS",
+          "type": "string",
+          "description": "The number of I/O operations per second (IOPS). Only for volume types io1, io2 and gp3."
+        },
+        {
+          "name": "snapshotId",
+          "viewName": "Create From Snapshot(ID)",
+          "type": "string",
+          "placeholder": "snap-066877671789bd71b",
+          "description": "If specified create the volume from the snapshot specified."
+        },
+        {
+          "name": "outpostArn",
+          "viewName": "Outpost ARN",
+          "type": "string",
+          "description": "If specified create the volume on the outpost specified."
+        },
+        {
+          "name": "throughput",
+          "viewName": "Throughput",
+          "type": "string",
+          "description": "This parameter is valid only for gp3 volumes. The throughput to provision for the volume, with a maximum of 1,000 MiB/s."
+        },
+        {
+          "name": "encrypted",
+          "viewName": "Is Encrypted",
+          "type": "boolean",
+          "description": "Indicates Whether to encrypt the volume or not. Encryption type depends on the volume origin (new or from a snapshot), starting encryption state, ownership, and whether encryption by default is enabled.",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html#encryption-by-default"
+        },
+        {
+          "name": "kmsKeyId",
+          "viewName": "KMS Key ID",
+          "type": "string",
+          "placeholder": "1234abcd-12ab-34cd-56ef-1234567890ab",
+          "description": "The identifier of the Key Management Service (KMS) KMS key to use for Amazon EBS encryption. If this parameter is not specified, your KMS key for Amazon EBS is used. If KmsKeyId is specified, the encrypted state must be true. You can specify the KMS key using any of the following: Key ID | Key alias | Key ARN | Alias ARN",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volumes-multi.html"
+        },
+        {
+          "name": "multiAttachEnabled",
+          "viewName": "Multi Attach Enabled",
+          "type": "boolean",
+          "description": "Indicates whether to enable Amazon EBS Multi-Attach. If you enable Multi-Attach, you can attach the volume to up to 16 Instances built on the Nitro System in the same Availability Zone. This parameter is supported with io1 and io2 volumes only.",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volumes-multi.html"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean",
+          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation."
+        }
+      ] 
+    },
+    {
+      "name": "createSnapshot",
+      "viewName": "Create Snapshot",
+      "params":[
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access key",
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request."
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret key",
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request."
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "getRegions",
+          "description": "The region to execute the request in."
+        },
+        {
+          "name": "volumeId",
+          "viewName": "Volume ID",
+          "type": "string",
+          "placeholder": "vol-1234567890abcdef0",
+          "description": "The ID of the volume to create the snapshot of."
+        },
+        {
+          "name": "description",
+          "viewName": "Description",
+          "type": "text",
+          "description": "A description for the snapshot."
+        },
+        {
+          "name": "outpostArn",
+          "viewName": "Outpost ARN",
+          "type": "string",
+          "description": "If specified, create the snapshot on the outpost specified. Not related to the outpost the volume is stored on.",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/snapshots-outposts.html#create-snapshot"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean",
+          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation."
         }
       ] 
     }
