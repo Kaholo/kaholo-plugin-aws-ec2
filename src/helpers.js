@@ -10,9 +10,9 @@ function getEc2(params, settings) {
 }
 
 async function runEc2Func(action, settings, params, funcName){
-    const ec2 = action.params.ec2 ? action.params.ec2 : getEc2(action.params, settings);
+    action.params.ec2 = action.params.ec2 ? action.params.ec2 : getEc2(action.params, settings);
     const resultPromise = new Promise((resolve, reject) => {
-        ec2[funcName](params, (err, result) => {
+        action.params.ec2[funcName](params, (err, result) => {
             if (err) reject(err);
             else resolve(result);
         });
@@ -20,6 +20,16 @@ async function runEc2Func(action, settings, params, funcName){
     const result = {};
     result[funcName] = await resultPromise;
     return result;
+}
+
+async function wairForEc2Resource(action, state, params){
+    const ec2 = action.params.ec2 ? action.params.ec2 : getEc2(action.params, settings);
+    return new Promise((resolve, reject) => {
+        ec2.waitFor(state, params, (err, result) => {
+            if (err) return reject(err);
+            resolve(result);
+        });
+    });
 }
 
 function parseLegacyParam(param, parseFunc) {
@@ -66,5 +76,6 @@ module.exports = {
     runEc2Func,
     parseLegacyParam,
     getPortObj,
-    waitForNatGateway
+    waitForNatGateway,
+    wairForEc2Resource
 }

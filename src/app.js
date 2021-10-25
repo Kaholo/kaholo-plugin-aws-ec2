@@ -1,4 +1,4 @@
-const { runEc2Func, parseLegacyParam, getPortObj, waitForNatGateway } = require('./helpers');
+const { runEc2Func, parseLegacyParam, getPortObj, waitForNatGateway, wairForEc2Resource } = require('./helpers');
 const parsers = require('./parsers');
 const { getInstanceTypes, getRegions } = require('./autocomplete')
 
@@ -393,7 +393,12 @@ async function createVolume(action, settings) {
     if ((!params.AvailabilityZone && !params.OutpostArn) || !params.VolumeType){
         throw "One of the required parameters was not given";
     }
-    return runEc2Func(action, settings, params, "createVolume");
+    var result = await runEc2Func(action, settings, params, "createVolume");
+    if (!action.params.waitForEnd){
+        return result;
+    }
+    result = await wairForEc2Resource(action, "volumeAvailable", {VolumeIds: [result.createVolume.VolumeId]});
+    return {createVolume: result.Volumes[0]};
 }
 
 async function createSnapshot(action, settings) {
@@ -406,7 +411,12 @@ async function createSnapshot(action, settings) {
     if (!params.VolumeId){
         throw "Must provide volume ID to create the snapshot of!";
     }
-    return runEc2Func(action, settings, params, "createSnapshot");
+    var result = await runEc2Func(action, settings, params, "createSnapshot");
+    if (!action.params.waitForEnd){
+        return result;
+    }
+    result = await wairForEc2Resource(action, "snapshotCompleted", {SnapshotIds: [result.createSnapshot.SnapshotId]});
+    return {createSnapshot: result.Snapshots[0]};
 }
 
 module.exports = {
