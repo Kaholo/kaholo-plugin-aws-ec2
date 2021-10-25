@@ -411,14 +411,15 @@ Volume types are:
 * Cold HDD: sc1
 * Magnetic: standard
 6. Size(In GBs) (String) **Required if no snapshot specified** - The size of the volume, in GBs. You must specify either a snapshot ID or a volume size. If you specify a snapshot, the default is the snapshot size. You can specify a volume size that is equal to or larger than the snapshot size.
-7. IOPS (String) **Optional** - The number of I/O operations per second (IOPS). Only for volume types io1, io2 and gp3.
-8. Create From Snapshot(ID) (String) **Optional** - If specified create the volume from the snapshot specified.
+7. IOPS (String) **Required for volume types: io1, io2 and gp3** - The number of I/O operations per second (IOPS).
+8. Create From Snapshot(ID) (String) **Required if no size provided** - If specified create the volume from the snapshot specified.
 9. Outpost ARN (String) **Optional** - If specified create the volume on the outpost specified.
 10. Throughput (String) **Optional** - This parameter is valid only for gp3 volumes. The throughput to provision for the volume, with a maximum of 1,000 MiB/s.
 11. Is Encrypted (Boolean) **Optional** - Indicates Whether to encrypt the volume or not. Encryption type depends on the volume origin (new or from a snapshot), starting encryption state, ownership, and whether encryption by default is enabled.
 12. KMS Key ID (String) **Optional** - The identifier of the Key Management Service (KMS) KMS key to use for Amazon EBS encryption. If this parameter is not specified, your KMS key for Amazon EBS is used. If KmsKeyId is specified, the encrypted state must be true. You can specify the KMS key using any of the following: Key ID | Key alias | Key ARN | Alias ARN
 13. Multi Attach Enabled (Boolean) **Optional** - Indicates whether to enable Amazon EBS Multi-Attach. If you enable Multi-Attach, you can attach the volume to up to 16 Instances built on the Nitro System in the same Availability Zone. This parameter is supported with io1 and io2 volumes only.
 14. Dry Run (Boolean) **Optional** - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
+15. Wait Until Operation End (Boolean) **Optional** - If true wait until the end of the operation. The operation ends when the volume is ready.
 
 ## Method: Create EBS Snapshot
 Create a new snapshot of the specified EBS volume.
@@ -431,3 +432,4 @@ Create a new snapshot of the specified EBS volume.
 5. Description (Text) **Optional** - A description for the snapshot.
 6. Outpost ARN (String) **Optional** - If specified, create the snapshot on the outpost specified. Not related to the outpost the volume is stored on.
 7. Dry Run (Boolean) **Optional** - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
+8. Wait Until Operation End (Boolean) **Optional** - If true wait until the end of the operation. The operation ends when the snapshot is completed.
