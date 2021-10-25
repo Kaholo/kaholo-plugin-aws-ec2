@@ -420,8 +420,8 @@ Volume types are:
 13. Multi Attach Enabled (Boolean) **Optional** - Indicates whether to enable Amazon EBS Multi-Attach. If you enable Multi-Attach, you can attach the volume to up to 16 Instances built on the Nitro System in the same Availability Zone. This parameter is supported with io1 and io2 volumes only.
 14. Dry Run (Boolean) **Optional** - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
 
-## Method: Create Snapshot
-Create a new snapshot of the specified volume.
+## Method: Create EBS Snapshot
+Create a new snapshot of the specified EBS volume.
 
 ## Parameters
 1. Access key (Vault) **Required if not in settings** - The Access Key ID to use to authenticate to AWS for this request.
