@@ -376,6 +376,39 @@ async function createRoute(action, settings) {
     return runEc2Func(action, settings, params, "createRoute");
 }
 
+async function createVolume(action, settings) {
+    const params = {
+        AvailabilityZone: parsers.string(action.params.availabilityZone),
+        VolumeType: action.params.volumeType,
+        Size: parsers.number(action.params.size),
+        Iops: parsers.number(action.params.iops),
+        SnapshotId: parsers.string(action.params.snapshotId),
+        OutpostArn: parsers.string(action.params.outpostArn),
+        Throughput: parsers.number(action.params.throughput),
+        Encrypted: parsers.boolean(action.params.encrypted),
+        KmsKeyId: parsers.string(action.params.kmsKeyId),
+        MultiAttachEnabled: parsers.boolean(action.params.multiAttachEnabled),
+        DryRun: parsers.boolean(action.params.dryRun)
+    };
+    if ((!params.AvailabilityZone && !params.OutpostArn) || !params.VolumeType){
+        throw "One of the required parameters was not given";
+    }
+    return runEc2Func(action, settings, params, "createVolume");
+}
+
+async function createSnapshot(action, settings) {
+    const params = {
+        VolumeId: parsers.string(action.params.volumeId),
+        Description: parsers.string(action.params.description),
+        OutpostArn: parsers.string(action.params.outpostArn),
+        DryRun: parsers.boolean(action.params.dryRun)
+    };
+    if (!params.VolumeId){
+        throw "Must provide volume ID to create the snapshot of!";
+    }
+    return runEc2Func(action, settings, params, "createSnapshot");
+}
+
 module.exports = {
     createInstance,
     startInstances: manageInstances,
@@ -402,6 +435,8 @@ module.exports = {
     attachInternetGateway,
     addSecurityGroupRules,
     createRoute,
+    createVolume,
+    createSnapshot,
     // auto complete
     getInstanceTypes,
     getRegions
