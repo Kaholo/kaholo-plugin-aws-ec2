@@ -39,7 +39,7 @@ async function getInstanceTypes(query, pluginSettings, actionParams){
     return new Promise((resolve, reject) => {
         ec2.describeInstanceTypeOfferings(ec2Params, function(err, data){
             if (err){
-                reject(err);
+                reject(`Can't return instance types: ${err.message || JSON.stringify(err)}`);
             }
             resolve(data.InstanceTypeOfferings.map(instanceTypeOffering => {
                 return { id: instanceTypeOffering.InstanceType, value: instanceTypeOffering.InstanceType };
