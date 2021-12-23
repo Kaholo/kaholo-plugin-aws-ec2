@@ -116,12 +116,7 @@ Allocates an Elastic IP address to your AWS account. This method calls ec2 [allo
 1. Access Key - This is a parameter taken from the vault to access AWS
 2. Secret Key - This is a paramer taken from the vault to access AWS
 3. Region
-4. Domain 
-&ensp;Set to vpc to allocate the address for use with instances in a VPC\
-&ensp;Default: The address is for use with instances in EC2-Classic.\
-&ensp;Possible values include:\
-&ensp;&ensp;- "vpc"\
-&ensp;&ensp;- "standard"
+4. Domain Type (options) - The type of domain to allocate the address for. Can either be standard for regular ec2 instances, or "VPN" if it's for an instance inside a VPN.
 5. Address - (string) The Elastic IP address to recover or an IPv4 address from an address pool.
 6. PublicPV4Pool - The ID of an address pool that you own. Use this parameter to let Amazon EC2 select an address from the address pool. To specify a specific ```address``` from the address pool, use the Address parameter instead.
 7. DryRun - (Boolean) Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.
@@ -392,6 +387,7 @@ Create a new route inside the specified Route Table. This method calls ec2 [crea
 5. Gateway ID (String) **Optional** - ID of an internet gateway. If specified make the Internet Gateway specified the target of the route.
 6. NAT Gateway ID (String) **Optional** - ID of a NAT gateway. If specified make the NAT Gateway specified the target of the route.
 7. Instance ID (String) **Optional** - ID of an Instance. If specified make the Instance specified the target of the route.
+8. Destination CIDR Block **Required** - This route will target all IPv4 addresses in the specified IP block.
 8. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
 **Can only accepot one of paramaters 5-7**
 
