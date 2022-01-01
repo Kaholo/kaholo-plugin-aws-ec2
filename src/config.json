@@ -103,7 +103,7 @@
           "type": "string",
           "placeholder": "ami-0effcafbe4e502297",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html",
-          "description": "Amazon Machine Image (AMI) provides the information required to launch an instance."
+          "description": "AMI template that contains the software configuration (operating system, application server, and applications) required to launch your instance."
         },
         {
           "name": "INSTANCE_TYPE",
@@ -111,23 +111,23 @@
           "type": "string",
           "placeholder": "c5.large",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html",
-          "description": "The machine type you want to launch for example: t2.micro"
+          "description": "Instance type determines CPU, memory, storage, and networking capacity."
         },
         {
           "name": "KEY_NAME",
-          "viewName": "Key name",
+          "viewName": "Key pair name",
           "type": "string",
-          "placeholder": "my_max_256_chars_key_pair",
+          "placeholder": "deploykey-dev",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html",
-          "description": "If specified, encrypt the volume created for this instance using the specified Key pair."
+          "description": "A key pair allows you to connect to your instance securely."
         },
         {
           "name": "SECURITY_GROUP_IDS",
           "viewName": "Security groups IDs",
           "type": "string",
-          "placeholder": "sg-33bb22aa",
+          "placeholder": "sg-01c01234f60aefd58",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html",
-          "description": "Connect this instance to a security group. You will have to use a code or configuration to transfer the array to the API"
+          "description": "A security group is a set of firewall rules that control network traffic for your instance. Use code and configuration for an array of security groups."
         },
         {
           "name": "USER_DATA",
@@ -135,37 +135,37 @@
           "type": "string",
           "placeholder": "/folder/script.sh\n#!/bin/sh\nyum update -y",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html",
-          "description": "Option of passing user data to the instance that can be used to perform common automated configuration tasks and even run scripts after the instance starts."
+          "description": "(Optional) User data performs common automated configuration tasks and even run scripts after the instance starts."
         },
         {
           "name": "MIN_COUNT",
           "viewName": "minimum of instances",
           "type": "string",
           "placeholder": "1",
-          "description": "The minimum number of instances to launch (by default 1)."
+          "description": "(Optional) The minimum number of instances to launch (by default 1)."
         },
         {
           "name": "MAX_COUNT",
           "viewName": "maximum of instances",
           "type": "string",
           "placeholder": "1",
-          "description": "The maximum number of instances to launch. The default is 1."
+          "description": "(Optional) The maximum number of instances to launch. The default is 1."
         },
         {
           "name": "subnetId",
           "viewName": "Subnet ID",
           "type": "string",
-          "placeholder": "192.168.255.255",
+          "placeholder": "subnet-047f12345f4c5bd18",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html",
-          "description": "If specified, host the instance on the specified Subnet."
+          "description": "Subnet ID determines the VPC, CIDR block and availability zone where the instance is deployed."
         },
         {
           "name": "TAGS_SPECIFICATION",
           "viewName": "Tags Specification",
           "type": "text",
-          "placeholder": "ResourceType=volume\nResourceEnv=dev",
+          "placeholder": "Name=webserver\nEnvironment=dev",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_TagSpecification.html",
-          "description": "The tags to apply to the resources during launch. "
+          "description": "(optional) Tags are case-sensitive key-value pairs assigned to the instance."
         }
       ]
     },
