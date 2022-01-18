@@ -401,6 +401,31 @@ async function createVolume(action, settings) {
     return {createVolume: result.Volumes[0]};
 }
 
+async function describeVolumes(action, settings) {
+    const params = {
+        DryRun: action.params.DRYRUN,
+        MaxResults: action.params.MAX_RESULTS,
+        NextToken: action.params.NEXT_TOKEN
+    }
+    if (action.params.VOLUME_IDS) {
+        params.VolumeIds = parseLegacyParam(action.params.VOLUME_IDS, parsers.array)
+    }
+    if (action.params.filters) {
+        if (!Array.isArray(action.params.filters))
+            return reject("Filters ids must be an array");
+        params.Filters = action.params.filters;
+    }
+    return runEc2Func(action, settings, params, "describeVolumes");
+}
+
+async function deleteVolume(action, settings) {
+    const params = {
+        VolumeId: action.params.volumeId,
+        DryRun: action.params.dryRun,
+    }
+    return runEc2Func(action, settings, params, "deleteVolume");
+}
+
 async function createSnapshot(action, settings) {
     const params = {
         VolumeId: parsers.string(action.params.volumeId),
@@ -446,6 +471,8 @@ module.exports = {
     addSecurityGroupRules,
     createRoute,
     createVolume,
+    describeVolumes,
+    deleteVolume,
     createSnapshot,
     // auto complete
     getInstanceTypes,

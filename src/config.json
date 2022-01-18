@@ -2427,6 +2427,203 @@
       ]
     },
     {
+      "name": "describeVolumes",
+      "viewName": "Describe Volumes",
+      "params": [
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access Key",
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request.",
+          "placeholder": "AKIAIOSFODNN7EXAMPLE",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret Key",
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
+          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "options",
+          "description": "The region to execute the request in.",
+          "placeholder": "us-east-2",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html",
+          "options": [
+            {
+              "id": "us-east-1",
+              "name": "us-east-1"
+            },
+            {
+              "id": "us-east-2",
+              "name": "us-east-2"
+            },
+            {
+              "id": "us-west-1",
+              "name": "us-west-1"
+            },
+            {
+              "id": "us-west-2",
+              "name": "us-west-2"
+            },
+            {
+              "id": "ap-southeast-1",
+              "name": "ap-southeast-1"
+            },
+            {
+              "id": "ap-southeast-2",
+              "name": "ap-southeast-2"
+            },
+            {
+              "id": "ap-northeast-1",
+              "name": "ap-northeast-1"
+            },
+            {
+              "id": "eu-west-1",
+              "name": "eu-west-1"
+            },
+            {
+              "id": "sa-east-1",
+              "name": "sa-east-1"
+            },
+            {
+              "id": "eu-central-1",
+              "name": "eu-central-1"
+            }
+          ]
+        },
+        {
+          "name": "VOLUME_IDS",
+          "viewName": "Volume Ids",
+          "type": "string",
+          "description": "The IDs of the volumes. Can be an array of instances.",
+          "placeholder": "vol-0bfd007930672e68d",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volumes.html"
+        },
+        {
+          "name": "filters",
+          "viewName": "Filters (Array)",
+          "type": "string",
+          "description": "Array of filters",
+          "placeholder": "",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVolumes.html"
+        },
+        {
+          "name": "DRYRUN",
+          "viewName": "Dry Run",
+          "type": "boolean",
+          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
+        },
+        {
+          "name": "MAX_RESULTS",
+          "viewName": "Max Results",
+          "type": "int",
+          "description": "Maximum number of instances to return.",
+          "placeholder": "100",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVolumes.html"
+        },
+        {
+          "name": "NEXT_TOKEN",
+          "viewName": "Next Token",
+          "type": "string",
+          "description": "Use the specified token to get the instances. Used for paging.",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeVolumes.html"
+        }
+      ]
+    },
+    {
+      "name": "deleteVolume",
+      "viewName": "Delete Volume",
+      "params": [
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access Key",
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request.",
+          "placeholder": "AKIAIOSFODNN7EXAMPLE",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret Key",
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
+          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "options",
+          "description": "The region to execute the request in.",
+          "placeholder": "us-east-2",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html",
+          "options": [
+            {
+              "id": "us-east-1",
+              "name": "us-east-1"
+            },
+            {
+              "id": "us-east-2",
+              "name": "us-east-2"
+            },
+            {
+              "id": "us-west-1",
+              "name": "us-west-1"
+            },
+            {
+              "id": "us-west-2",
+              "name": "us-west-2"
+            },
+            {
+              "id": "ap-southeast-1",
+              "name": "ap-southeast-1"
+            },
+            {
+              "id": "ap-southeast-2",
+              "name": "ap-southeast-2"
+            },
+            {
+              "id": "ap-northeast-1",
+              "name": "ap-northeast-1"
+            },
+            {
+              "id": "eu-west-1",
+              "name": "eu-west-1"
+            },
+            {
+              "id": "sa-east-1",
+              "name": "sa-east-1"
+            },
+            {
+              "id": "eu-central-1",
+              "name": "eu-central-1"
+            }
+          ]
+        },
+        {
+          "name": "volumeId",
+          "viewName": "Volume ID",
+          "type": "string",
+          "placeholder": "vol-0bfd007930672e68d",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volumes.html",
+          "description": "The id of the volume to delete."
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean",
+          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
+        }
+      ]
+    },
+    {
       "name": "createSnapshot",
       "viewName": "Create EBS Snapshot",
       "params": [
