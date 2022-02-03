@@ -50,52 +50,12 @@
         {
           "name": "REGION",
           "viewName": "Region",
-          "type": "options",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html",
-          "options": [
-            {
-              "id": "us-east-1",
-              "name": "us-east-1"
-            },
-            {
-              "id": "us-east-2",
-              "name": "us-east-2"
-            },
-            {
-              "id": "us-west-1",
-              "name": "us-west-1"
-            },
-            {
-              "id": "us-west-2",
-              "name": "us-west-2"
-            },
-            {
-              "id": "ap-southeast-1",
-              "name": "ap-southeast-1"
-            },
-            {
-              "id": "ap-southeast-2",
-              "name": "ap-southeast-2"
-            },
-            {
-              "id": "ap-northeast-1",
-              "name": "ap-northeast-1"
-            },
-            {
-              "id": "eu-west-1",
-              "name": "eu-west-1"
-            },
-            {
-              "id": "sa-east-1",
-              "name": "sa-east-1"
-            },
-            {
-              "id": "eu-central-1",
-              "name": "eu-central-1"
-            }
-          ]
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
           "name": "IMAGE_ID",

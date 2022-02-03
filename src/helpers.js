@@ -9,6 +9,14 @@ function getEc2(params, settings) {
     });
 }
 
+function getLightsail(params, settings) {
+    return new aws.Lightsail({
+        region: parsers.autocomplete(params.REGION),
+        accessKeyId: params.AWS_ACCESS_KEY_ID || settings.AWS_ACCESS_KEY_ID,
+        secretAccessKey: params.AWS_SECRET_ACCESS_KEY || settings.AWS_SECRET_ACCESS_KEY
+    });
+}
+
 async function runEc2Func(action, settings, params, funcName){
     action.params.ec2 = action.params.ec2 ? action.params.ec2 : getEc2(action.params, settings);
     const resultPromise = new Promise((resolve, reject) => {
@@ -35,7 +43,7 @@ async function wairForEc2Resource(action, state, params){
 function parseLegacyParam(param, parseFunc) {
     try {
         if (typeof param == 'string') return JSON.parse(param);
-    } 
+    }
     catch (err) {}
     finally {
         return parseFunc(param);
@@ -73,6 +81,7 @@ async function waitForNatGateway(action, settings){
 
 module.exports = {
     getEc2,
+    getLightsail,
     runEc2Func,
     parseLegacyParam,
     getPortObj,

@@ -1,4 +1,6 @@
-const { getEc2 } = require('./helpers');
+const { getEc2, getLightsail } = require('./helpers');
+
+const MISSING_CREDENTIALS_ERROR = "Missing credentials - please select access and secret keys first";
 
 function paramsMapper(pluginSettings,actionParams){
     const settings = {};
@@ -22,7 +24,7 @@ function paramsMapper(pluginSettings,actionParams){
 async function getInstanceTypes(query, pluginSettings, actionParams){
     const {settings, params} = paramsMapper(pluginSettings,actionParams);
     const ec2 = getEc2(params, settings);
-        
+
     let ec2Params = {
         MaxResults: "10",
         Filters: [{
@@ -65,5 +67,44 @@ async function getRegions(query, _, _){
     return regionsList.filter(region => { return !query || region.id.includes(query) || region.value.includes(query) });
 }
 
+async function listRegions(query, pluginSettings, actionParams) {
+    const { settings, params } = paramsMapper(pluginSettings, actionParams);
+    if (!params.REGION) {
+        params.REGION = "eu-west-2";
+    }
+    const ec2 = getEc2(params, settings);
+    let results = await new Promise((resolve, reject) => {
+        ec2.describeRegions((err, data) => {
+            if (err) {
+                reject(MISSING_CREDENTIALS_ERROR);
+            } else {
+                const result = data.Regions.map((endpoint) =>
+                    ({id: endpoint.RegionName, value: endpoint.RegionName}));
+                resolve(result);
+            }
+        });
+    });
 
-module.exports = { getInstanceTypes, getRegions }
+    const lightsail = getLightsail(params, settings);
+    return new Promise((resolve, reject) => {
+        lightsail.getRegions((err, data) => {
+            if (err) {
+                reject(MISSING_CREDENTIALS_ERROR);
+            } else {
+                results = results.map((entry) => {
+                    const lsData = data.regions.find((x) => x.name === entry.id);
+                    return lsData ?
+                        { value: `${lsData.displayName} (${entry.id})`, id: entry.value } :
+                        entry;
+                }).sort((a, b) => {
+                    if (a.value > b.value) return 1;
+                    if (a.value < b.value) return -1;
+                    return 0;
+                });
+                resolve(results);
+            }
+        });
+    });
+}
+
+module.exports = { getInstanceTypes, getRegions, listRegions }
