@@ -1,6 +1,6 @@
 const { runEc2Func, parseLegacyParam, getPortObj, waitForNatGateway, wairForEc2Resource } = require('./helpers');
 const parsers = require('./parsers');
-const { getInstanceTypes, getRegions } = require('./autocomplete')
+const { getInstanceTypes, listRegions } = require('./autocomplete')
 
 async function createInstance(action, settings) {
     const params = {
@@ -22,8 +22,8 @@ async function createInstance(action, settings) {
     }
 
     if (action.params.TAGS_SPECIFICATION) {
-        params.TagSpecifications = [{ 
-            ResourceType: "instance", 
+        params.TagSpecifications = [{
+            ResourceType: "instance",
             Tags: parseLegacyParam(action.params.TAGS_SPECIFICATION, parsers.tags)
         }]
     }
@@ -159,7 +159,7 @@ async function createSubnet(action, settings) {
 
     let result = await runEc2Func(action, settings, params, "createSubnet");
     action.params.subnetId = result.createSubnet.Subnet.SubnetId;
-    
+
     if (action.params.allocationId){ // indicates that nat gateway is needed
         result = {...result, ...(await createNatGateway(action, settings))};
     }
@@ -168,7 +168,7 @@ async function createSubnet(action, settings) {
     }
     else if (action.params.createPrivateRouteTable){
         result = {...result, ...(await createRouteTable(action, settings))};
-        if (result.createNatGateway){ 
+        if (result.createNatGateway){
             // if nat gateway also was created, connect to correct route
             action.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
             action.params.natGatewayId = result.createNatGateway.NatGateway.NatGatewayId;
@@ -213,7 +213,7 @@ async function modifyInstanceType(action, settings){
             InstanceId : instanceId,
             InstanceType: instanceType
         };
-        return runEc2Func(action, settings, params, "modifyInstanceAttribute", true);  
+        return runEc2Func(action, settings, params, "modifyInstanceAttribute", true);
     }));
 }
 
@@ -236,7 +236,7 @@ async function createInternetGateway(action, settings) {
 
 async function createRouteTable(action, settings) {
     const params = {
-        VpcId: (action.params.vpcId || "").trim(), 
+        VpcId: (action.params.vpcId || "").trim(),
         DryRun: action.params.dryRun || false
     };
     if (!params.VpcId){
@@ -245,7 +245,7 @@ async function createRouteTable(action, settings) {
     if (action.params.tags){
         params.TagSpecifications = [{ResourceType: "route-table", Tags: parsers.tags(action.params.tags)}];
     }
-    
+
     let result = await runEc2Func(action, settings, params, "createRouteTable");
     if (action.params.subnetId || action.params.gatewayId){
         action.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
@@ -298,14 +298,14 @@ async function associateRouteTable(action, settings) {
     }
     let result;
     if (action.params.subnetId){ // we need to associate subnet and gateway in seperate functions - otherwise fails...
-        const subParams = { 
+        const subParams = {
             ...params,
             SubnetId: (action.params.subnetId || "").trim()
         }
         result = await runEc2Func(action, settings, subParams, "associateRouteTable");
     }
     if (action.params.gatewayId){
-        const subParams = { 
+        const subParams = {
             ...params,
             GatewayId: (action.params.gatewayId || "").trim()
         }
@@ -346,18 +346,18 @@ async function addSecurityGroupRules(action, settings) {
 
     const params = {
         GroupId: parsers.string(action.params.groupId),
-        IpPermissions: fromPorts.map((fromPort, index) => 
+        IpPermissions: fromPorts.map((fromPort, index) =>
             getPortObj(fromPort, toPorts[index], ipProtocol, cidrIps, cidrIps6, description))
     };
     if (!params.GroupId){
         throw "Must provide Group ID";
     }
-    
-    const funcName = ruleType === "Egress-Authorize" ? "authorizeSecurityGroupEgress" : 
-        ruleType === "Ingress-Revoke" ? "revokeSecurityGroupIngress" : 
-        ruleType === "Egress-Revoke" ? "revokeSecurityGroupEgress" : 
+
+    const funcName = ruleType === "Egress-Authorize" ? "authorizeSecurityGroupEgress" :
+        ruleType === "Ingress-Revoke" ? "revokeSecurityGroupIngress" :
+        ruleType === "Egress-Revoke" ? "revokeSecurityGroupEgress" :
         "authorizeSecurityGroupIngress"; // default
-    
+
     return runEc2Func(action, settings, params, funcName);
 }
 
@@ -449,5 +449,5 @@ module.exports = {
     createSnapshot,
     // auto complete
     getInstanceTypes,
-    getRegions
-};        
+    listRegions
+};
