@@ -65,7 +65,7 @@ async function listRegions(query, pluginSettings, actionParams) {
             return ec2Regions.Regions.map((ec2Region) => {
                 const lsRegion = lightsailRegions.regions.find((x) => x.name === ec2Region.RegionName);
                 return lsRegion ?
-                    { id: ec2Region.RegionName, value: `${ec2Region.RegionName} (${lsRegion.displayName})` } :
+                    { id: ec2Region.RegionName, value: `${ec2Region.RegionName} ostatni test (${lsRegion.displayName})` } :
                     { id: ec2Region.RegionName, value: ec2Region.RegionName }
             }).sort((a,b) => {
                 if (a.value > b.value) return 1;
