@@ -1,6 +1,6 @@
 const { runEc2Func, parseLegacyParam, getPortObj, waitForNatGateway, wairForEc2Resource } = require('./helpers');
 const parsers = require('./parsers');
-const { getInstanceTypes, getRegions, listRegions } = require('./autocomplete')
+const { getInstanceTypes, listRegions } = require('./autocomplete')
 
 async function createInstance(action, settings) {
     const params = {
@@ -449,6 +449,5 @@ module.exports = {
     createSnapshot,
     // auto complete
     getInstanceTypes,
-    getRegions,
     listRegions
 };
