@@ -53,7 +53,6 @@ async function getInstanceTypes(query, pluginSettings, actionParams){
 async function listRegions(query, pluginSettings, actionParams) {
     let { settings, params } = paramsMapper(pluginSettings, actionParams);
     params = {...params, REGION: params.REGION || "eu-west-2"};
-    console.error(params);
     const ec2 = getEc2(params, settings);
     const lightsail = getLightsail(params, settings);
 
