@@ -7,7 +7,10 @@
   "imgUrl": "logo.png",
   "version": "2.5.9",
   "description": "Integration with AWS EC2 API",
-  "category": ["CLOUD", "COMPUTE"],
+  "category": [
+    "CLOUD",
+    "COMPUTE"
+  ],
   "settings": [
     {
       "name": "AWS_ACCESS_KEY_ID",
@@ -1852,6 +1855,128 @@
           "viewName": "Wait Until Operation End",
           "type": "boolean",
           "description": "Wait until the end of the operation. The operation ends when the snapshot is completed."
+        }
+      ]
+    },
+    {
+      "name": "modifyInstanceAttribute",
+      "viewName": "Modify Instance Attribute",
+      "params": [
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access Key",
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request.",
+          "placeholder": "AKIAIOSFODNN7EXAMPLE",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret Key",
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
+          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listRegions",
+          "description": "The region to execute the request in.",
+          "placeholder": "us-east-2",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
+        },
+        {
+          "name": "instanceIds",
+          "viewName": "Instance IDs",
+          "type": "text",
+          "description": "Accepts either a string with one or multiple instance IDs each separated with a new line, or an array of instance ID strings passed from the code layer.",
+          "placeholder": "i-1234567a"
+        },
+        {
+          "name": "attribute",
+          "viewName": "Attribute",
+          "learnUrl": "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html",
+          "type": "options",
+          "options": [
+            {
+              "id": "instanceType",
+              "name": "instanceType"
+            },
+            {
+              "id": "kernel",
+              "name": "kernel"
+            },
+            {
+              "id": "ramdisk",
+              "name": "ramdisk"
+            },
+            {
+              "id": "userData",
+              "name": "userData"
+            },
+            {
+              "id": "disableApiTermination",
+              "name": "disableApiTermination"
+            },
+            {
+              "id": "instanceInitiatedShutdownBehavior",
+              "name": "instanceInitiatedShutdownBehavior"
+            },
+            {
+              "id": "rootDeviceName",
+              "name": "rootDeviceName"
+            },
+            {
+              "id": "blockDeviceMapping",
+              "name": "blockDeviceMapping"
+            },
+            {
+              "id": "productCodes",
+              "name": "productCodes"
+            },
+            {
+              "id": "sourceDestCheck",
+              "name": "sourceDestCheck"
+            },
+            {
+              "id": "groupSet",
+              "name": "groupSet"
+            },
+            {
+              "id": "ebsOptimized",
+              "name": "ebsOptimized"
+            },
+            {
+              "id": "sriovNetSupport",
+              "name": "sriovNetSupport"
+            },
+            {
+              "id": "enaSupport",
+              "name": "enaSupport"
+            },
+            {
+              "id": "enclaveOptions",
+              "name": "enclaveOptions"
+            }
+          ]
+        },
+        {
+          "name": "attributeValue",
+          "viewName": "Attribute value",
+          "type": "string",
+          "placeholder": "m1.large",
+          "learnUrl": "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html",
+          "description": "The new value of an attribute."
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean",
+          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "learnUrl": "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html"
         }
       ]
     }
