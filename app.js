@@ -4,23 +4,112 @@ const {
 const parsers = require("./parsers");
 const { getInstanceTypes, listRegions } = require("./autocomplete");
 
+async function attachInternetGateway(action, settings) {
+  const params = {
+    InternetGatewayId: (action.params.gatewayId || "").trim(),
+    VpcId: (action.params.vpcId || "").trim(),
+    DryRun: action.params.dryRun || false,
+  };
+  if (!action.params.vpcId || !action.params.gatewayId) {
+    throw new Error("You need to provide a Subnet ID or a Gateway ID!");
+  }
+  return runEc2Func(action, settings, params, "attachInternetGateway");
+}
+
+async function createInternetGateway(_action, settings) {
+  const action = { ..._action };
+  const params = {
+    DryRun: action.params.dryRun,
+  };
+  if (action.params.tags) {
+    params.TagSpecifications = [{ ResourceType: "internet-gateway", Tags: parsers.tags(action.params.tags) }];
+  }
+  const vpcId = parsers.string(action.params.vpcId);
+  let result = await runEc2Func(action, settings, params, "createInternetGateway");
+  if (vpcId) {
+    action.params.gatewayId = result.createInternetGateway.InternetGateway.InternetGatewayId;
+    result = { ...result, ...(await attachInternetGateway(action, settings)) };
+  }
+  return result;
+}
+
+async function associateRouteTable(_action, settings) {
+  const action = { ..._action };
+  const params = {
+    RouteTableId: (action.params.routeTableId || "").trim(),
+    DryRun: action.params.dryRun || false,
+  };
+  if (!params.RouteTableId) {
+    throw new Error("Route Table ID was not given!");
+  }
+  if (!action.params.subnetId && !action.params.gatewayId) {
+    throw new Error("You need to provide a Subnet ID or a Gateway ID!");
+  }
+  let result;
+  if (action.params.subnetId) {
+    // we need to associate subnet and gateway in seperate functions - otherwise fails...
+    const subParams = {
+      ...params,
+      SubnetId: (action.params.subnetId || "").trim(),
+    };
+    result = await runEc2Func(action, settings, subParams, "associateRouteTable");
+  }
+  if (action.params.gatewayId) {
+    const subParams = {
+      ...params,
+      GatewayId: (action.params.gatewayId || "").trim(),
+    };
+    if (result) {
+      const gatewayResult = await runEc2Func(action, settings, subParams, "associateRouteTable");
+      result = {
+        associateRouteTableToSubnet: result.associateRouteTable,
+        associateRouteTableToGateway: gatewayResult.associateRouteTable,
+      };
+    } else {
+      result = await runEc2Func(action, settings, subParams, "associateRouteTable");
+    }
+  }
+  return result;
+}
+
+async function createRouteTable(_action, settings) {
+  const action = { ..._action };
+  const params = {
+    VpcId: (action.params.vpcId || "").trim(),
+    DryRun: action.params.dryRun || false,
+  };
+  if (!params.VpcId) {
+    throw new Error("Didn't provide VPC ID!");
+  }
+  if (action.params.tags) {
+    params.TagSpecifications = [{ ResourceType: "route-table", Tags: parsers.tags(action.params.tags) }];
+  }
+
+  let result = await runEc2Func(action, settings, params, "createRouteTable");
+  if (action.params.subnetId || action.params.gatewayId) {
+    action.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
+    result = { ...result, ...(await associateRouteTable(action, settings)) };
+  }
+  return result;
+}
+
 async function createInstance(action, settings) {
   const params = {
     ImageId: parsers.string(action.params.IMAGE_ID),
     InstanceType: parsers.string(action.params.INSTANCE_TYPE),
-    MinCount: parseInt(action.params.MIN_COUNT || 1),
-    MaxCount: parseInt(action.params.MAX_COUNT | 1),
+    MinCount: parseInt(action.params.MIN_COUNT || 1, 10),
+    MaxCount: parseInt(action.params.MAX_COUNT || 1, 10),
     KeyName: parsers.string(action.params.KEY_NAME),
     SecurityGroupIds: parsers.array(action.params.SECURITY_GROUP_IDS),
     SubnetId: parsers.string(action.params.subnetId),
   };
   const userData = parsers.string(action.params.userData);
   if (userData) {
-    const buffer = new Buffer(userData);
+    const buffer = Buffer.from(userData);
     params.UserData = buffer.toString("base64");
   }
   if (params.MaxCount < params.MinCount) {
-    throw "Max Count must be bigger or equal to Min Count";
+    throw new Error("Max Count must be bigger or equal to Min Count");
   }
 
   if (action.params.TAGS_SPECIFICATION) {
@@ -38,7 +127,7 @@ async function manageInstances(action, settings) {
     InstanceIds: parseLegacyParam(action.params.INSTANCE_IDS, parsers.array),
   };
   if (params.InstanceIds.length === 0) {
-    throw "You must provide at least one Instance ID";
+    throw new Error("You must provide at least one Instance ID");
   }
   return runEc2Func(action, settings, params, action.method.name);
 }
@@ -52,7 +141,7 @@ async function manageKeyPairs(action, settings) {
     KeyName: action.params.KEY_PAIR_NAME,
   };
   if (!params.KeyName) {
-    throw "Must provide Key Name";
+    throw new Error("Must provide Key Name");
   }
   return runEc2Func(action, settings, params, action.method.name);
 }
@@ -99,13 +188,47 @@ async function describeInstances(action, settings) {
     params.InstanceIds = parseLegacyParam(action.params.INSTANCE_IDS, parsers.array);
   }
   if (action.params.filters) {
-    if (!Array.isArray(action.params.filters)) { return reject("Filters ids must be an array"); }
+    if (!Array.isArray(action.params.filters)) {
+      throw new Error("Filters ids must be an array");
+    }
     params.Filters = action.params.filters;
   }
   return runEc2Func(action, settings, params, "describeInstances");
 }
 
-async function createVpc(action, settings) {
+async function createRoute(action, settings) {
+  const params = {
+    RouteTableId: parsers.string(action.params.routeTableId),
+    GatewayId: parsers.string(action.params.gatewayId),
+    NatGatewayId: parsers.string(action.params.natGatewayId),
+    InstanceId: parsers.string(action.params.instanceId),
+    DestinationCidrBlock: parsers.string(action.params.destinationCidrBlock),
+    DryRun: action.params.dryRun,
+  };
+  if (!params.RouteTableId || !params.DestinationCidrBlock) {
+    throw new Error("One of the required parameters was not given");
+  }
+  return runEc2Func(action, settings, params, "createRoute");
+}
+
+async function createSecurityGroup(action, settings) {
+  const params = {
+    GroupName: (action.params.name || "").trim(),
+    Description: (action.params.description || "").trim(),
+    VpcId: action.params.vpcId,
+    DryRun: action.params.dryRun || false,
+  };
+  if (!params.GroupName || !params.Description) {
+    throw new Error("One of the required parameters was not given!");
+  }
+  if (action.params.tags) {
+    params.TagSpecifications = [{ ResourceType: "security-group", Tags: parsers.tags(action.params.tags) }];
+  }
+  return runEc2Func(action, settings, params, "createSecurityGroup");
+}
+
+async function createVpc(_action, settings) {
+  const action = { ..._action };
   const params = {
     CidrBlock: action.params.cidrBlock,
     AmazonProvidedIpv6CidrBlock: action.params.amazonProvidedIpv6CidrBlock || false,
@@ -113,7 +236,7 @@ async function createVpc(action, settings) {
     DryRun: action.params.dryRun || false,
   };
   if (!params.CidrBlock && !params.AmazonProvidedIpv6CidrBlock) {
-    throw "Must provide CIDR Block or select AmazonProvidedIpv6CidrBlock";
+    throw new Error("Must provide CIDR Block or select AmazonProvidedIpv6CidrBlock");
   }
   if (action.params.tags) {
     params.TagSpecifications = [{ ResourceType: "vpc", Tags: parsers.tags(action.params.tags) }];
@@ -142,7 +265,23 @@ async function createVpc(action, settings) {
   return result;
 }
 
-async function createSubnet(action, settings) {
+async function createNatGateway(action, settings) {
+  const params = {
+    SubnetId: (action.params.subnetId || "").trim(),
+    AllocationId: action.params.allocationId,
+    DryRun: action.params.dryRun || false,
+  };
+  if (!params.SubnetId) {
+    throw new Error("One of the required parameters was not given!");
+  }
+  if (action.params.tags) {
+    params.TagSpecifications = [{ ResourceType: "natgateway", Tags: parsers.tags(action.params.tags) }];
+  }
+  return runEc2Func(action, settings, params, "createNatGateway");
+}
+
+async function createSubnet(_action, settings) {
+  const action = { ..._action };
   const params = {
     AvailabilityZone: parsers.string(action.params.availabilityZone),
     CidrBlock: parsers.string(action.params.cidrBlock),
@@ -152,7 +291,7 @@ async function createSubnet(action, settings) {
     DryRun: action.params.dryRun || false,
   };
   if (!(params.CidrBlock || params.Ipv6CidrBlock)) {
-    throw "Must provide CIDR Block or IPv6 CIDR Block";
+    throw new Error("Must provide CIDR Block or IPv6 CIDR Block");
   }
   if (action.params.tags) {
     params.TagSpecifications = [{ ResourceType: "subnet", Tags: parsers.tags(action.params.tags) }];
@@ -207,7 +346,9 @@ async function deleteSubnet(action, settings) {
 async function modifyInstanceType(action, settings) {
   const instanceIds = parsers.array(action.params.instanceIds);
   const instanceType = { Value: parsers.autocomplete(action.params.instanceType) };
-  if (!instanceType.Value || !instanceIds || !instanceIds.length) { throw "Didn't provide one of the required fields"; }
+  if (!instanceType.Value || !instanceIds || !instanceIds.length) {
+    throw new Error("Didn't provide one of the required fields");
+  }
   return Promise.all(instanceIds.map((instanceId) => {
     const params = {
       InstanceId: instanceId,
@@ -217,123 +358,8 @@ async function modifyInstanceType(action, settings) {
   }));
 }
 
-async function createInternetGateway(action, settings) {
-  const params = {
-    DryRun: action.params.dryRun,
-  };
-  if (action.params.tags) {
-    params.TagSpecifications = [{ ResourceType: "internet-gateway", Tags: parsers.tags(action.params.tags) }];
-  }
-  const vpcId = parsers.string(action.params.vpcId);
-  let result = await runEc2Func(action, settings, params, "createInternetGateway");
-  if (vpcId) {
-    action.params.gatewayId = result.createInternetGateway.InternetGateway.InternetGatewayId;
-    result = { ...result, ...(await attachInternetGateway(action, settings)) };
-  }
-  return result;
-}
-
-async function createRouteTable(action, settings) {
-  const params = {
-    VpcId: (action.params.vpcId || "").trim(),
-    DryRun: action.params.dryRun || false,
-  };
-  if (!params.VpcId) {
-    throw "Didn't provide VPC ID!";
-  }
-  if (action.params.tags) {
-    params.TagSpecifications = [{ ResourceType: "route-table", Tags: parsers.tags(action.params.tags) }];
-  }
-
-  let result = await runEc2Func(action, settings, params, "createRouteTable");
-  if (action.params.subnetId || action.params.gatewayId) {
-    action.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
-    result = { ...result, ...(await associateRouteTable(action, settings)) };
-  }
-  return result;
-}
-
-async function createNatGateway(action, settings) {
-  const params = {
-    SubnetId: (action.params.subnetId || "").trim(),
-    AllocationId: action.params.allocationId,
-    DryRun: action.params.dryRun || false,
-  };
-  if (!params.SubnetId) {
-    throw "One of the required parameters was not given!";
-  }
-  if (action.params.tags) {
-    params.TagSpecifications = [{ ResourceType: "natgateway", Tags: parsers.tags(action.params.tags) }];
-  }
-  return runEc2Func(action, settings, params, "createNatGateway");
-}
-
-async function createSecurityGroup(action, settings) {
-  const params = {
-    GroupName: (action.params.name || "").trim(),
-    Description: (action.params.description || "").trim(),
-    VpcId: action.params.vpcId,
-    DryRun: action.params.dryRun || false,
-  };
-  if (!params.GroupName || !params.Description) {
-    throw "One of the required parameters was not given!";
-  }
-  if (action.params.tags) {
-    params.TagSpecifications = [{ ResourceType: "security-group", Tags: parsers.tags(action.params.tags) }];
-  }
-  return runEc2Func(action, settings, params, "createSecurityGroup");
-}
-
-async function associateRouteTable(action, settings) {
-  const params = {
-    RouteTableId: (action.params.routeTableId || "").trim(),
-    DryRun: action.params.dryRun || false,
-  };
-  if (!params.RouteTableId) {
-    throw "Route Table ID was not given!";
-  }
-  if (!action.params.subnetId && !action.params.gatewayId) {
-    throw "You need to provide a Subnet ID or a Gateway ID!";
-  }
-  let result;
-  if (action.params.subnetId) { // we need to associate subnet and gateway in seperate functions - otherwise fails...
-    const subParams = {
-      ...params,
-      SubnetId: (action.params.subnetId || "").trim(),
-    };
-    result = await runEc2Func(action, settings, subParams, "associateRouteTable");
-  }
-  if (action.params.gatewayId) {
-    const subParams = {
-      ...params,
-      GatewayId: (action.params.gatewayId || "").trim(),
-    };
-    if (result) {
-      const gatewayResult = await runEc2Func(action, settings, subParams, "associateRouteTable");
-      result = {
-        associateRouteTableToSubnet: result.associateRouteTable,
-        associateRouteTableToGateway: gatewayResult.associateRouteTable,
-      };
-    } else {
-      result = await runEc2Func(action, settings, subParams, "associateRouteTable");
-    }
-  }
-  return result;
-}
-
-async function attachInternetGateway(action, settings) {
-  const params = {
-    InternetGatewayId: (action.params.gatewayId || "").trim(),
-    VpcId: (action.params.vpcId || "").trim(),
-    DryRun: action.params.dryRun || false,
-  };
-  if (!action.params.vpcId || !action.params.gatewayId) {
-    throw "You need to provide a Subnet ID or a Gateway ID!";
-  }
-  return runEc2Func(action, settings, params, "attachInternetGateway");
-}
-
-async function addSecurityGroupRules(action, settings) {
+async function addSecurityGroupRules(_action, settings) {
+  const action = { ..._action };
   const arrays = ["cidrIps", "cidrIps6", "fromPorts", "toPorts"];
   arrays.forEach((arrayName) => {
     action.params[arrayName] = parsers.array((action.params[arrayName]));
@@ -341,38 +367,44 @@ async function addSecurityGroupRules(action, settings) {
   const {
     cidrIps, cidrIps6, fromPorts, toPorts, ipProtocol, description, ruleType,
   } = action.params;
-  if (fromPorts.length === 0 || toPorts.length === 0) { throw "Must provide from and to ports!"; }
-  if (fromPorts.length !== toPorts.length) { throw "From Ports and To Ports must be the same length"; }
+  if (fromPorts.length === 0 || toPorts.length === 0) {
+    throw new Error("Must provide from and to ports!");
+  }
+  if (fromPorts.length !== toPorts.length) {
+    throw new Error("From Ports and To Ports must be the same length");
+  }
 
   const params = {
     GroupId: parsers.string(action.params.groupId),
-    IpPermissions: fromPorts.map((fromPort, index) => getPortObj(fromPort, toPorts[index], ipProtocol, cidrIps, cidrIps6, description)),
+    IpPermissions: fromPorts.map((fromPort, index) => getPortObj(
+      fromPort,
+      toPorts[index],
+      ipProtocol,
+      cidrIps,
+      cidrIps6,
+      description,
+    )),
   };
   if (!params.GroupId) {
-    throw "Must provide Group ID";
+    throw new Error("Must provide Group ID");
   }
 
-  const funcName = ruleType === "Egress-Authorize" ? "authorizeSecurityGroupEgress"
-    : ruleType === "Ingress-Revoke" ? "revokeSecurityGroupIngress"
-      : ruleType === "Egress-Revoke" ? "revokeSecurityGroupEgress"
-        : "authorizeSecurityGroupIngress"; // default
+  let funcName;
+  switch (ruleType) {
+    case "Egress-Authorize":
+      funcName = "authorizeSecurityGroupEgress";
+      break;
+    case "Ingress-Revoke":
+      funcName = "revokeSecurityGroupIngress";
+      break;
+    case "Egress-Revoke":
+      funcName = "revokeSecurityGroupEgress";
+      break;
+    default:
+      funcName = "authorizeSecurityGroupIngress";
+  }
 
   return runEc2Func(action, settings, params, funcName);
-}
-
-async function createRoute(action, settings) {
-  const params = {
-    RouteTableId: parsers.string(action.params.routeTableId),
-    GatewayId: parsers.string(action.params.gatewayId),
-    NatGatewayId: parsers.string(action.params.natGatewayId),
-    InstanceId: parsers.string(action.params.instanceId),
-    DestinationCidrBlock: parsers.string(action.params.destinationCidrBlock),
-    DryRun: action.params.dryRun,
-  };
-  if (!params.RouteTableId || !params.DestinationCidrBlock) {
-    throw "One of the required parameters was not given";
-  }
-  return runEc2Func(action, settings, params, "createRoute");
 }
 
 async function createVolume(action, settings) {
@@ -390,7 +422,7 @@ async function createVolume(action, settings) {
     DryRun: parsers.boolean(action.params.dryRun),
   };
   if ((!params.AvailabilityZone && !params.OutpostArn) || !params.VolumeType) {
-    throw "One of the required parameters was not given";
+    throw new Error("One of the required parameters was not given");
   }
   let result = await runEc2Func(action, settings, params, "createVolume");
   if (!action.params.waitForEnd) {
@@ -408,7 +440,7 @@ async function createSnapshot(action, settings) {
     DryRun: parsers.boolean(action.params.dryRun),
   };
   if (!params.VolumeId) {
-    throw "Must provide volume ID to create the snapshot of!";
+    throw new Error("Must provide volume ID to create the snapshot of!");
   }
   let result = await runEc2Func(action, settings, params, "createSnapshot");
   if (!action.params.waitForEnd) {
