@@ -1,5 +1,5 @@
 const {
-  runEc2Func, parseLegacyParam, getPortObj, waitForNatGateway, wairForEc2Resource,
+  runEc2Func, parseLegacyParam, getPortObj, waitForNatGateway, waitForEc2Resource,
 } = require("./helpers");
 const parsers = require("./parsers");
 const { getInstanceTypes, listRegions } = require("./autocomplete");
@@ -428,7 +428,7 @@ async function createVolume(action, settings) {
   if (!action.params.waitForEnd) {
     return result;
   }
-  result = await wairForEc2Resource(action, "volumeAvailable", { VolumeIds: [result.createVolume.VolumeId] });
+  result = await waitForEc2Resource(action, "volumeAvailable", { VolumeIds: [result.createVolume.VolumeId] });
   return { createVolume: result.Volumes[0] };
 }
 
@@ -446,7 +446,7 @@ async function createSnapshot(action, settings) {
   if (!action.params.waitForEnd) {
     return result;
   }
-  result = await wairForEc2Resource(action, "snapshotCompleted", { SnapshotIds: [result.createSnapshot.SnapshotId] });
+  result = await waitForEc2Resource(action, "snapshotCompleted", { SnapshotIds: [result.createSnapshot.SnapshotId] });
   return { createSnapshot: result.Snapshots[0] };
 }
 

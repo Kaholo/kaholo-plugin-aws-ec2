@@ -17,7 +17,8 @@ function getLightsail(params, settings) {
   });
 }
 
-async function runEc2Func(action, settings, params, funcName) {
+async function runEc2Func(_action, settings, params, funcName) {
+  const action = { ..._action };
   action.params.ec2 = action.params.ec2 ? action.params.ec2 : getEc2(action.params, settings);
   const resultPromise = new Promise((resolve, reject) => {
     action.params.ec2[funcName](params, (err, result) => {
@@ -29,22 +30,28 @@ async function runEc2Func(action, settings, params, funcName) {
   return result;
 }
 
-async function wairForEc2Resource(action, state, params) {
-  const ec2 = action.params.ec2 ? action.params.ec2 : getEc2(action.params, settings);
+async function waitForEc2Resource(action, state, params) {
+  const ec2 = action.params.ec2 ? action.params.ec2 : getEc2(action.params);
   return new Promise((resolve, reject) => {
     ec2.waitFor(state, params, (err, result) => {
       if (err) { return reject(err); }
-      resolve(result);
+      return resolve(result);
     });
   });
 }
 
 function parseLegacyParam(param, parseFunc) {
+  let parsedParam;
   try {
-    if (typeof param === "string") { return JSON.parse(param); }
-  } catch (err) {} finally {
-    return parseFunc(param);
+    if (typeof param === "string") {
+      parsedParam = JSON.parse(param);
+    } else {
+      parsedParam = parseFunc(param);
+    }
+  } catch (err) {
+    throw new Error("Error parsing legacy param");
   }
+  return parsedParam;
 }
 
 function getPortObj(fromPort, toPort, ipProtocol, cidrIps, cidrIps6, description) {
@@ -72,6 +79,8 @@ async function waitForNatGateway(action, settings) {
   const params = { NatGatewayIds: [action.params.natGatewayId] };
   let result;
   while (!result || result.describeNatGateways.NatGateways[0].State !== "available") {
+    // TODO: take a look if this loop is really needed
+    // eslint-disable-next-line no-await-in-loop
     result = await runEc2Func(action, settings, params, "describeNatGateways");
   }
 }
@@ -83,5 +92,5 @@ module.exports = {
   parseLegacyParam,
   getPortObj,
   waitForNatGateway,
-  wairForEc2Resource,
+  waitForEc2Resource,
 };
