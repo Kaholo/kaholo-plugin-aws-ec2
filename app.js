@@ -455,53 +455,12 @@ async function modifyInstanceAttribute(action, settings) {
   return Promise.all(instanceIds.map((instanceId) => {
     const params = {
       InstanceId: instanceId,
-      InstanceType: {
-        Value: parsers.autocomplete(action.params.instanceType),
-      },
-      Kernel: {
-        Value: parsers.string(action.params.kernel),
-      },
-      Ramdisk: {
-        Value: parsers.string(action.params.ramdisk),
-      },
-      UserData: {
-        Value: parsers.string(action.params.userData),
-      },
-      DisableApiTermination: {
-        Value: parsers.string(action.params.disableApiTermination),
-      },
-      InstanceInitiatedShutdownBehavior: {
-        Value: parsers.string(action.params.instanceInitiatedShutdownBehavior),
-      },
-      RootDeviceName: {
-        Value: parsers.string(action.params.rootDeviceName),
-      },
-      BlockDeviceMapping: {
-        Value: parsers.string(action.params.blockDeviceMapping),
-      },
-      ProductCodes: {
-        Value: parsers.string(action.params.productCodes),
-      },
-      SourceDestCheck: {
-        Value: parsers.string(action.params.sourceDestCheck),
-      },
-      GroupSet: {
-        Value: parsers.string(action.params.groupSet),
-      },
-      EbsOptimized: {
-        Value: parsers.string(action.params.ebsOptimized),
-      },
-      SriovNetSupport: {
-        Value: parsers.string(action.params.sriovNetSupport),
-      },
-      EnaSupport: {
-        Value: parsers.string(action.params.enaSupport),
-      },
-      EnclaveOptions: {
-        Value: parsers.string(action.params.enclaveOptions),
-      },
       DryRun: parsers.boolean(action.params.dryRun),
     };
+
+    params[action.params.attribute] = {};
+    params[action.params.attribute].Value = parsers.string(action.params.attributeValue);
+
     return runEc2Func(action, settings, params, "modifyInstanceAttribute");
   }));
 }

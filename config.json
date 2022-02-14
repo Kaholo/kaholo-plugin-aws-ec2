@@ -5,7 +5,7 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "2.5.9",
+  "version": "2.5.10",
   "description": "Integration with AWS EC2 API",
   "category": [
     "CLOUD",
@@ -1902,64 +1902,64 @@
           "type": "options",
           "options": [
             {
-              "id": "instanceType",
-              "name": "instanceType"
+              "id": "InstanceType",
+              "name": "InstanceType"
             },
             {
-              "id": "kernel",
-              "name": "kernel"
+              "id": "Kernel",
+              "name": "Kernel"
             },
             {
-              "id": "ramdisk",
-              "name": "ramdisk"
+              "id": "Ramdisk",
+              "name": "Ramdisk"
             },
             {
-              "id": "userData",
-              "name": "userData"
+              "id": "UserData",
+              "name": "UserData"
             },
             {
-              "id": "disableApiTermination",
-              "name": "disableApiTermination"
+              "id": "DisableApiTermination",
+              "name": "DisableApiTermination"
             },
             {
-              "id": "instanceInitiatedShutdownBehavior",
-              "name": "instanceInitiatedShutdownBehavior"
+              "id": "InstanceInitiatedShutdownBehavior",
+              "name": "InstanceInitiatedShutdownBehavior"
             },
             {
-              "id": "rootDeviceName",
-              "name": "rootDeviceName"
+              "id": "RootDeviceName",
+              "name": "RootDeviceName"
             },
             {
-              "id": "blockDeviceMapping",
-              "name": "blockDeviceMapping"
+              "id": "BlockDeviceMapping",
+              "name": "BlockDeviceMapping"
             },
             {
-              "id": "productCodes",
-              "name": "productCodes"
+              "id": "ProductCodes",
+              "name": "ProductCodes"
             },
             {
-              "id": "sourceDestCheck",
-              "name": "sourceDestCheck"
+              "id": "SourceDestCheck",
+              "name": "SourceDestCheck"
             },
             {
-              "id": "groupSet",
-              "name": "groupSet"
+              "id": "GroupSet",
+              "name": "GroupSet"
             },
             {
-              "id": "ebsOptimized",
-              "name": "ebsOptimized"
+              "id": "EbsOptimized",
+              "name": "EbsOptimized"
             },
             {
-              "id": "sriovNetSupport",
-              "name": "sriovNetSupport"
+              "id": "SriovNetSupport",
+              "name": "SriovNetSupport"
             },
             {
-              "id": "enaSupport",
-              "name": "enaSupport"
+              "id": "EnaSupport",
+              "name": "EnaSupport"
             },
             {
-              "id": "enclaveOptions",
-              "name": "enclaveOptions"
+              "id": "EnclaveOptions",
+              "name": "EnclaveOptions"
             }
           ]
         },
