@@ -63,11 +63,12 @@ module.exports = {
       return undefined;
     }
 
-    return parsedEnvironmentVariables.reduce((_obj, rawVariable) => {
+    return parsedEnvironmentVariables.reduce((obj, rawVariable) => {
       const [k, v] = rawVariable.split(":");
-      const obj = { ..._obj };
-      obj[k.trim()] = v.trim();
-      return obj;
+      return {
+        ...obj,
+        [k.trim()]: v.trim(),
+      };
     }, {});
   },
   number: (value) => {
