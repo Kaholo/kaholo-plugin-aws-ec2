@@ -1,3 +1,5 @@
+const _ = require("lodash");
+
 function parseArray(value) {
   if (!value) {
     return [];
@@ -11,30 +13,32 @@ function parseArray(value) {
   throw new Error("Unsupported array format");
 }
 
-function parseTags(_value) {
-  let value = { ..._value };
-  if (!value) {
+function parseTags(value) {
+  let valueCopy = _.clone(value);
+  if (!valueCopy) {
     return undefined;
   }
-  if (Array.isArray(value)) {
-    if (!value.every((tag) => tag.Key)) {
+  if (Array.isArray(valueCopy)) {
+    if (!valueCopy.every((tag) => tag.Key)) {
       throw new Error("Bad AWS Tags Format");
     }
-    return value;
+    return valueCopy;
   }
-  if (typeof (value) === "string") {
-    value = value.split("\n").map((line) => line.trim()).filter((line) => line);
-    return value.map((line) => {
-      const [key, ..._val] = line.split("=");
-      let val = _val;
+  if (typeof (valueCopy) === "string") {
+    valueCopy = valueCopy.split("\n").map((line) => line.trim()).filter((line) => line);
+    return valueCopy.map((line) => {
+      const [key, ...val] = line.split("=");
+      let stringValue;
       if (Array.isArray(val)) {
-        val = val.join("=");
+        stringValue = val.join("=");
+      } else {
+        stringValue = val;
       }
-      return { Key: key, Value: val };
+      return { Key: key, Value: stringValue };
     });
   }
-  if (typeof (value) === "object") {
-    return Object.entries(value).map(([key, val]) => ({ Key: key, Value: val }));
+  if (typeof (valueCopy) === "object") {
+    return Object.entries(valueCopy).map(([key, val]) => ({ Key: key, Value: val }));
   }
   throw new Error("Unsupported tags format!");
 }
@@ -52,9 +56,9 @@ module.exports = {
     }
     return undefined;
   },
-  environmentVariables: (_value) => {
-    const value = { ..._value };
-    const parsedEnvironmentVariables = module.exports.text(value);
+  environmentVariables: (value) => {
+    const valueCopy = _.clone(value);
+    const parsedEnvironmentVariables = module.exports.text(valueCopy);
     if (!parsedEnvironmentVariables) {
       return undefined;
     }

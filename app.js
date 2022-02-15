@@ -16,79 +16,79 @@ async function attachInternetGateway(action, settings) {
   return runEc2Func(action, settings, params, "attachInternetGateway");
 }
 
-async function createInternetGateway(_action, settings) {
-  const action = { ..._action };
+async function createInternetGateway(action, settings) {
+  const actionCopy = { ...action };
   const params = {
-    DryRun: action.params.dryRun,
+    DryRun: actionCopy.params.dryRun,
   };
-  if (action.params.tags) {
-    params.TagSpecifications = [{ ResourceType: "internet-gateway", Tags: parsers.tags(action.params.tags) }];
+  if (actionCopy.params.tags) {
+    params.TagSpecifications = [{ ResourceType: "internet-gateway", Tags: parsers.tags(actionCopy.params.tags) }];
   }
-  const vpcId = parsers.string(action.params.vpcId);
-  let result = await runEc2Func(action, settings, params, "createInternetGateway");
+  const vpcId = parsers.string(actionCopy.params.vpcId);
+  let result = await runEc2Func(actionCopy, settings, params, "createInternetGateway");
   if (vpcId) {
-    action.params.gatewayId = result.createInternetGateway.InternetGateway.InternetGatewayId;
-    result = { ...result, ...(await attachInternetGateway(action, settings)) };
+    actionCopy.params.gatewayId = result.createInternetGateway.InternetGateway.InternetGatewayId;
+    result = { ...result, ...(await attachInternetGateway(actionCopy, settings)) };
   }
   return result;
 }
 
-async function associateRouteTable(_action, settings) {
-  const action = { ..._action };
+async function associateRouteTable(action, settings) {
+  const actionCopy = { ...action };
   const params = {
-    RouteTableId: (action.params.routeTableId || "").trim(),
-    DryRun: action.params.dryRun || false,
+    RouteTableId: (actionCopy.params.routeTableId || "").trim(),
+    DryRun: actionCopy.params.dryRun || false,
   };
   if (!params.RouteTableId) {
     throw new Error("Route Table ID was not given!");
   }
-  if (!action.params.subnetId && !action.params.gatewayId) {
+  if (!actionCopy.params.subnetId && !actionCopy.params.gatewayId) {
     throw new Error("You need to provide a Subnet ID or a Gateway ID!");
   }
   let result;
-  if (action.params.subnetId) {
+  if (actionCopy.params.subnetId) {
     // we need to associate subnet and gateway in seperate functions - otherwise fails...
     const subParams = {
       ...params,
-      SubnetId: (action.params.subnetId || "").trim(),
+      SubnetId: (actionCopy.params.subnetId || "").trim(),
     };
-    result = await runEc2Func(action, settings, subParams, "associateRouteTable");
+    result = await runEc2Func(actionCopy, settings, subParams, "associateRouteTable");
   }
-  if (action.params.gatewayId) {
+  if (actionCopy.params.gatewayId) {
     const subParams = {
       ...params,
-      GatewayId: (action.params.gatewayId || "").trim(),
+      GatewayId: (actionCopy.params.gatewayId || "").trim(),
     };
     if (result) {
-      const gatewayResult = await runEc2Func(action, settings, subParams, "associateRouteTable");
+      const gatewayResult = await runEc2Func(actionCopy, settings, subParams, "associateRouteTable");
       result = {
         associateRouteTableToSubnet: result.associateRouteTable,
         associateRouteTableToGateway: gatewayResult.associateRouteTable,
       };
     } else {
-      result = await runEc2Func(action, settings, subParams, "associateRouteTable");
+      result = await runEc2Func(actionCopy, settings, subParams, "associateRouteTable");
     }
   }
   return result;
 }
 
-async function createRouteTable(_action, settings) {
-  const action = { ..._action };
+async function createRouteTable(action, settings) {
+  const actionCopy = { ...action };
   const params = {
-    VpcId: (action.params.vpcId || "").trim(),
-    DryRun: action.params.dryRun || false,
+    VpcId: (actionCopy.params.vpcId || "").trim(),
+    DryRun: actionCopy.params.dryRun || false,
   };
   if (!params.VpcId) {
     throw new Error("Didn't provide VPC ID!");
   }
-  if (action.params.tags) {
-    params.TagSpecifications = [{ ResourceType: "route-table", Tags: parsers.tags(action.params.tags) }];
+  if (actionCopy.params.tags) {
+    params.TagSpecifications = [{ ResourceType: "route-table", Tags: parsers.tags(actionCopy.params.tags) }];
   }
 
-  let result = await runEc2Func(action, settings, params, "createRouteTable");
-  if (action.params.subnetId || action.params.gatewayId) {
-    action.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
-    result = { ...result, ...(await associateRouteTable(action, settings)) };
+  let result = await runEc2Func(actionCopy, settings, params, "createRouteTable");
+  if (actionCopy.params.subnetId || actionCopy.params.gatewayId) {
+    actionCopy.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
+    result = { ...result, ...(await associateRouteTable(actionCopy, settings)) };
   }
   return result;
 }
@@ -227,40 +227,40 @@ async function createSecurityGroup(action, settings) {
   return runEc2Func(action, settings, params, "createSecurityGroup");
 }
 
-async function createVpc(_action, settings) {
-  const action = { ..._action };
+async function createVpc(action, settings) {
+  const actionCopy = { ...action };
   const params = {
-    CidrBlock: action.params.cidrBlock,
-    AmazonProvidedIpv6CidrBlock: action.params.amazonProvidedIpv6CidrBlock || false,
-    InstanceTenancy: action.params.instanceTenancy || "default",
-    DryRun: action.params.dryRun || false,
+    CidrBlock: actionCopy.params.cidrBlock,
+    AmazonProvidedIpv6CidrBlock: actionCopy.params.amazonProvidedIpv6CidrBlock || false,
+    InstanceTenancy: actionCopy.params.instanceTenancy || "default",
+    DryRun: actionCopy.params.dryRun || false,
   };
   if (!params.CidrBlock && !params.AmazonProvidedIpv6CidrBlock) {
     throw new Error("Must provide CIDR Block or select AmazonProvidedIpv6CidrBlock");
   }
-  if (action.params.tags) {
-    params.TagSpecifications = [{ ResourceType: "vpc", Tags: parsers.tags(action.params.tags) }];
+  if (actionCopy.params.tags) {
+    params.TagSpecifications = [{ ResourceType: "vpc", Tags: parsers.tags(actionCopy.params.tags) }];
   }
-  let result = await runEc2Func(action, settings, params, "createVpc");
-  action.params.vpcId = result.createVpc.Vpc.VpcId; // for later use
-  if (action.params.createInternetGateway) {
+  let result = await runEc2Func(actionCopy, settings, params, "createVpc");
+  actionCopy.params.vpcId = result.createVpc.Vpc.VpcId; // for later use
+  if (actionCopy.params.createInternetGateway) {
     // we use '...' since createInternetGateway can return multiple action results
-    result = { ...result, ...(await createInternetGateway(action, settings)) };
+    result = { ...result, ...(await createInternetGateway(actionCopy, settings)) };
   }
-  if (action.params.createRouteTable) {
-    action.params.gatewayId = undefined;
-    result = { ...result, ...(await createRouteTable(action, settings)) };
-    if (action.params.createInternetGateway) {
-      action.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
-      action.params.destinationCidrBlock = "0.0.0.0/0";
-      action.params.gatewayId = result.createInternetGateway.InternetGateway.InternetGatewayId;
-      result = { ...result, ...(await createRoute(action, settings)) };
+  if (actionCopy.params.createRouteTable) {
+    actionCopy.params.gatewayId = undefined;
+    result = { ...result, ...(await createRouteTable(actionCopy, settings)) };
+    if (actionCopy.params.createInternetGateway) {
+      actionCopy.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
+      actionCopy.params.destinationCidrBlock = "0.0.0.0/0";
+      actionCopy.params.gatewayId = result.createInternetGateway.InternetGateway.InternetGatewayId;
+      result = { ...result, ...(await createRoute(actionCopy, settings)) };
     }
   }
-  if (action.params.createSecurityGroup) {
-    action.params.name = `${action.params.vpcId}-dedicated-security-group`;
-    action.params.description = `A security group dedicated only for ${action.params.vpcId}`;
-    result = { ...result, ...(await createSecurityGroup(action, settings)) };
+  if (actionCopy.params.createSecurityGroup) {
+    actionCopy.params.name = `${actionCopy.params.vpcId}-dedicated-security-group`;
+    actionCopy.params.description = `A security group dedicated only for ${actionCopy.params.vpcId}`;
+    result = { ...result, ...(await createSecurityGroup(actionCopy, settings)) };
   }
   return result;
 }
@@ -280,49 +280,49 @@ async function createNatGateway(action, settings) {
   return runEc2Func(action, settings, params, "createNatGateway");
 }
 
-async function createSubnet(_action, settings) {
-  const action = { ..._action };
+async function createSubnet(action, settings) {
+  const actionCopy = { ...action };
   const params = {
-    AvailabilityZone: parsers.string(action.params.availabilityZone),
-    CidrBlock: parsers.string(action.params.cidrBlock),
-    Ipv6CidrBlock: parsers.string(action.params.ipv6CidrBlock),
-    VpcId: parsers.string(action.params.vpcId),
-    OutpostArn: parsers.string(action.params.outpostArn),
-    DryRun: action.params.dryRun || false,
+    AvailabilityZone: parsers.string(actionCopy.params.availabilityZone),
+    CidrBlock: parsers.string(actionCopy.params.cidrBlock),
+    Ipv6CidrBlock: parsers.string(actionCopy.params.ipv6CidrBlock),
+    VpcId: parsers.string(actionCopy.params.vpcId),
+    OutpostArn: parsers.string(actionCopy.params.outpostArn),
+    DryRun: actionCopy.params.dryRun || false,
   };
   if (!(params.CidrBlock || params.Ipv6CidrBlock)) {
     throw new Error("Must provide CIDR Block or IPv6 CIDR Block");
   }
-  if (action.params.tags) {
-    params.TagSpecifications = [{ ResourceType: "subnet", Tags: parsers.tags(action.params.tags) }];
+  if (actionCopy.params.tags) {
+    params.TagSpecifications = [{ ResourceType: "subnet", Tags: parsers.tags(actionCopy.params.tags) }];
   }
 
-  let result = await runEc2Func(action, settings, params, "createSubnet");
-  action.params.subnetId = result.createSubnet.Subnet.SubnetId;
+  let result = await runEc2Func(actionCopy, settings, params, "createSubnet");
+  actionCopy.params.subnetId = result.createSubnet.Subnet.SubnetId;
 
-  if (action.params.allocationId) { // indicates that nat gateway is needed
-    result = { ...result, ...(await createNatGateway(action, settings)) };
+  if (actionCopy.params.allocationId) { // indicates that nat gateway is needed
+    result = { ...result, ...(await createNatGateway(actionCopy, settings)) };
   }
-  if (action.params.routeTableId) {
-    result = { ...result, ...(await associateRouteTable(action, settings)) };
-  } else if (action.params.createPrivateRouteTable) {
-    result = { ...result, ...(await createRouteTable(action, settings)) };
+  if (actionCopy.params.routeTableId) {
+    result = { ...result, ...(await associateRouteTable(actionCopy, settings)) };
+  } else if (actionCopy.params.createPrivateRouteTable) {
+    result = { ...result, ...(await createRouteTable(actionCopy, settings)) };
     if (result.createNatGateway) {
       // if nat gateway also was created, connect to correct route
-      action.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
-      action.params.natGatewayId = result.createNatGateway.NatGateway.NatGatewayId;
-      action.params.destinationCidrBlock = "0.0.0.0/0";
+      actionCopy.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
+      actionCopy.params.natGatewayId = result.createNatGateway.NatGateway.NatGatewayId;
+      actionCopy.params.destinationCidrBlock = "0.0.0.0/0";
       // wait for nat gateway to be available than create route
-      await waitForNatGateway(action, settings);
-      result = { ...result, ...(await createRoute(action, settings)) };
+      await waitForNatGateway(actionCopy, settings);
+      result = { ...result, ...(await createRoute(actionCopy, settings)) };
     }
   }
-  if (action.params.mapPublicIpOnLaunch) {
+  if (actionCopy.params.mapPublicIpOnLaunch) {
     const chagneAttrParams = {
-      SubnetId: action.params.subnetId,
+      SubnetId: actionCopy.params.subnetId,
       MapPublicIpOnLaunch: { Value: true },
     };
-    result = { ...result, ...(await runEc2Func(action, settings, chagneAttrParams, "modifySubnetAttribute")) };
+    result = { ...result, ...(await runEc2Func(actionCopy, settings, chagneAttrParams, "modifySubnetAttribute")) };
   }
   return result;
 }
@@ -358,15 +358,15 @@ async function modifyInstanceType(action, settings) {
   }));
 }
 
-async function addSecurityGroupRules(_action, settings) {
-  const action = { ..._action };
+async function addSecurityGroupRules(action, settings) {
+  const actionCopy = { ...action };
   const arrays = ["cidrIps", "cidrIps6", "fromPorts", "toPorts"];
   arrays.forEach((arrayName) => {
-    action.params[arrayName] = parsers.array((action.params[arrayName]));
+    actionCopy.params[arrayName] = parsers.array((actionCopy.params[arrayName]));
   });
   const {
     cidrIps, cidrIps6, fromPorts, toPorts, ipProtocol, description, ruleType,
-  } = action.params;
+  } = actionCopy.params;
   if (fromPorts.length === 0 || toPorts.length === 0) {
     throw new Error("Must provide from and to ports!");
   }
@@ -375,7 +375,7 @@ async function addSecurityGroupRules(_action, settings) {
   }
 
   const params = {
-    GroupId: parsers.string(action.params.groupId),
+    GroupId: parsers.string(actionCopy.params.groupId),
     IpPermissions: fromPorts.map((fromPort, index) => getPortObj(
       fromPort,
       toPorts[index],
@@ -404,7 +404,7 @@ async function addSecurityGroupRules(_action, settings) {
       funcName = "authorizeSecurityGroupIngress";
   }
 
-  return runEc2Func(action, settings, params, funcName);
+  return runEc2Func(actionCopy, settings, params, funcName);
 }
 
 async function createVolume(action, settings) {

@@ -17,11 +17,11 @@ function getLightsail(params, settings) {
   });
 }
 
-async function runEc2Func(_action, settings, params, funcName) {
-  const action = { ..._action };
-  action.params.ec2 = action.params.ec2 ? action.params.ec2 : getEc2(action.params, settings);
+async function runEc2Func(action, settings, params, funcName) {
+  const actionCopy = { ...action };
+  actionCopy.params.ec2 = actionCopy.params.ec2 || getEc2(actionCopy.params, settings);
   const resultPromise = new Promise((resolve, reject) => {
-    action.params.ec2[funcName](params, (err, result) => {
+    actionCopy.params.ec2[funcName](params, (err, result) => {
       if (err) { reject(err); } else { resolve(result); }
     });
   });
@@ -31,7 +31,7 @@ async function runEc2Func(_action, settings, params, funcName) {
 }
 
 async function waitForEc2Resource(action, state, params) {
-  const ec2 = action.params.ec2 ? action.params.ec2 : getEc2(action.params);
+  const ec2 = action.params.ec2 || getEc2(action.params);
   return new Promise((resolve, reject) => {
     ec2.waitFor(state, params, (err, result) => {
       if (err) { return reject(err); }

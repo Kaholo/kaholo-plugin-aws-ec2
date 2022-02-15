@@ -73,7 +73,8 @@ async function listRegions(query, pluginSettings, actionParams) {
       if (a.value < b.value) { return -1; }
       return 0;
     }),
-  ).catch(() => {
+  ).catch((err) => {
+    console.error(err);
     throw new Error(MISSING_OR_INCORRECT_CREDENTIALS_ERROR);
   });
 }
