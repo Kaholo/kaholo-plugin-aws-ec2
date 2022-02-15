@@ -429,3 +429,18 @@ Create a new snapshot of the specified EBS volume.
 6. Outpost ARN (String) **Optional** - If specified, create the snapshot on the outpost specified. Not related to the outpost the volume is stored on.
 7. Dry Run (Boolean) **Optional** - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
 8. Wait Until Operation End (Boolean) **Optional** - If true wait until the end of the operation. The operation ends when the snapshot is completed.
+
+## Method: Modify Instance Attribute
+**Description**
+
+Modify the instance attribute. This method calls ec2 [ModifyInstanceAttribute](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#modifyInstanceAttribute-property)
+
+**Parameters**
+1. Access Key - This is a parameter taken from the vault to access AWS
+2. Secret Key - This is a paramer taken from the vault to access AWS
+3. Region 
+4. Instance IDs - Instance IDs of all instances you want to modify. Accecpts either a string with one or multiple instance IDs, each seperated with a new line,
+    or an Array of instance IDs strings passed from code.
+5. attribute - (option) choose the attribute to modify
+6. attributeValue (string) specify the new value of an attrubute
+7. Dry Run (Boolean) - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
