@@ -437,10 +437,10 @@ Modify the instance attribute. This method calls ec2 [ModifyInstanceAttribute](h
 
 **Parameters**
 1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a paramer taken from the vault to access AWS
+2. Secret Key - This is a parameter taken from the vault to access AWS
 3. Region 
-4. Instance IDs - Instance IDs of all instances you want to modify. Accecpts either a string with one or multiple instance IDs, each seperated with a new line,
+4. Instance IDs - Instance IDs of all instances you want to modify. Accepts either a string with one or multiple instance IDs, each seperated with a new line,
     or an Array of instance IDs strings passed from code.
 5. attribute - (option) choose the attribute to modify
-6. attributeValue (string) specify the new value of an attrubute
+6. attributeValue (string) specify the new value of an attribute
 7. Dry Run (Boolean) - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
