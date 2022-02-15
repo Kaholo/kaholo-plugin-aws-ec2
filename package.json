@@ -1,14 +1,23 @@
 {
   "name": "kaholo-plugin-aws-ec2",
-  "version": "2.4.1",
+  "version": "2.6.0",
   "description": "AWS EC2 plugin for Kaholo",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx jest .",
+    "lint": "npx eslint .",
+    "lint:fix": "npx eslint . --fix"
   },
   "author": "Kaholo team (Matan Kadosh)",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "2.853.0"
+    "aws-sdk": "2.853.0",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "eslint": "^8.8.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4",
+    "jest": "^27.5.0"
   }
 }
