@@ -2,7 +2,7 @@ const {
   runEc2Func, parseLegacyParam, getPortObj, waitForNatGateway, waitForEc2Resource,
 } = require("./helpers");
 const parsers = require("./parsers");
-const { getInstanceTypes, listRegions } = require("./autocomplete");
+const { getInstanceTypes, listRegions, listSubnets } = require("./autocomplete");
 
 async function attachInternetGateway(action, settings) {
   const params = {
@@ -496,5 +496,6 @@ module.exports = {
   // auto complete
   getInstanceTypes,
   listRegions,
+  listSubnets,
   modifyInstanceAttribute,
 };

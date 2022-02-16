@@ -1,6 +1,6 @@
 const { getEc2, getLightsail } = require("./helpers");
 
-const MISSING_OR_INCORRECT_CREDENTIALS_ERROR = "Missing or incorrect credentials - please select valid access and secret keys first";
+const MISSING_OR_INCORRECT_CREDENTIALS_ERROR = "Missing or incorrect credentials - please select valid access and secret keys first.";
 
 function paramsMapper(pluginSettings, actionParams) {
   const settings = {};
@@ -69,13 +69,43 @@ async function listRegions(query, pluginSettings, actionParams) {
         ? { id: ec2Region.RegionName, value: `${ec2Region.RegionName} (${lsRegion.displayName})` }
         : { id: ec2Region.RegionName, value: ec2Region.RegionName };
     }).sort((a, b) => {
-      if (a.value > b.value) { return 1; }
-      if (a.value < b.value) { return -1; }
+      if (a.value > b.value) {
+        return 1;
+      }
+      if (a.value < b.value) {
+        return -1;
+      }
       return 0;
     }),
-  ).catch(() => {
+  ).catch((err) => {
+    console.error(err);
     throw new Error(MISSING_OR_INCORRECT_CREDENTIALS_ERROR);
   });
 }
 
-module.exports = { getInstanceTypes, listRegions };
+async function listSubnets(query, pluginSettings, actionParams) {
+  let { params } = paramsMapper(pluginSettings, actionParams);
+  const { settings } = paramsMapper(pluginSettings, actionParams);
+  params = { ...params, REGION: params.REGION || "eu-west-2" };
+  const ec2 = getEc2(params, settings);
+  let subnets;
+  try {
+    subnets = (await ec2.describeSubnets().promise()).Subnets.filter(
+      (subnet) => subnet.VpcId.includes(query)
+          || subnet.AvailabilityZone.includes(query)
+          || subnet.SubnetId.includes(query),
+    ).map((subnet) => (
+      {
+        id: subnet.SubnetId,
+        value: subnet.SubnetId,
+      }
+    ));
+    console.error(subnets);
+  } catch (err) {
+    console.error(err);
+    throw new Error("Error getting subnets");
+  }
+  return subnets;
+}
+
+module.exports = { getInstanceTypes, listRegions, listSubnets };
