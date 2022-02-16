@@ -100,7 +100,6 @@ async function listSubnets(query, pluginSettings, actionParams) {
         value: subnet.SubnetId,
       }
     ));
-    console.error(subnets);
   } catch (err) {
     console.error(err);
     throw new Error("Error getting subnets");

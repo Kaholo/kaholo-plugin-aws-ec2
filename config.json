@@ -989,7 +989,9 @@
         {
           "name": "subnetId",
           "viewName": "Subnet ID",
-          "type": "string",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listSubnets",
           "description": "The ID of the subnet.",
           "placeholder": "192.168.255.255",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html"
@@ -1148,7 +1150,9 @@
         {
           "name": "subnetId",
           "viewName": "Subnet ID",
-          "type": "string",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listSubnets",
           "description": "If specified, associate the created Route Table with the specified Subnet.",
           "placeholder": "192.168.255.255",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html"
@@ -1211,7 +1215,9 @@
         {
           "name": "subnetId",
           "viewName": "Subnet ID",
-          "type": "string",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listSubnets",
           "description": "The subnet to create this NAT Gateway in.",
           "placeholder": "192.168.255.255",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html"
@@ -1353,7 +1359,9 @@
         {
           "name": "subnetId",
           "viewName": "Subnet ID",
-          "type": "string",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listSubnets",
           "description": "If specified, associate the route table with the specified subnet.",
           "placeholder": "subnet-01234567890abcdef",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/attach-internet-gateway.html"
