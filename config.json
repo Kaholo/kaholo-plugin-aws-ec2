@@ -5,7 +5,7 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "description": "Integration with AWS EC2 API",
   "category": [
     "CLOUD",
@@ -34,6 +34,14 @@
       "name": "createInstance",
       "viewName": "Create Instance",
       "params": [
+        {
+          "name": "NAME_TAG",
+          "viewName": "Name",
+          "type": "string",
+          "description": "Set the \"Name\" tag of the created instance for easier future reference.",
+          "placeholder": "my-new-instance",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
+        },
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access Key",
