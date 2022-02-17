@@ -5,7 +5,7 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "description": "Integration with AWS EC2 API",
   "category": [
     "CLOUD",
@@ -117,7 +117,9 @@
         {
           "name": "subnetId",
           "viewName": "Subnet ID",
-          "type": "string",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listSubnets",
           "placeholder": "192.168.255.255",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html",
           "description": "If specified, host the instance on the specified Subnet."
@@ -987,7 +989,9 @@
         {
           "name": "subnetId",
           "viewName": "Subnet ID",
-          "type": "string",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listSubnets",
           "description": "The ID of the subnet.",
           "placeholder": "192.168.255.255",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html"
@@ -1146,7 +1150,9 @@
         {
           "name": "subnetId",
           "viewName": "Subnet ID",
-          "type": "string",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listSubnets",
           "description": "If specified, associate the created Route Table with the specified Subnet.",
           "placeholder": "192.168.255.255",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html"
@@ -1209,7 +1215,9 @@
         {
           "name": "subnetId",
           "viewName": "Subnet ID",
-          "type": "string",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listSubnets",
           "description": "The subnet to create this NAT Gateway in.",
           "placeholder": "192.168.255.255",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html"
@@ -1351,7 +1359,9 @@
         {
           "name": "subnetId",
           "viewName": "Subnet ID",
-          "type": "string",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listSubnets",
           "description": "If specified, associate the route table with the specified subnet.",
           "placeholder": "subnet-01234567890abcdef",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/attach-internet-gateway.html"
