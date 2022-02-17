@@ -105,10 +105,10 @@ function handleInstanceTags(action) {
   if (action.params.NAME_TAG) {
     const nameTagSpecification = {
       ResourceType: "instance",
-      Tags: {
+      Tags: [{
         Key: "Name",
         Value: parsers.string(action.params.NAME_TAG),
-      },
+      }],
     };
     tagSpecifications.push(nameTagSpecification);
   }
