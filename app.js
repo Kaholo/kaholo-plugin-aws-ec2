@@ -101,16 +101,19 @@ function handleInstanceTags(action) {
       Tags: parseLegacyParam(action.params.TAGS_SPECIFICATION, parsers.tags),
     });
   }
-
   if (action.params.NAME_TAG) {
-    const nameTagSpecification = {
-      ResourceType: "instance",
-      Tags: [{
-        Key: "Name",
-        Value: parsers.string(action.params.NAME_TAG),
-      }],
+    const nameTag = {
+      Key: "Name",
+      Value: parsers.string(action.params.NAME_TAG),
     };
-    tagSpecifications.push(nameTagSpecification);
+    if (tagSpecifications.length > 0) {
+      tagSpecifications[0].Tags.push(nameTag);
+    } else {
+      tagSpecifications.push({
+        ResourceType: "instance",
+        Tags: [nameTag],
+      });
+    }
   }
   return tagSpecifications;
 }

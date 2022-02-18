@@ -42,14 +42,14 @@ async function waitForEc2Resource(action, state, params) {
 
 function parseLegacyParam(param, parseFunc) {
   let parsedParam;
-  try {
-    if (typeof param === "string") {
+  if (typeof param === "string") {
+    try {
       parsedParam = JSON.parse(param);
-    } else {
+    } catch {
       parsedParam = parseFunc(param);
     }
-  } catch (err) {
-    throw new Error("Error parsing legacy param");
+  } else {
+    parsedParam = parseFunc(param);
   }
   return parsedParam;
 }
