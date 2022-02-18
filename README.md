@@ -9,18 +9,19 @@ This plugin is based on [aws-sdk API](https://www.npmjs.com/package/aws-sdk) and
 This method will create a new AWS instance. This method calls ec2 [runInstance](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#runInstances-property)
 
 **Parameters**
-1. Access Key (Vault) **Optional** - This is a parameter taken from the vault to access AWS
-2. Secret Key  (Vault) **Optional** - This is a paramer taken from the vault to access AWS
-3. Region (Options) **Required** - Select a region from the appeard list.
-4. Image ID (String) **Required** - If you already have an AMI ready for launch
-5. Instance type (String) **Required** - The machine type you want to launce for example: t2.micro
-6. Key name (String) **Optional** - Add a key-pair in order to connect to the new server.
-7. Security Group ID (Text/Array) **Required** - connect this instance to a security group. You will have to use a code (code or configuration) to transfer array to the api.
-8. User data (String) **Optional** - Schell script to run on the instance on start.
-9. Minimum of instances (Int) **Optional** - The minimum number of instances to launch (by default 1).
-10. Maximum of instances (Int) **Optional**- The maximum number of instances to launch (by default 1).
-11. Subnet ID (String) **Optional**- If specified, host the instance on the specified Subnet.
-12. Tags specifications (Text/Object) **Optional** - The tags to apply to the resources during launch. 
+1. Name (string) **Optional** - Set the "Name" tag of the created instance for easier future reference.
+2. Access Key (Vault) **Optional** - This is a parameter taken from the vault to access AWS
+3. Secret Key  (Vault) **Optional** - This is a paramer taken from the vault to access AWS
+4. Region (Options) **Required** - Select a region from the appeard list.
+5. Image ID (String) **Required** - If you already have an AMI ready for launch
+6. Instance type (String) **Required** - The machine type you want to launce for example: t2.micro
+7. Key name (String) **Optional** - Add a key-pair in order to connect to the new server.
+8. Security Group ID (Text/Array) **Required** - connect this instance to a security group. You will have to use a code (code or configuration) to transfer array to the api.
+9. User data (String) **Optional** - Schell script to run on the instance on start.
+10. Minimum of instances (Int) **Optional** - The minimum number of instances to launch (by default 1).
+11. Maximum of instances (Int) **Optional**- The maximum number of instances to launch (by default 1).
+12. Subnet ID (String) **Optional**- If specified, host the instance on the specified Subnet.
+13. Tags specifications (Text/Object) **Optional** - The tags to apply to the resources during launch. 
 
 ## Method: Start Instance
 
