@@ -2,7 +2,7 @@ const {
   runEc2Func, parseLegacyParam, getPortObj, waitForNatGateway, waitForEc2Resource,
 } = require("./helpers");
 const parsers = require("./parsers");
-const { getInstanceTypes, listRegions } = require("./autocomplete");
+const { getInstanceTypes, listRegions, listSubnets } = require("./autocomplete");
 
 async function attachInternetGateway(action, settings) {
   const params = {
@@ -93,6 +93,31 @@ async function createRouteTable(action, settings) {
   return result;
 }
 
+function handleInstanceTags(action) {
+  const tagSpecifications = [];
+  if (action.params.TAGS_SPECIFICATION) {
+    tagSpecifications.push({
+      ResourceType: "instance",
+      Tags: parseLegacyParam(action.params.TAGS_SPECIFICATION, parsers.tags),
+    });
+  }
+  if (action.params.NAME_TAG) {
+    const nameTag = {
+      Key: "Name",
+      Value: parsers.string(action.params.NAME_TAG),
+    };
+    if (tagSpecifications.length > 0) {
+      tagSpecifications[0].Tags.push(nameTag);
+    } else {
+      tagSpecifications.push({
+        ResourceType: "instance",
+        Tags: [nameTag],
+      });
+    }
+  }
+  return tagSpecifications;
+}
+
 async function createInstance(action, settings) {
   const params = {
     ImageId: parsers.string(action.params.IMAGE_ID),
@@ -112,12 +137,7 @@ async function createInstance(action, settings) {
     throw new Error("Max Count must be bigger or equal to Min Count");
   }
 
-  if (action.params.TAGS_SPECIFICATION) {
-    params.TagSpecifications = [{
-      ResourceType: "instance",
-      Tags: parseLegacyParam(action.params.TAGS_SPECIFICATION, parsers.tags),
-    }];
-  }
+  params.TagSpecifications = handleInstanceTags(action, params);
 
   return runEc2Func(action, settings, params, "runInstances");
 }
@@ -496,5 +516,6 @@ module.exports = {
   // auto complete
   getInstanceTypes,
   listRegions,
+  listSubnets,
   modifyInstanceAttribute,
 };
