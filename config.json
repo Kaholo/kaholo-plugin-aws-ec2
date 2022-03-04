@@ -1248,6 +1248,7 @@
           "name": "AllocationId",
           "viewName": "Allocation ID",
           "type": "string",
+          "required": true,
           "description": "The allocation ID of an Elastic IP address to associate with the NAT gateway. If the Elastic IP address is associated with another resource, you must first disassociate it.",
           "placeholder": "eipalloc-12345678",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-addresses.html"
