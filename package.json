@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "2.853.0",
+    "kaholo-aws-plugin": "github:Kaholo/aws-plugin#KP-565",
     "lodash": "^4.17.21"
   },
   "devDependencies": {

@@ -1,110 +1,47 @@
-const { getEc2, getLightsail } = require("./helpers");
-
-const MISSING_OR_INCORRECT_CREDENTIALS_ERROR = "Missing or incorrect credentials - please select valid access and secret keys first.";
-
-function paramsMapper(pluginSettings, actionParams) {
-  const settings = {};
-  const params = {};
-
-  if (pluginSettings && pluginSettings.length > 0) {
-    pluginSettings.forEach((setting) => {
-      settings[setting.name] = setting.value;
-    });
-  }
-
-  if (actionParams && actionParams.length > 0) {
-    actionParams.forEach((param) => {
-      params[param.name] = param.value;
-    });
-  }
-
-  return { settings, params };
-}
+const aws = require("aws-sdk");
+const { autocomplete } = require("kaholo-aws-plugin");
 
 async function getInstanceTypes(query, pluginSettings, actionParams) {
-  const { settings, params } = paramsMapper(pluginSettings, actionParams);
-  const ec2 = getEc2(params, settings);
+  const {
+    client,
+    params,
+    settings,
+  } = autocomplete.handleInput(aws.EC2, actionParams, pluginSettings);
 
-  const ec2Params = {
-    MaxResults: "10",
+  const payload = {
+    MaxResults: "100",
     Filters: [{
       Name: "location",
-      Values: [params.REGION.id],
+      Values: [params.REGION || settings.REGION],
+    }, {
+      Name: "instance-type",
+      Values: [`*${query}*`],
     }],
   };
-  if (query) {
-    ec2Params.Filters.push({
-      Name: "instance-type",
-      Values: [`${query}*`],
+
+  return (await client.describeInstanceTypeOfferings(payload).promise())
+    .InstanceTypeOfferings.map((type) => ({
+      id: type.InstanceType,
+      value: type.InstanceType,
+    })).sort((a, b) => {
+      if (a.id < b.id) { return -1; }
+      return 1;
     });
-  }
-  return new Promise((resolve, reject) => {
-    ec2.describeInstanceTypeOfferings(ec2Params, (err, data) => {
-      if (err) {
-        reject(new Error(`Can't return instance types: ${err.message || JSON.stringify(err)}`));
-      }
-      resolve(data.InstanceTypeOfferings.map((instanceTypeOffering) => ({
-        id: instanceTypeOffering.InstanceType,
-        value: instanceTypeOffering.InstanceType,
-      })));
-    });
-  });
-}
-
-async function listRegions(query, pluginSettings, actionParams) {
-  let { params } = paramsMapper(pluginSettings, actionParams);
-  const { settings } = paramsMapper(pluginSettings, actionParams);
-  params = { ...params, REGION: params.REGION || "eu-west-2" };
-  const ec2 = getEc2(params, settings);
-  const lightsail = getLightsail(params, settings);
-
-  const ec2RegionsPromise = ec2.describeRegions().promise();
-  const lightsailRegionsPromise = lightsail.getRegions().promise();
-
-  return Promise.all([ec2RegionsPromise, lightsailRegionsPromise]).then(
-    ([ec2Regions,
-      lightsailRegions]) => ec2Regions.Regions.map((ec2Region) => {
-      const lsRegion = lightsailRegions.regions.find((x) => x.name === ec2Region.RegionName);
-      return lsRegion
-        ? { id: ec2Region.RegionName, value: `${ec2Region.RegionName} (${lsRegion.displayName})` }
-        : { id: ec2Region.RegionName, value: ec2Region.RegionName };
-    }).sort((a, b) => {
-      if (a.value > b.value) {
-        return 1;
-      }
-      if (a.value < b.value) {
-        return -1;
-      }
-      return 0;
-    }),
-  ).catch((err) => {
-    console.error(err);
-    throw new Error(MISSING_OR_INCORRECT_CREDENTIALS_ERROR);
-  });
 }
 
 async function listSubnets(query, pluginSettings, actionParams) {
-  let { params } = paramsMapper(pluginSettings, actionParams);
-  const { settings } = paramsMapper(pluginSettings, actionParams);
-  params = { ...params, REGION: params.REGION || "eu-west-2" };
-  const ec2 = getEc2(params, settings);
-  let subnets;
-  try {
-    subnets = (await ec2.describeSubnets().promise()).Subnets.filter(
-      (subnet) => subnet.VpcId.includes(query)
-          || subnet.AvailabilityZone.includes(query)
-          || subnet.SubnetId.includes(query),
-    ).map((subnet) => (
-      {
-        id: subnet.SubnetId,
-        value: subnet.SubnetId,
-      }
-    ));
-  } catch (err) {
-    console.error(err);
-    throw new Error("Error getting subnets");
-  }
-  return subnets;
+  const { client } = autocomplete.handleInput(aws.EC2, actionParams, pluginSettings);
+  const subnets = await client.describeSubnets().promise();
+
+  return subnets.Subnets.filter(
+    (subnet) => subnet.VpcId.includes(query)
+      || subnet.AvailabilityZone.includes(query)
+      || subnet.SubnetId.includes(query),
+  ).map((subnet) => autocomplete.itemFromValue(subnet.SubnetId));
 }
 
-module.exports = { getInstanceTypes, listRegions, listSubnets };
+module.exports = {
+  listSubnets,
+  getInstanceTypes,
+  listRegions: autocomplete.listRegions,
+};
