@@ -12,12 +12,12 @@
   "dependencies": {
     "aws-sdk": "2.853.0",
     "kaholo-aws-plugin": "github:Kaholo/aws-plugin#KP-565",
-    "lodash": "^4.17.21"
+    "lodash": "4.17.21"
   },
   "devDependencies": {
-    "eslint": "^8.8.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.4",
-    "jest": "^27.5.0"
+    "eslint": "8.8.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-plugin-import": "2.25.4",
+    "jest": "27.5.0"
   }
 }

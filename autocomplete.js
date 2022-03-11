@@ -1,43 +1,33 @@
-const aws = require("aws-sdk");
+const _ = require("lodash");
 const { autocomplete } = require("kaholo-aws-plugin");
 
-async function getInstanceTypes(query, pluginSettings, actionParams) {
-  const {
-    client,
-    params,
-    settings,
-  } = autocomplete.handleInput(aws.EC2, actionParams, pluginSettings);
-
+async function getInstanceTypes(query, params, client, region) {
   const payload = {
     MaxResults: "100",
     Filters: [{
       Name: "location",
-      Values: [params.REGION || settings.REGION],
+      Values: [region],
     }, {
       Name: "instance-type",
       Values: [`*${query}*`],
     }],
   };
 
-  return (await client.describeInstanceTypeOfferings(payload).promise())
+  return _.sortBy((await client.describeInstanceTypeOfferings(payload).promise())
     .InstanceTypeOfferings.map((type) => ({
       id: type.InstanceType,
       value: type.InstanceType,
-    })).sort((a, b) => {
-      if (a.id < b.id) { return -1; }
-      return 1;
-    });
+    })), ["id"]);
 }
 
-async function listSubnets(query, pluginSettings, actionParams) {
-  const { client } = autocomplete.handleInput(aws.EC2, actionParams, pluginSettings);
+async function listSubnets(query, params, client) {
   const subnets = await client.describeSubnets().promise();
 
   return subnets.Subnets.filter(
     (subnet) => subnet.VpcId.includes(query)
       || subnet.AvailabilityZone.includes(query)
       || subnet.SubnetId.includes(query),
-  ).map((subnet) => autocomplete.itemFromValue(subnet.SubnetId));
+  ).map((subnet) => autocomplete.toAutocompleteItemFromPrimitive(subnet.SubnetId));
 }
 
 module.exports = {

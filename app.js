@@ -5,19 +5,13 @@ const { resolveSecurityGroupFunction } = require("./helpers");
 const { getInstanceTypes, listRegions, listSubnets } = require("./autocomplete");
 const payloadFuncs = require("./payload-functions");
 
-function EC2Func(funcName, payloadFunction = null) {
-  return awsPlugin.mapToAws(aws.EC2, funcName, payloadFunction);
-}
+const awsCreateNatGateway = awsPlugin.mapToAwsMethod("createNatGateway", payloadFuncs.prepareCreateNatGatewayPayload);
+const awsCreateRoute = awsPlugin.mapToAwsMethod("createRoute");
+const awsModifySubnetAttribute = awsPlugin.mapToAwsMethod("modifySubnetAttribute");
+const awsAttachInternetGateway = awsPlugin.mapToAwsMethod("attachInternetGateway");
+const awsCreateSecurityGroup = awsPlugin.mapToAwsMethod("createSecurityGroup", payloadFuncs.prepareCreateSecurityGroupPayload);
 
-const awsCreateNatGateway = EC2Func("createNatGateway", payloadFuncs.prepareCreateNatGatewayPayload);
-const awsCreateRoute = EC2Func("createRoute");
-const awsModifySubnetAttribute = EC2Func("modifySubnetAttributes");
-const awsAttachInternetGateway = EC2Func("attachInternetGateway");
-const awsCreateSecurityGroup = EC2Func("createSecurityGroup", payloadFuncs.prepareCreateSecurityGroupPayload);
-
-async function modifyInstanceType(action, settings) {
-  const { client, params } = awsPlugin.handleInput(aws.EC2, action, settings, { InstanceIds: "array" });
-
+async function modifyInstanceType(client, params) {
   return Promise.all(params.InstanceIds.map((instanceId) => {
     const payload = {
       InstanceId: instanceId,
@@ -27,10 +21,8 @@ async function modifyInstanceType(action, settings) {
   }));
 }
 
-async function modifyInstanceAttribute(action, settings) {
-  const { client, params } = awsPlugin.handleInput(aws.EC2, action, settings, { InstanceIds: "array" });
-
-  return Promise.all(params.instanceIds.map((instanceId) => {
+async function modifyInstanceAttribute(client, params) {
+  return Promise.all(params.InstanceIds.map((instanceId) => {
     const payload = {
       InstanceId: instanceId,
       DryRun: params.DryRun,
@@ -43,17 +35,16 @@ async function modifyInstanceAttribute(action, settings) {
   }));
 }
 
-async function associateRouteTable(action, settings) {
-  const awsAssociateRouteTableToSubnet = EC2Func("associateRouteTable", payloadFuncs.prepareAssociateRouteTableToSubnetPayload);
-  const awsAssociateRouteTableToGateway = EC2Func("associateRouteTable", payloadFuncs.prepareAssociateRouteTableToGatewayPayload);
+async function associateRouteTable(client, params, region) {
+  const awsAssociateRouteTableToSubnet = awsPlugin.mapToAwsMethod("associateRouteTable", payloadFuncs.prepareAssociateRouteTableToSubnetPayload);
+  const awsAssociateRouteTableToGateway = awsPlugin.mapToAwsMethod("associateRouteTable", payloadFuncs.prepareAssociateRouteTableToGatewayPayload);
 
-  const params = awsPlugin.helpers.readActionArguments(action);
   let result = {};
 
   if (params.SubnetId) {
     result = {
       associateRouteTableToSubnet:
-      (await awsAssociateRouteTableToSubnet(action, settings)).associateRouteTable,
+      (await awsAssociateRouteTableToSubnet(client, params, region)).associateRouteTable,
     };
   }
   if (params.GatewayId) {
@@ -61,7 +52,7 @@ async function associateRouteTable(action, settings) {
       result,
       {
         associateRouteTableToGateway:
-          (await awsAssociateRouteTableToGateway(action, settings)).associateRouteTable,
+          (await awsAssociateRouteTableToGateway(client, params, region)).associateRouteTable,
       },
     );
   }
@@ -69,22 +60,22 @@ async function associateRouteTable(action, settings) {
   return result;
 }
 
-async function createInternetGatewayWorkflow(action, settings) {
-  const awsCreateInternetGateway = EC2Func("createInternetGateway", payloadFuncs.prepareCreateInternetGatewayPayload);
-
-  const params = awsPlugin.helpers.readActionArguments(action);
-  const result = { createInternetGateway: await awsCreateInternetGateway(action, settings) };
+async function createInternetGatewayWorkflow(client, params, region) {
+  const awsCreateInternetGateway = awsPlugin.mapToAwsMethod("createInternetGateway", payloadFuncs.prepareCreateInternetGatewayPayload);
+  const result = { createInternetGateway: await awsCreateInternetGateway(client, params, region) };
 
   if (params.VpcId) {
-    const attachInternetGatewayAction = awsPlugin.helpers.convertActionForAnotherMethodCall("attachInternetGateway", action, {
-      InternetGatewayId: result.createInternetGateway.InternetGateway.InternetGatewayId,
-    });
+    const attachInternetGatewayParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+      "attachInternetGateway",
+      params,
+      { InternetGatewayId: result.createInternetGateway.InternetGateway.InternetGatewayId },
+    );
 
     return _.merge(
       result,
       {
         attachInternetGateway:
-          await awsAttachInternetGateway(attachInternetGatewayAction, settings),
+          await awsAttachInternetGateway(client, attachInternetGatewayParams, region),
       },
     );
   }
@@ -92,153 +83,228 @@ async function createInternetGatewayWorkflow(action, settings) {
   return result;
 }
 
-async function createRouteTableWorkflow(action, settings) {
-  const awsCreateRouteTable = EC2Func("createRouteTable", payloadFuncs.prepareCreateRouteTablePayload);
-
-  const params = awsPlugin.helpers.readActionArguments(action);
-  const result = { createRouteTable: await awsCreateRouteTable(action, settings) };
+async function createRouteTableWorkflow(client, params, region) {
+  const awsCreateRouteTable = awsPlugin.mapToAwsMethod("createRouteTable", payloadFuncs.prepareCreateRouteTablePayload);
+  const result = { createRouteTable: await awsCreateRouteTable(client, params, region) };
 
   if (params.SubnetId || params.GatewayId) {
-    const associateAction = awsPlugin.helpers.convertActionForAnotherMethodCall("associateRouteTable", action, {
-      RouteTableId: result.createRouteTable.RouteTable.RouteTableId,
-    });
+    const associateRouteTableParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+      "associateRouteTable",
+      params,
+      { RouteTableId: result.createRouteTable.RouteTable.RouteTableId },
+    );
 
     return _.merge(
       result,
-      { associateRouteTable: await associateRouteTable(associateAction, settings) },
+      { associateRouteTable: await associateRouteTable(client, associateRouteTableParams, region) },
     );
   }
 
   return result;
 }
 
-async function createVpcWorkflow(action, settings) {
-  const awsCreateVpc = EC2Func("createVpc", payloadFuncs.prepareCreateVpcPayload);
+async function callCreateInternetGatewayMethod(client, params, additionalParams, region) {
+  const createInternetGatewayParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+    "createInternetGateway",
+    params,
+    additionalParams,
+  );
+  return createInternetGatewayWorkflow(client, createInternetGatewayParams, region);
+}
 
-  const params = awsPlugin.helpers.readActionArguments(action);
-  let result = { createVpc: await awsCreateVpc(action, settings) };
+async function callCreateRouteTableMethod(client, params, additionalParams, region) {
+  const createRouteTableParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+    "createRouteTable",
+    params,
+    additionalParams,
+  );
+
+  return createRouteTableWorkflow(client, createRouteTableParams, region);
+}
+
+async function callCreateRouteForInternetGatewayMethod(client, params, additionalParams, region) {
+  const createRouteParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+    "createRoute",
+    params,
+    {
+      RouteTableId: additionalParams.createRouteTable.RouteTable.RouteTableId,
+      DestinationCidrBlock: "0.0.0.0/0",
+      GatewayId: additionalParams.createInternetGateway.InternetGateway.InternetGatewayId,
+    },
+  );
+
+  return { createRoute: await awsCreateRoute(client, createRouteParams, region) };
+}
+
+async function callCreateSecurityGroupMethod(client, params, additionalParams, region) {
+  const createSecurityGroupParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+    "createSecurityGroup",
+    params,
+    {
+      ...additionalParams,
+      GroupName: `${params.VpcId}-dedicated-security-group`,
+      Description: `A security group dedicated only for ${params.VpcId}`,
+    },
+  );
+
+  return {
+    createSecurityGroup: await awsCreateSecurityGroup(client, createSecurityGroupParams, region),
+  };
+}
+
+async function createVpcWorkflow(client, params, region) {
+  const awsCreateVpc = awsPlugin.mapToAwsMethod("createVpc", payloadFuncs.prepareCreateVpcPayload);
+  let result = { createVpc: await awsCreateVpc(client, params, region) };
 
   const additionalParams = {
     VpcId: result.createVpc.Vpc.VpcId,
   };
 
   if (params.CreateInternetGateway) {
-    const createGatewayAction = awsPlugin.helpers.convertActionForAnotherMethodCall("createInternetGateway", action, additionalParams);
     result = _.merge(
       result,
-      await createInternetGatewayWorkflow(createGatewayAction, settings),
+      await callCreateInternetGatewayMethod(client, params, additionalParams),
     );
   }
 
   if (params.CreateRouteTable) {
-    const createRouteTableAction = awsPlugin.helpers.convertActionForAnotherMethodCall("createRouteTable", action, additionalParams);
     result = _.merge(
       result,
-      await createRouteTableWorkflow(createRouteTableAction, settings),
+      await callCreateRouteTableMethod(client, params, additionalParams, region),
     );
 
     if (params.CreateInternetGateway) {
-      const createRouteAction = awsPlugin.helpers.convertActionForAnotherMethodCall("createRoute", action, {
-        RouteTableId: result.createRouteTable.RouteTable.RouteTableId,
-        DestinationCidrBlock: "0.0.0.0/0",
-        GatewayId: result.createInternetGateway.InternetGateway.InternetGatewayId,
-      });
-
       result = _.merge(
         result,
-        { createRoute: await awsCreateRoute(createRouteAction, settings) },
+        await callCreateRouteForInternetGatewayMethod(client, params, result, region),
       );
     }
   }
 
   if (params.CreateSecurityGroup) {
-    const securityGroupAction = awsPlugin.helpers.convertActionForAnotherMethodCall("createSecurityGroup", action, {
-      ...additionalParams,
-      GroupName: `${params.VpcId}-dedicated-security-group`,
-      Description: `A security group dedicated only for ${params.VpcId}`,
-    });
-
     result = _.merge(
       result,
-      { createSecurityGroup: await awsCreateSecurityGroup(securityGroupAction, settings) },
+      callCreateSecurityGroupMethod(client, params, additionalParams, region),
     );
   }
 
   return result;
 }
 
-async function createSubnetWorkflow(action, settings) {
-  const awsCreateSubnet = EC2Func("createSubnet", payloadFuncs.prepareCreateSubnetPayload);
+async function callCreateNatGatewayMethod(client, params, additionalParams, region) {
+  const createNatGatewayParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+    "createNatGateway",
+    params,
+    additionalParams,
+  );
+  return { createNatGateway: await awsCreateNatGateway(client, createNatGatewayParams, region) };
+}
 
-  const { client, params } = awsPlugin.handleInput(aws.EC2, action, settings);
-  let result = { createSubnet: await awsCreateSubnet(action, settings) };
+async function callAssociateRouteTableMethod(client, params, additionalParams, region) {
+  const associateRouteTableParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+    "associateRouteTable",
+    params,
+    additionalParams,
+  );
+  return {
+    associateRouteTable: await associateRouteTable(client, associateRouteTableParams, region),
+  };
+}
+
+async function callCreateRouteForNatGatewayMethod(client, params, additionalParams, region) {
+  const createRouteParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+    "createRoute",
+    params,
+    {
+      SubnetId: additionalParams.SubnetId,
+      RouteTableId: additionalParams.createRouteTable.RouteTable.RouteTableId,
+      NatGatewayId: additionalParams.createNatGateway.NatGateway.NatGatewayId,
+      DestinationCidrBlock: "0.0.0.0/0",
+    },
+  );
+
+  return { createRoute: await awsCreateRoute(client, createRouteParams, region) };
+}
+
+async function callModifySubnetAttributeMethodToMapPublicIp(
+  client,
+  params,
+  additionalParams,
+  region,
+) {
+  const modifySubnetAttributeParams = {
+    ...additionalParams,
+    MapPublicIpOnLaunch: { Value: true },
+  };
+
+  return {
+    modifySubnetAttribute: await awsModifySubnetAttribute(
+      client,
+      modifySubnetAttributeParams,
+      region,
+    ),
+  };
+}
+
+async function createSubnetWorkflow(client, params, region) {
+  const awsCreateSubnet = awsPlugin.mapToAwsMethod("createSubnet", payloadFuncs.prepareCreateSubnetPayload);
+  let result = { createSubnet: await awsCreateSubnet(client, params, region) };
 
   const additionalParams = {
     SubnetId: result.createSubnet.Subnet.SubnetId,
   };
 
   if (params.AllocationId) {
-    const createNatGatewayAction = awsPlugin.helpers.convertActionForAnotherMethodCall("createNatGateway", action, additionalParams);
     result = _.merge(
       result,
-      { createNatGateway: await awsCreateNatGateway(createNatGatewayAction, settings) },
+      await callCreateNatGatewayMethod(client, params, additionalParams, region),
     );
   }
 
   if (params.RouteTableId) {
-    const associateRouteTableAction = awsPlugin.helpers.convertActionForAnotherMethodCall("associateRouteTable", action, additionalParams);
     result = _.merge(
       result,
-      { associateRouteTable: await associateRouteTable(associateRouteTableAction, settings) },
+      await callAssociateRouteTableMethod(client, params, additionalParams, region),
     );
   } else if (params.CreatePrivateRouteTable) {
-    const createRouteTableAction = awsPlugin.helpers.convertActionForAnotherMethodCall("createRouteTableWorkflow", action, additionalParams);
     result = _.merge(
       result,
-      await createRouteTableWorkflow(createRouteTableAction, settings),
+      await callCreateRouteTableMethod(client, params, additionalParams, region),
     );
 
     if (result.createNatGateway) {
-      // if nat gateway also was created, connect to correct route
-      const createRouteAction = awsPlugin.helpers.convertActionForAnotherMethodCall("createRoute", action, {
-        ...additionalParams,
-        RouteTableId: result.createRouteTable.RouteTable.RouteTableId,
-        NatGatewayId: result.createNatGateway.NatGateway.NatGatewayId,
-        DestinationCidrBlock: "0.0.0.0/0",
-      });
-
-      // wait for nat gateway to be available than create route
       await client.waitFor("natGatewayAvailable", {
         NatGatewayIds: [result.createNatGateway.NatGateway.NatGatewayId],
       }).promise();
 
       result = _.merge(
         result,
-        { createRoute: await awsCreateRoute(createRouteAction, settings) },
+        await callCreateRouteForNatGatewayMethod(
+          client,
+          params,
+          { ...additionalParams, ...result },
+          region,
+        ),
       );
     }
   }
 
   if (params.MapPublicIpOnLaunch) {
-    const subnetAttributeAction = awsPlugin.helpers.convertActionForAnotherMethodCall("modifySubnetAttribute", action, {
-      ...additionalParams,
-      MapPublicIpOnLaunch: { Value: true },
-    });
-
     result = _.merge(
       result,
-      { modifySubnetAttribute: await awsModifySubnetAttribute(subnetAttributeAction, settings) },
+      await callModifySubnetAttributeMethodToMapPublicIp(client, params, additionalParams, region),
     );
   }
 
   return result;
 }
 
-async function createVolume(action, settings) {
-  const awsCreateVolume = EC2Func("createVolume", (params) => _.omit(params, "WaitForEnd"));
-
-  const { client, params } = awsPlugin.handleInput(aws.EC2, action, settings);
-  let result = { createVolume: await awsCreateVolume(action, settings) };
+async function createVolume(client, params, region) {
+  const awsCreateVolume = awsPlugin.mapToAwsMethod(
+    "createVolume",
+    (parameters) => _.omit(parameters, "WaitForEnd"),
+  );
+  let result = { createVolume: await awsCreateVolume(client, params, region) };
 
   if (!params.WaitForEnd) {
     return result;
@@ -251,11 +317,12 @@ async function createVolume(action, settings) {
   return { createVolume: result.Volumes[0] };
 }
 
-async function createSnapshot(action, settings) {
-  const awsCreateSnapshot = EC2Func("createSnapshot", (params) => _.omit(params, "WaitForEnd"));
-
-  const { client, params } = awsPlugin.handleInput(aws.EC2, action, settings);
-  let result = { createSnapshot: await awsCreateSnapshot(action, settings) };
+async function createSnapshot(client, params, region) {
+  const awsCreateSnapshot = awsPlugin.mapToAwsMethod(
+    "createSnapshot",
+    (parameters) => _.omit(parameters, "WaitForEnd"),
+  );
+  let result = { createSnapshot: await awsCreateSnapshot(client, params, region) };
 
   if (!params.WaitForEnd) {
     return result;
@@ -268,14 +335,7 @@ async function createSnapshot(action, settings) {
   return { createSnapshot: result.Snapshots[0] };
 }
 
-async function addSecurityGroupRules(action, settings) {
-  const { client, params } = awsPlugin.handleInput(aws.EC2, action, settings, {
-    CidrIps: "array",
-    CidrIps6: "array",
-    FromPorts: "array",
-    ToPorts: "array",
-  });
-
+async function addSecurityGroupRules(client, params) {
   const payload = payloadFuncs.prepareAddSecurityGroupRulesPayload(params);
   const funcName = resolveSecurityGroupFunction(params.RuleType);
 
@@ -283,37 +343,43 @@ async function addSecurityGroupRules(action, settings) {
 }
 
 module.exports = {
-  createInstance: EC2Func("runInstances", payloadFuncs.prepareCreateInstancePayload),
-  startInstances: EC2Func("startInstances", payloadFuncs.prepareManageInstancesPayload),
-  stopInstances: EC2Func("stopInstances", payloadFuncs.prepareManageInstancesPayload),
-  rebootInstances: EC2Func("rebootInstances", payloadFuncs.prepareManageInstancesPayload),
-  terminateInstances: EC2Func("terminateInstances", payloadFuncs.prepareManageInstancesPayload),
-  describeInstances: EC2Func("describeInstances", payloadFuncs.prepareDescribeInstancesPayload),
-  modifyInstanceType,
-  modifyInstanceAttribute,
-  createKeyPair: EC2Func("createKeyPair"),
-  deleteKeyPair: EC2Func("deleteKeyPair"),
-  describeKeyPairs: EC2Func("describeKeyPairs"),
-  allocateAddress: EC2Func("allocateAddress"),
-  associateAddress: EC2Func("associateAddress"),
-  releaseAddress: EC2Func("releaseAddress"),
-  createVpc: createVpcWorkflow,
-  deleteVpc: EC2Func("deleteVpc"),
-  createSubnet: createSubnetWorkflow,
-  deleteSubnet: EC2Func("deleteSubnet"),
-  createNatGateway: awsCreateNatGateway,
-  createInternetGateway: createInternetGatewayWorkflow,
-  attachInternetGateway: awsAttachInternetGateway,
-  createRoute: awsCreateRoute,
-  createRouteTable: createRouteTableWorkflow,
-  associateRouteTable,
-  createVolume,
-  createSnapshot,
-  createSecurityGroup: awsCreateSecurityGroup,
-  addSecurityGroupRules,
+  ...awsPlugin.bootstrap(
+    aws.EC2,
+    {
+      createInstance: awsPlugin.mapToAwsMethod("runInstances", payloadFuncs.prepareCreateInstancePayload),
+      startInstances: awsPlugin.mapToAwsMethod("startInstances"),
+      stopInstances: awsPlugin.mapToAwsMethod("stopInstances"),
+      rebootInstances: awsPlugin.mapToAwsMethod("rebootInstances"),
+      terminateInstances: awsPlugin.mapToAwsMethod("terminateInstances"),
+      describeInstances: awsPlugin.mapToAwsMethod("describeInstances", payloadFuncs.prepareDescribeInstancesPayload),
+      modifyInstanceType,
+      modifyInstanceAttribute,
+      createKeyPair: awsPlugin.mapToAwsMethod("createKeyPair"),
+      deleteKeyPair: awsPlugin.mapToAwsMethod("deleteKeyPair"),
+      describeKeyPairs: awsPlugin.mapToAwsMethod("describeKeyPairs"),
+      allocateAddress: awsPlugin.mapToAwsMethod("allocateAddress"),
+      associateAddress: awsPlugin.mapToAwsMethod("associateAddress"),
+      releaseAddress: awsPlugin.mapToAwsMethod("releaseAddress"),
+      createVpc: createVpcWorkflow,
+      deleteVpc: awsPlugin.mapToAwsMethod("deleteVpc"),
+      createSubnet: createSubnetWorkflow,
+      deleteSubnet: awsPlugin.mapToAwsMethod("deleteSubnet"),
+      createNatGateway: awsCreateNatGateway,
+      createInternetGateway: createInternetGatewayWorkflow,
+      attachInternetGateway: awsAttachInternetGateway,
+      createRoute: awsCreateRoute,
+      createRouteTable: createRouteTableWorkflow,
+      associateRouteTable,
+      createVolume,
+      createSnapshot,
+      createSecurityGroup: awsCreateSecurityGroup,
+      addSecurityGroupRules,
+    },
+    {
+      getInstanceTypes,
+      listRegions,
+      listSubnets,
+    },
+  ),
 
-  // auto complete
-  getInstanceTypes,
-  listRegions,
-  listSubnets,
 };

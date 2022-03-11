@@ -5,7 +5,7 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "3.0.0",
+  "version": "2.8.1",
   "description": "Integration with AWS EC2 API",
   "category": [
     "CLOUD",
@@ -88,6 +88,7 @@
           "name": "SecurityGroupIds",
           "viewName": "Security groups IDs",
           "type": "string",
+          "parserType": "array",
           "placeholder": "sg-33bb22aa",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html",
           "description": "Connect this instance to a security group. You will have to use a code or configuration to transfer the array to the API"
@@ -104,6 +105,8 @@
           "name": "MinCount",
           "viewName": "minimum of instances",
           "type": "string",
+          "parserType": "number",
+          "required": true,
           "default": "1",
           "placeholder": "1",
           "description": "The minimum number of instances to launch (by default 1)."
@@ -112,6 +115,8 @@
           "name": "MaxCount",
           "viewName": "maximum of instances",
           "type": "string",
+          "parserType": "number",
+          "required": true,
           "default": "1",
           "placeholder": "1",
           "description": "The maximum number of instances to launch. The default is 1."
@@ -178,6 +183,7 @@
           "name": "InstanceIds",
           "viewName": "Instance ids (array)",
           "type": "text",
+          "parserType": "array",
           "required": true,
           "placeholder": "i-1234567a",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
@@ -219,6 +225,7 @@
           "name": "InstanceIds",
           "viewName": "Instance ids (array)",
           "type": "text",
+          "parserType": "array",
           "required": true,
           "placeholder": "i-1234567a",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
@@ -260,6 +267,7 @@
           "name": "InstanceIds",
           "viewName": "Instance ids (array)",
           "type": "text",
+          "parserType": "array",
           "required": true,
           "placeholder": "i-1234567a",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
@@ -301,6 +309,7 @@
           "name": "InstanceIds",
           "viewName": "Instance Ids",
           "type": "string",
+          "parserType": "array",
           "required": true,
           "placeholder": "i-1234567a",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
@@ -342,6 +351,7 @@
           "name": "InstanceIds",
           "viewName": "Instance Ids",
           "type": "text",
+          "parserType": "array",
           "description": "The IDs of the instances. Can be an array of instances.",
           "placeholder": "i-1234567a",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html"
@@ -350,6 +360,7 @@
           "name": "Filters",
           "viewName": "Filters (Array)",
           "type": "text",
+          "parserType": "array",
           "description": "Array of filters",
           "placeholder": "eyJNYXJrZXIiOiBudWxsLCAiYm90b190cnVuY2F0ZV9hbW91bnQiOiAxfQ==",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html"
@@ -365,6 +376,7 @@
           "name": "MaxResults",
           "viewName": "Max Results",
           "type": "string",
+          "parserType": "number",
           "default": "100",
           "description": "Maximum number of instances to return.",
           "placeholder": "100",
@@ -413,6 +425,7 @@
           "name": "InstanceIds",
           "viewName": "Instance IDs",
           "type": "text",
+          "parserType": "array",
           "required": true,
           "description": "Accepts either a string with one or multiple instance IDs each separated with a new line, or an array of instance ID strings passed from the code layer.",
           "placeholder": "i-1234567a"
@@ -464,6 +477,7 @@
           "name": "InstanceIds",
           "viewName": "Instance IDs",
           "type": "text",
+          "parserType": "array",
           "required": true,
           "description": "Accepts either a string with one or multiple instance IDs each separated with a new line, or an array of instance ID strings passed from the code layer.",
           "placeholder": "i-1234567a"
@@ -1497,6 +1511,7 @@
           "name": "VpcId",
           "viewName": "VPC ID",
           "type": "string",
+          "required": true,
           "description": "The VPC to create this Route Table in.",
           "placeholder": "vpc-2f09a348",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
@@ -1570,6 +1585,7 @@
           "name": "RouteTableId",
           "viewName": "Route Table ID",
           "type": "string",
+          "required": true,
           "description": "The ID of the route table to associate.\n\n5. Subnet ID (String)Optional- If specified, associate the route table with the specified subnet.",
           "placeholder": "192.168.255.255",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html"
@@ -1965,6 +1981,7 @@
           "name": "CidrIps",
           "viewName": "CIDR IPv4 Blocks",
           "type": "text",
+          "parserType": "array",
           "description": "The IP v6 ranges in CIDR notation to apply to the rule(To authorize\\revoke). To enter multiple values separate each with a new line.",
           "placeholder": "10.2.0.0/16",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html"
@@ -1973,6 +1990,7 @@
           "name": "CidrIps6",
           "viewName": "CIDR IPv6 Blocks",
           "type": "text",
+          "parserType": "array",
           "description": "The IP v6 ranges in CIDR notation to apply to the rule(To authorize\revoke). To enter multiple values separate each with a new line.",
           "placeholder": "2002::1234:abcd:ffff:c0a8:101/64"
         },
@@ -1980,6 +1998,7 @@
           "name": "FromPorts",
           "viewName": "From Ports",
           "type": "text",
+          "parserType": "array",
           "description": "The source ports to apply the rule to. To enter multiple values separate each with a new line. If specified the same number of ports as 'From Ports' map each port in 'From Ports' to a port specified here. If not, map each port on 'From Ports' to all ports specified here.For example: \n* From Ports: 22, 80. To Ports: 22, 80. => 2 rules, 22->22, 80->80.\n* From Ports: 80, 8080. To Ports: 80. => 2 rules, 80->80, 8080->80.",
           "placeholder": "8009",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-group-rules.html"
@@ -1988,6 +2007,7 @@
           "name": "ToPorts",
           "viewName": "To Ports",
           "type": "text",
+          "parserType": "array",
           "description": "The target ports to apply the rule to. To enter multiple values separate each with a new line.",
           "placeholder": "8090",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-group-rules.html"

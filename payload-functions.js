@@ -1,12 +1,9 @@
-const { helpers, parsers } = require("kaholo-aws-plugin");
+const { helpers } = require("kaholo-aws-plugin");
 const _ = require("lodash");
 const { strToBase64 } = require("./helpers");
 
 function prepareCreateInstancePayload(params) {
-  const maxCount = parsers.number(params.MaxCount);
-  const minCount = parsers.number(params.MinCount);
-
-  if (maxCount < minCount) {
+  if (params.maxCount < params.minCount) {
     throw new Error("Max Count must be bigger or equal to Min Count");
   }
 
@@ -20,41 +17,18 @@ function prepareCreateInstancePayload(params) {
 
   return {
     ...(_.omit(params, "NameTag")),
-    MaxCount: maxCount,
-    MinCount: minCount,
-    SecurityGroupIds: parsers.array(params.SecurityGroupIds),
     UserData: strToBase64(params.UserData),
-    TagSpecifications: helpers.handleTagSpecification("instance", [params.TagSpecifications, ...nameTag]),
-  };
-}
-
-function prepareManageInstancesPayload(params) {
-  const instances = parsers.array(params.InstanceIds);
-
-  if (_.isEmpty(instances)) {
-    throw new Error("You must provide at least one Instance ID");
-  }
-
-  return {
-    InstanceIds: instances,
+    TagSpecifications: helpers.buildTagSpecification("instance", [params.TagSpecifications, ...nameTag]),
   };
 }
 
 function prepareDescribeInstancesPayload(params) {
-  const payload = {
-    ...params,
-    MaxResults: parsers.number(params.MaxResults),
-    InstanceIds: parsers.array(params.InstanceIds),
-    Filters: parsers.array(params.Filters),
-  };
-
-  // EC2 does not allow MaxResults if I
-  // nstanceIds are provided
-  if (payload.InstanceIds.length) {
-    return _.omit(payload, "MaxResults");
+  // EC2 does not allow MaxResults if InstanceIds are provided
+  if (params.InstanceIds.length) {
+    return _.omit(params, "MaxResults");
   }
 
-  return payload;
+  return params;
 }
 
 function prepareCreateVpcPayload(params) {
@@ -64,45 +38,33 @@ function prepareCreateVpcPayload(params) {
 
   return {
     ...(_.pick(params, ["CidrBlock", "AmazonProvidedIpv6CidrBlock", "InstanceTenancy", "DryRun"])),
-    TagSpecifications: helpers.handleTagSpecification("vpc", params.tags),
+    TagSpecifications: helpers.buildTagSpecification("vpc", params.tags),
   };
 }
 
 function prepareCreateInternetGatewayPayload(params) {
   return {
     DryRun: params.DryRun,
-    TagSpecifications: helpers.handleTagSpecification("internet-gateway", params.tags),
+    TagSpecifications: helpers.buildTagSpecification("internet-gateway", params.tags),
   };
 }
 
 function prepareCreateRouteTablePayload(params) {
-  if (!params.VpcId) {
-    throw new Error("Didn't provide VPC ID!");
-  }
-
   return {
     VpcId: params.VpcId,
     DryRun: params.DryRun,
-    TagSpecifications: helpers.handleTagSpecification("route-table", params.Tags),
+    TagSpecifications: helpers.buildTagSpecification("route-table", params.Tags),
   };
 }
 
 function prepareCreateNatGatewayPayload(params) {
-  if (!params.SubnetId) {
-    throw new Error("Must provide Subnet ID");
-  }
-
   return {
     ...(_.pick(params, ["SubnetId", "AllocationId", "DryRun"])),
-    TagSpecifications: helpers.handleTagSpecification("natgateway", params.Tags),
+    TagSpecifications: helpers.buildTagSpecification("natgateway", params.Tags),
   };
 }
 
 function validateAssociateRouteTableParams(params) {
-  if (!params.RouteTableId) {
-    throw new Error("Route Table ID was not given!");
-  }
-
   if (!params.SubnetId && !params.GatewayId) {
     throw new Error("You need to provide a Subnet ID or a Gateway ID!");
   }
@@ -110,28 +72,24 @@ function validateAssociateRouteTableParams(params) {
 
 function prepareAssociateRouteTableToSubnetPayload(params) {
   validateAssociateRouteTableParams(params);
-
   if (!params.SubnetId) {
     throw new Error("Subnet ID is missing!");
   }
-
   return _.omit(params, "GatewayId");
 }
 
 function prepareAssociateRouteTableToGatewayPayload(params) {
   validateAssociateRouteTableParams(params);
-
   if (!params.GatewayId) {
     throw new Error("Gateway ID is missing!");
   }
-
   return _.omit(params, "SubnetId");
 }
 
 function prepareCreateSecurityGroupPayload(params) {
   return {
     ...(_.omit(params, "Tags")),
-    TagSpecifications: helpers.handleTagSpecification("security-group", params.Tags),
+    TagSpecifications: helpers.buildTagSpecification("security-group", params.Tags),
   };
 }
 
@@ -142,14 +100,14 @@ function prepareCreateSubnetPayload(params) {
 
   return {
     ...(_.pick(params, [
+      "VpcId",
       "AvailabilityZone",
       "CidrBlock",
       "Ipv6CidrBlock",
-      "VpcId",
       "OutpostArn",
       "DryRun",
     ])),
-    TagsSpecifications: helpers.handleTagSpecification("subnet", params.Tags),
+    TagsSpecifications: helpers.buildTagSpecification("subnet", params.Tags),
   };
 }
 
@@ -182,7 +140,6 @@ function prepareAddSecurityGroupRulesPayload(params) {
 
 module.exports = {
   prepareCreateInstancePayload,
-  prepareManageInstancesPayload,
   prepareDescribeInstancesPayload,
   prepareCreateVpcPayload,
   prepareCreateInternetGatewayPayload,
