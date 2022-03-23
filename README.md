@@ -11,7 +11,7 @@ This method will create a new AWS instance. This method calls ec2 [runInstance](
 **Parameters**
 1. Name (string) **Optional** - Set the "Name" tag of the created instance for easier future reference.
 2. Access Key (Vault) **Optional** - This is a parameter taken from the vault to access AWS
-3. Secret Key  (Vault) **Optional** - This is a paramer taken from the vault to access AWS
+3. Secret Key  (Vault) **Optional** - This is a parameter taken from the vault to access AWS
 4. Region (Options) **Required** - Select a region from the appeard list.
 5. Image ID (String) **Required** - If you already have an AMI ready for launch
 6. Instance type (String) **Required** - The machine type you want to launce for example: t2.micro
@@ -252,7 +252,7 @@ Modify the instance type of the instance(s) specified. You must stop all instanc
 1. Access Key - This is a parameter taken from the vault to access AWS
 2. Secret Key - This is a paramer taken from the vault to access AWS
 3. Region 
-4. Instance IDs - Instance IDs of all instances you want to modify. Accecpts either a string with one or multiple instance IDs, each seperated with a new line,
+4. Instance IDs - Instance IDs of all instances you want to modify. Accepts either a string with one or multiple instance IDs, each seperated with a new line,
     or an Array of instance IDs strings passed from code.
 5. instanceType - The new [Instance Type](https://aws.amazon.com/ec2/instance-types/) to modify all specified instances to. 
 
