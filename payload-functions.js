@@ -24,7 +24,7 @@ function prepareCreateInstancePayload(params) {
 
 function prepareDescribeInstancesPayload(params) {
   // EC2 does not allow MaxResults if InstanceIds are provided
-  if (params.InstanceIds.length) {
+  if (params.InstanceIds && params.InstanceIds.length) {
     return _.omit(params, "MaxResults");
   }
 
