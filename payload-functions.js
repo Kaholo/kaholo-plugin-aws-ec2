@@ -85,7 +85,7 @@ function prepareCreateSecurityGroupPayload(params) {
 }
 
 function prepareCreateSubnetPayload(params) {
-  if (!params.CidrBlock && !params.AmazonProvidedIpv6CidrBlock) {
+  if (!params.CidrBlock && !params.Ipv6CidrBlock) {
     throw new Error("Must either provide CIDR Block or select AmazonProvidedIpv6CidrBlock");
   }
 
