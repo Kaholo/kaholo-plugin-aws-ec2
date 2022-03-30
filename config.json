@@ -61,7 +61,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "ImageId",
+          "name": "IMAGE_ID",
           "viewName": "Image id",
           "type": "string",
           "placeholder": "ami-0effcafbe4e502297",
@@ -69,7 +69,7 @@
           "description": "Amazon Machine Image (AMI) provides the information required to launch an instance."
         },
         {
-          "name": "InstanceType",
+          "name": "INSTANCE_TYPE",
           "viewName": "instance type",
           "type": "string",
           "placeholder": "c5.large",
@@ -77,7 +77,7 @@
           "description": "The machine type you want to launch for example: t2.micro"
         },
         {
-          "name": "KeyName",
+          "name": "KEY_NAME",
           "viewName": "Key name",
           "type": "string",
           "placeholder": "my_max_256_chars_key_pair",
@@ -85,7 +85,7 @@
           "description": "If specified, encrypt the volume created for this instance using the specified Key pair."
         },
         {
-          "name": "SecurityGroupIds",
+          "name": "SECURITY_GROUP_IDS",
           "viewName": "Security groups IDs",
           "type": "string",
           "parserType": "array",
@@ -94,7 +94,7 @@
           "description": "Connect this instance to a security group. You will have to use a code or configuration to transfer the array to the API"
         },
         {
-          "name": "UserData",
+          "name": "USER_DATA",
           "viewName": "User data",
           "type": "text",
           "placeholder": "/folder/script.sh\n#!/bin/sh\nyum update -y",
@@ -102,7 +102,7 @@
           "description": "Option of passing user data to the instance that can be used to perform common automated configuration tasks and even run scripts after the instance starts."
         },
         {
-          "name": "MinCount",
+          "name": "MIN_COUNT",
           "viewName": "minimum of instances",
           "type": "string",
           "parserType": "number",
@@ -112,7 +112,7 @@
           "description": "The minimum number of instances to launch (by default 1)."
         },
         {
-          "name": "MaxCount",
+          "name": "MAX_COUNT",
           "viewName": "maximum of instances",
           "type": "string",
           "parserType": "number",
@@ -122,7 +122,7 @@
           "description": "The maximum number of instances to launch. The default is 1."
         },
         {
-          "name": "SubnetId",
+          "name": "subnetId",
           "viewName": "Subnet ID",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -132,7 +132,7 @@
           "description": "If specified, host the instance on the specified Subnet."
         },
         {
-          "name": "NameTag",
+          "name": "NAME_TAG",
           "viewName": "Name",
           "type": "string",
           "description": "Set the \"Name\" tag of the created instance for easier future reference.",
@@ -140,7 +140,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
-          "name": "TagSpecifications",
+          "name": "TAGS_SPECIFICATION",
           "viewName": "Tags Specification",
           "type": "text",
           "placeholder": "ResourceType=volume\nResourceEnv=dev",
@@ -180,7 +180,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "InstanceIds",
+          "name": "INSTANCE_IDS",
           "viewName": "Instance ids (array)",
           "type": "text",
           "parserType": "array",
@@ -222,7 +222,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "InstanceIds",
+          "name": "INSTANCE_IDS",
           "viewName": "Instance ids (array)",
           "type": "text",
           "parserType": "array",
@@ -264,7 +264,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "InstanceIds",
+          "name": "INSTANCE_IDS",
           "viewName": "Instance ids (array)",
           "type": "text",
           "parserType": "array",
@@ -306,7 +306,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "InstanceIds",
+          "name": "INSTANCE_IDS",
           "viewName": "Instance Ids",
           "type": "string",
           "parserType": "array",
@@ -348,7 +348,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "InstanceIds",
+          "name": "INSTANCE_IDS",
           "viewName": "Instance Ids",
           "type": "text",
           "parserType": "array",
@@ -357,7 +357,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html"
         },
         {
-          "name": "Filters",
+          "name": "filters",
           "viewName": "Filters (Array)",
           "type": "text",
           "parserType": "array",
@@ -366,7 +366,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html"
         },
         {
-          "name": "DryRun",
+          "name": "DRYRUN",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -405,7 +405,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "InstanceIds",
+          "name": "instanceIds",
           "viewName": "Instance IDs",
           "type": "text",
           "parserType": "array",
@@ -414,7 +414,7 @@
           "placeholder": "i-1234567a"
         },
         {
-          "name": "InstanceType",
+          "name": "instanceType",
           "viewName": "Instance Type",
           "type": "autocomplete",
           "required": true,
@@ -457,7 +457,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "InstanceIds",
+          "name": "instanceIds",
           "viewName": "Instance IDs",
           "type": "text",
           "parserType": "array",
@@ -466,7 +466,7 @@
           "placeholder": "i-1234567a"
         },
         {
-          "name": "Attribute",
+          "name": "attribute",
           "viewName": "Attribute",
           "required": true,
           "learnUrl": "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html",
@@ -535,7 +535,7 @@
           ]
         },
         {
-          "name": "AttributeValue",
+          "name": "attributeValue",
           "viewName": "Attribute value",
           "type": "string",
           "required": true,
@@ -544,7 +544,7 @@
           "description": "The new value of an attribute."
         },
         {
-          "name": "DryRun",
+          "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -583,7 +583,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "KeyName",
+          "name": "KEY_PAIR_NAME",
           "viewName": "Key pair name",
           "type": "string",
           "required": true,
@@ -624,7 +624,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "KeyName",
+          "name": "KEY_PAIR_NAME",
           "viewName": "Key pair name",
           "type": "string",
           "required": true,
@@ -697,7 +697,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "Domain",
+          "name": "DOMAIN",
           "viewName": "Domain Type",
           "type": "options",
           "options": [
@@ -715,7 +715,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html"
         },
         {
-          "name": "Address",
+          "name": "ADDRESS",
           "viewName": "Address",
           "type": "string",
           "placeholder": "192.168.20.20",
@@ -723,7 +723,7 @@
           "description": "The Elastic IP address to recover or an IPv4 address from an address pool."
         },
         {
-          "name": "PublicIpv4Pool",
+          "name": "PUBLICIPV4POOL",
           "viewName": "Public IPv4 Pool",
           "type": "string",
           "placeholder": "ipv4pool-ec2-1234567890abcdef0",
@@ -731,7 +731,7 @@
           "description": "The ID of an address pool that you own. Use this parameter to let Amazon EC2 select an address from the address pool. To specify a specific address from the address pool, use the Address parameter instead."
         },
         {
-          "name": "DryRun",
+          "name": "DRYRUN",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -770,7 +770,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "AllocationId",
+          "name": "ALLOCATION_ID",
           "viewName": "Allocation Id",
           "type": "string",
           "placeholder": "eipalloc-12345678",
@@ -778,7 +778,7 @@
           "description": "The allocation ID. This is required for EC2-VPC."
         },
         {
-          "name": "InstanceId",
+          "name": "INSTANCE_ID",
           "viewName": "Instance Id",
           "type": "string",
           "placeholder": "i-1234567a",
@@ -786,7 +786,7 @@
           "description": "The IDs of the instances. Can be an array of instance IDs."
         },
         {
-          "name": "PublicId",
+          "name": "PUBLIC_IP",
           "viewName": "Public Ip",
           "type": "string",
           "placeholder": "8.8.8.8",
@@ -794,7 +794,7 @@
           "description": "The Elastic IP address to associate with the instance. This is required for EC2-Classic."
         },
         {
-          "name": "AllowReassociation",
+          "name": "ALLOW_REASSOCIATION",
           "viewName": "Allow Reassociation",
           "type": "boolean",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/associate-address.html",
@@ -802,7 +802,7 @@
           "placeholder": "true/false"
         },
         {
-          "name": "NetworkInterfaceId",
+          "name": "NETWORK_INTERFACE_ID",
           "viewName": "Network Interface Id",
           "type": "string",
           "placeholder": "eni-0070b14946example",
@@ -810,7 +810,7 @@
           "description": "The ID of the network interface. If the instance has more than one network interface, you must specify a network interface ID."
         },
         {
-          "name": "PrivateIpAddress",
+          "name": "PRIVATE_IP_ADDRESS",
           "viewName": "Private Ip Address",
           "type": "string",
           "placeholder": "172.20.20.20",
@@ -818,7 +818,7 @@
           "description": "The primary or secondary private IP address to associate with the Elastic IP address."
         },
         {
-          "name": "DryRun",
+          "name": "DRYRUN",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -857,7 +857,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "AllocationId",
+          "name": "ALLOCATION_ID",
           "viewName": "Allocation Id",
           "type": "string",
           "description": "The allocation ID. This is required for EC2-VPC.",
@@ -865,7 +865,7 @@
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-addresses.html"
         },
         {
-          "name": "PublicIp",
+          "name": "PUBLIC_IP",
           "viewName": "Public Ip",
           "type": "string",
           "description": "The Elastic IP address to associate with the instance. This is required for EC2-Classic.",
@@ -873,7 +873,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html"
         },
         {
-          "name": "DryRun",
+          "name": "DRYRUN",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -912,7 +912,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "CidrBlock",
+          "name": "cidrBlock",
           "viewName": "CIDR Block",
           "type": "string",
           "description": "The IPv4 network range for the VPC, in CIDR notation. For example, 10.0.0.0/16.",
@@ -920,7 +920,7 @@
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html"
         },
         {
-          "name": "AmazonProvidedIpv6CidrBlock",
+          "name": "amazonProvidedIpv6CidrBlock",
           "viewName": "Amazon Provided IPV6 Block",
           "type": "boolean",
           "default": false,
@@ -928,7 +928,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/block-device-mapping-concepts.html"
         },
         {
-          "name": "InstanceTenancy",
+          "name": "instanceTenancy",
           "viewName": "Instance Tenancy",
           "type": "options",
           "default": "default",
@@ -947,28 +947,28 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dedicated-instance.html#change-tenancy-vpc"
         },
         {
-          "name": "CreateInternetGateway",
+          "name": "createInternetGateway",
           "viewName": "Create Internet Gateway",
           "type": "boolean",
           "description": "If true, create an Internet gateway and attach it this VPC. Default value is false.",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html"
         },
         {
-          "name": "CreateRouteTable",
+          "name": "createRouteTable",
           "viewName": "Create Route Table",
           "type": "boolean",
           "description": "If true, create a Route Table inside this VPC. If a subnet or an internet gateway were also created automatically, associate the route table with whoever was created. Default value is false.",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html"
         },
         {
-          "name": "CreateSecurityGroup",
+          "name": "createSecurityGroup",
           "viewName": "Create Security Group",
           "type": "boolean",
           "description": "If true, create a VPC-Security group, for this VPC. Default value is false.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/create-security-group.html"
         },
         {
-          "name": "Tags",
+          "name": "tags",
           "viewName": "Tags",
           "type": "text",
           "description": "If specified, tag all resources created(At least the VPC, more if checked the create box for any other resource) with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. ",
@@ -976,7 +976,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
-          "name": "DryRun",
+          "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -1015,7 +1015,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "VpcId",
+          "name": "vpcId",
           "viewName": "VPC ID",
           "type": "string",
           "required": true,
@@ -1024,7 +1024,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
         },
         {
-          "name": "DryRun",
+          "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -1063,7 +1063,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "VpcId",
+          "name": "vpcId",
           "viewName": "VPC ID",
           "type": "string",
           "required": true,
@@ -1072,7 +1072,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html "
         },
         {
-          "name": "RouteTableId",
+          "name": "routeTableId",
           "viewName": "Route Table ID",
           "type": "string",
           "description": "If specified, associate the subnet with the specified Route Table.Doesn't work together with the parameter 'Create Private Route Table'.",
@@ -1080,7 +1080,7 @@
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-route-tables.html"
         },
         {
-          "name": "AvailabilityZone",
+          "name": "availabilityZone",
           "viewName": "Availability Zone",
           "type": "string",
           "description": "The Availability Zone or Local Zone for the subnet.Default(if not provided):AWS selects one for you. If you create more than one subnet in your VPC, AWS does not necessarily select a different zone for each subnet.\nTo create a subnet in a Local Zone, set this value to the Local Zone ID, for example us-west-2-lax-1a. For information about the Regions that support Local Zones, see Available Regions in the Amazon Elastic Compute Cloud User Guide. To create a subnet in an Outpost, set this value to the Availability Zone for the Outpost and specify the Outpost ARN.",
@@ -1088,7 +1088,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/RegionsAndAZs.html"
         },
         {
-          "name": "CidrBlock",
+          "name": "cidrBlock",
           "viewName": "CIDR Block",
           "type": "string",
           "description": "The IPv4 network range for the VPC, in CIDR notation. For example, 10.0.0.0/16.",
@@ -1096,7 +1096,7 @@
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html"
         },
         {
-          "name": "Ipv6CidrBlock",
+          "name": "ipv6CidrBlock",
           "viewName": "IPv6 CIDR Block",
           "type": "string",
           "description": "The IPv6 network range for the subnet, in CIDR notation. The subnet size must use a /64 prefix length.",
@@ -1104,7 +1104,7 @@
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/get-started-ipv6.html"
         },
         {
-          "name": "OutpostArn",
+          "name": "outpostArn",
           "viewName": "Outpost ARN",
           "type": "string",
           "description": "The Amazon Resource Name (ARN) of the Outpost. If you specify an Outpost ARN, you must also specify the Availability Zone of the Outpost subnet.",
@@ -1112,7 +1112,7 @@
           "learnUrl": "https://docs.aws.amazon.com/outposts/latest/userguide/outposts-networking-components.html"
         },
         {
-          "name": "AllocationId",
+          "name": "allocationId",
           "viewName": "NAT Gateway Allocation ID",
           "type": "string",
           "description": "If specified, create a NAT Gateway within the subnet created, with the Elastic IP address of the specified Allocation.",
@@ -1120,21 +1120,21 @@
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html"
         },
         {
-          "name": "CreatePrivateRouteTable",
+          "name": "createPrivateRouteTable",
           "viewName": "Create Private Route Table",
           "type": "boolean",
           "description": "If specified, it creates a new route table and connects it to the subnet.\nIn case a NAT Gateway was also created from this function, also create a default route from the route table to the NAT Gateway. This proccess needs to wait for the NAT Gateway to be available whichmight take a couple of minutes!",
           "learnUrl": "https://docs.aws.amazon.com/batch/latest/userguide/create-public-private-vpc.html"
         },
         {
-          "name": "MapPublicIpOnLaunch",
+          "name": "mapPublicIpOnLaunch",
           "viewName": "Map Public IP On Launch",
           "type": "boolean",
           "description": "If specified modify the attribute 'Map Public IP On Launch' on the subnet to true, using this command: [documentaion](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.Ifhtml#modifySubnetAttribute-property). The subnet will map a public ip address to any instance launched from it.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/modify-subnet-attribute.html"
         },
         {
-          "name": "Tags",
+          "name": "tags",
           "viewName": "Tags",
           "type": "text",
           "description": "If specified, tag all resources created(Subnet and maybe Nat Gateway) with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. ",
@@ -1142,7 +1142,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
-          "name": "DryRun",
+          "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -1181,7 +1181,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "SubnetId",
+          "name": "subnetId",
           "viewName": "Subnet ID",
           "type": "autocomplete",
           "required": true,
@@ -1192,7 +1192,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html"
         },
         {
-          "name": "DryRun",
+          "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -1231,7 +1231,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "SubnetId",
+          "name": "subnetId",
           "viewName": "Subnet ID",
           "type": "autocomplete",
           "required": true,
@@ -1242,7 +1242,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html"
         },
         {
-          "name": "AllocationId",
+          "name": "allocationId",
           "viewName": "Allocation ID",
           "type": "string",
           "required": true,
@@ -1251,7 +1251,7 @@
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-addresses.html"
         },
         {
-          "name": "Tags",
+          "name": "tags",
           "viewName": "Tags",
           "type": "text",
           "description": "If specified, tag the NAT Gateway with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values separate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }.",
@@ -1259,7 +1259,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
-          "name": "DryRun",
+          "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -1298,7 +1298,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "VpcId",
+          "name": "vpcId",
           "viewName": "VPC ID",
           "type": "string",
           "description": "If specified, attach the newly created Internet Gateway to the specified VPC.",
@@ -1306,7 +1306,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
         },
         {
-          "name": "Tags",
+          "name": "tags",
           "viewName": "Tags",
           "type": "text",
           "description": "If specified, tag the Internet Gateway with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }.",
@@ -1314,7 +1314,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
-          "name": "DryRun",
+          "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -1353,7 +1353,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "InternetGatewayId",
+          "name": "gatewayId",
           "viewName": "Gateway ID",
           "type": "string",
           "required": true,
@@ -1362,7 +1362,7 @@
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/attach-internet-gateway.html"
         },
         {
-          "name": "VpcId",
+          "name": "vpcId",
           "viewName": "VPC ID",
           "type": "string",
           "required": true,
@@ -1371,7 +1371,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
         },
         {
-          "name": "DryRun",
+          "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -1410,7 +1410,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "RouteTableId",
+          "name": "routeTableId",
           "viewName": "Route Table ID",
           "type": "string",
           "required": true,
@@ -1419,7 +1419,7 @@
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-route-tables.html"
         },
         {
-          "name": "GatewayId",
+          "name": "gatewayId",
           "viewName": "Gateway ID",
           "type": "string",
           "description": "ID of an internet gateway. If specified, make the Internet Gateway specify the target of the route.",
@@ -1427,7 +1427,7 @@
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/attach-internet-gateway.html"
         },
         {
-          "name": "NatGatewayId",
+          "name": "natGatewayId",
           "viewName": "NAT Gateway ID",
           "type": "string",
           "description": "ID of a NAT gateway. If specified, make the NAT Gateway specify the target of the route.",
@@ -1435,7 +1435,7 @@
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html"
         },
         {
-          "name": "InstanceId",
+          "name": "instanceId",
           "viewName": "Instance ID",
           "type": "string",
           "description": "ID of an Instance. If specified, make the Instance specify the target of the route.",
@@ -1443,7 +1443,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html"
         },
         {
-          "name": "DestinationCidrBlock",
+          "name": "destinationCidrBlock",
           "viewName": "Destination CIDR Block",
           "type": "string",
           "required": true,
@@ -1452,7 +1452,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createRoute-property"
         },
         {
-          "name": "DryRun",
+          "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -1491,7 +1491,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "VpcId",
+          "name": "vpcId",
           "viewName": "VPC ID",
           "type": "string",
           "required": true,
@@ -1500,7 +1500,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
         },
         {
-          "name": "SubnetId",
+          "name": "subnetId",
           "viewName": "Subnet ID",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -1510,7 +1510,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html"
         },
         {
-          "name": "GatewayId",
+          "name": "gatewayId",
           "viewName": "Gateway ID",
           "type": "string",
           "description": "If specified, associate the created Route Table with the specified Internet Gateway.",
@@ -1518,7 +1518,7 @@
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/attach-internet-gateway.html"
         },
         {
-          "name": "Tags",
+          "name": "tags",
           "viewName": "tags",
           "type": "text",
           "description": "If specified, tag the Route Table with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values separate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. ",
@@ -1526,7 +1526,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
-          "name": "DryRun",
+          "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -1565,7 +1565,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "RouteTableId",
+          "name": "routeTableId",
           "viewName": "Route Table ID",
           "type": "string",
           "required": true,
@@ -1574,7 +1574,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html"
         },
         {
-          "name": "SubnetId",
+          "name": "subnetId",
           "viewName": "Subnet ID",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -1584,7 +1584,7 @@
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/attach-internet-gateway.html"
         },
         {
-          "name": "GatewayId",
+          "name": "gatewayId",
           "viewName": "Gateway ID",
           "type": "string",
           "description": "If specified, associate the route table with the specified internet gateway.",
@@ -1631,7 +1631,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "AvailabilityZone",
+          "name": "availabilityZone",
           "viewName": "Availability Zone",
           "type": "string",
           "required": true,
@@ -1640,7 +1640,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/RegionsAndAZs.html"
         },
         {
-          "name": "VolumeType",
+          "name": "volumeType",
           "viewName": "Volume Type",
           "type": "options",
           "options": [
@@ -1678,14 +1678,14 @@
           "placeholder": "st1"
         },
         {
-          "name": "Size",
+          "name": "size",
           "viewName": "Size(In GBs)",
           "type": "string",
           "description": "The size of the volume, in GBs. You must specify either a snapshot ID or a volume size. If you specify a snapshot, the default is the snapshot size. You can specify a volume size that is equal to or larger than the snapshot size.",
           "placeholder": "100"
         },
         {
-          "name": "Iops",
+          "name": "iops",
           "viewName": "IOPS",
           "type": "string",
           "description": "The number of I/O operations per second (IOPS). Only for volume types io1, io2 and gp3.",
@@ -1693,14 +1693,14 @@
           "learnUrl": "https://aws.amazon.com/blogs/devops/building-and-testing-ios-and-ipados-apps-with-aws-devops-and-mobile-services/"
         },
         {
-          "name": "SnapshotId",
+          "name": "snapshotId",
           "viewName": "Create From Snapshot(ID)",
           "type": "string",
           "placeholder": "snap-066877671789bd71b",
           "description": "If specified create the volume from the snapshot specified."
         },
         {
-          "name": "OutpostArn",
+          "name": "outpostArn",
           "viewName": "Outpost ARN",
           "type": "string",
           "description": "If specified create the volume on the outpost specified.",
@@ -1708,7 +1708,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/snapshots-outposts.html"
         },
         {
-          "name": "Throughput",
+          "name": "throughput",
           "viewName": "Throughput",
           "type": "string",
           "description": "This parameter is valid only for gp3 volumes. The throughput to provision for the volume, with a maximum of 1,000 MiB/s.",
@@ -1716,14 +1716,14 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-network-bandwidth.html"
         },
         {
-          "name": "Encrypted",
+          "name": "encrypted",
           "viewName": "Is Encrypted",
           "type": "boolean",
           "description": "Indicates Whether to encrypt the volume or not. Encryption type depends on the volume origin (new or from a snapshot), starting encryption state, ownership, and whether encryption by default is enabled.",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html#encryption-by-default"
         },
         {
-          "name": "KmsKeyId",
+          "name": "kmsKeyId",
           "viewName": "KMS Key ID",
           "type": "string",
           "placeholder": "1234abcd-12ab-34cd-56ef-1234567890ab",
@@ -1731,21 +1731,21 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volumes-multi.html"
         },
         {
-          "name": "MultiAttachEnabled",
+          "name": "multiAttachEnabled",
           "viewName": "Multi Attach Enabled",
           "type": "boolean",
           "description": "Indicates whether to enable Amazon EBS Multi-Attach. If you enable Multi-Attach, you can attach the volume to up to 16 Instances built on the Nitro System in the same Availability Zone. This parameter is supported with io1 and io2 volumes only.",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volumes-multi.html"
         },
         {
-          "name": "DryRun",
+          "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.",
           "learnUrl": "https://github.com/Kaholo/kaholo-plugin-amazon-ec2"
         },
         {
-          "name": "WaitForEnd",
+          "name": "waitForEnd",
           "viewName": "Wait Until Operation End",
           "type": "boolean",
           "description": "Wait until the end of the operation. The operation ends when the volume is ready."
@@ -1783,7 +1783,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "VolumeId",
+          "name": "volumeId",
           "viewName": "Volume ID",
           "type": "string",
           "required": true,
@@ -1792,7 +1792,7 @@
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-volumes.html"
         },
         {
-          "name": "Description",
+          "name": "description",
           "viewName": "Description",
           "type": "text",
           "description": "A description for the snapshot.",
@@ -1800,7 +1800,7 @@
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-volumes.html"
         },
         {
-          "name": "OutpostArn",
+          "name": "outpostArn",
           "viewName": "Outpost ARN",
           "type": "string",
           "description": "If specified, create the snapshot on the outpost specified. Not related to the outpost the volume is stored on.",
@@ -1808,14 +1808,14 @@
           "placeholder": "arn:aws:outposts:us-west-2:123456789012:outpost/op-abcdef1234567890a"
         },
         {
-          "name": "DryRun",
+          "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.",
           "learnUrl": "https://github.com/Kaholo/kaholo-plugin-amazon-ec2"
         },
         {
-          "name": "WaitForEnd",
+          "name": "waitForEnd",
           "viewName": "Wait Until Operation End",
           "type": "boolean",
           "description": "Wait until the end of the operation. The operation ends when the snapshot is completed."
@@ -1853,7 +1853,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "GroupName",
+          "name": "name",
           "viewName": "Name",
           "type": "string",
           "required": true,
@@ -1862,7 +1862,7 @@
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
         },
         {
-          "name": "Description",
+          "name": "description",
           "viewName": "Group description",
           "type": "text",
           "required": true,
@@ -1871,7 +1871,7 @@
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
         },
         {
-          "name": "VpcId",
+          "name": "vpcId",
           "viewName": "VPC ID",
           "type": "string",
           "description": "The ID of the VPC. Required for EC2-VPC Security Group.",
@@ -1879,7 +1879,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
         },
         {
-          "name": "Tags",
+          "name": "tags",
           "viewName": "Tags",
           "type": "text",
           "description": "If specified, tag the Security Group with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values separate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }.",
@@ -1887,7 +1887,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
-          "name": "DryRun",
+          "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -1926,7 +1926,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "GroupId",
+          "name": "groupId",
           "viewName": "Group ID",
           "type": "string",
           "required": true,
@@ -1935,7 +1935,7 @@
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
         },
         {
-          "name": "RuleType",
+          "name": "ruleType",
           "viewName": "Rule Type",
           "type": "options",
           "options": [
@@ -1961,7 +1961,7 @@
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-groups.html"
         },
         {
-          "name": "CidrIps",
+          "name": "cidrIps",
           "viewName": "CIDR IPv4 Blocks",
           "type": "text",
           "parserType": "array",
@@ -1970,7 +1970,7 @@
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html"
         },
         {
-          "name": "CidrIps6",
+          "name": "cidrIps6",
           "viewName": "CIDR IPv6 Blocks",
           "type": "text",
           "parserType": "array",
@@ -1978,7 +1978,7 @@
           "placeholder": "2002::1234:abcd:ffff:c0a8:101/64"
         },
         {
-          "name": "FromPorts",
+          "name": "fromPorts",
           "viewName": "From Ports",
           "type": "text",
           "parserType": "array",
@@ -1987,7 +1987,7 @@
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-group-rules.html"
         },
         {
-          "name": "ToPorts",
+          "name": "toPorts",
           "viewName": "To Ports",
           "type": "text",
           "parserType": "array",
@@ -1996,7 +1996,7 @@
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-group-rules.html"
         },
         {
-          "name": "IpProtocol",
+          "name": "ipProtocol",
           "viewName": "Ip Protocol",
           "type": "options",
           "options": [
@@ -2022,7 +2022,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html"
         },
         {
-          "name": "Description",
+          "name": "description",
           "viewName": "Description",
           "type": "text",
           "description": "The description of the rules created.",
@@ -2030,7 +2030,7 @@
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
         },
         {
-          "name": "DryRun",
+          "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
