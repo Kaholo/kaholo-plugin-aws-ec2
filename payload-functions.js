@@ -22,15 +22,6 @@ function prepareCreateInstancePayload(params) {
   };
 }
 
-function prepareDescribeInstancesPayload(params) {
-  // EC2 does not allow MaxResults if InstanceIds are provided
-  if (params.InstanceIds && params.InstanceIds.length) {
-    return _.omit(params, "MaxResults");
-  }
-
-  return params;
-}
-
 function prepareCreateVpcPayload(params) {
   if (!params.CidrBlock && !params.AmazonProvidedIpv6CidrBlock) {
     throw new Error("Must provide CIDR Block or select AmazonProvidedIpv6CidrBlock");
@@ -140,7 +131,6 @@ function prepareAddSecurityGroupRulesPayload(params) {
 
 module.exports = {
   prepareCreateInstancePayload,
-  prepareDescribeInstancesPayload,
   prepareCreateVpcPayload,
   prepareCreateInternetGatewayPayload,
   prepareCreateRouteTablePayload,

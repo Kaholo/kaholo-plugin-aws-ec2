@@ -11,7 +11,7 @@ const simpleAwsFunctions = {
   stopInstances: awsPlugin.generateAwsMethod("stopInstances"),
   rebootInstances: awsPlugin.generateAwsMethod("rebootInstances"),
   terminateInstances: awsPlugin.generateAwsMethod("terminateInstances"),
-  describeInstances: awsPlugin.generateAwsMethod("describeInstances", payloadFuncs.prepareDescribeInstancesPayload),
+  describeInstances: awsPlugin.generateAwsMethod("describeInstances"),
   createNatGateway: awsPlugin.generateAwsMethod("createNatGateway", payloadFuncs.prepareCreateNatGatewayPayload),
   createRoute: awsPlugin.generateAwsMethod("createRoute"),
   modifySubnetAttribute: awsPlugin.generateAwsMethod("modifySubnetAttribute"),

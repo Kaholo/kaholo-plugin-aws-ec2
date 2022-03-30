@@ -371,23 +371,6 @@
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
-        },
-        {
-          "name": "MaxResults",
-          "viewName": "Max Results",
-          "type": "string",
-          "parserType": "number",
-          "default": "100",
-          "description": "Maximum number of instances to return.",
-          "placeholder": "100",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html"
-        },
-        {
-          "name": "NextToken",
-          "viewName": "Next Token",
-          "type": "string",
-          "description": "Use the specified token to get the instances. Used for paging.",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html"
         }
       ]
     },
