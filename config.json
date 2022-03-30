@@ -27,6 +27,14 @@
       "description": "The default Access Key Secret to use to authenticate to AWS.",
       "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
       "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+    },
+    {
+      "name": "REGION",
+      "viewName": "Region",
+      "type": "string",
+      "description": "The region to execute the request in.",
+      "placeholder": "us-east-2",
+      "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
     }
   ],
   "methods": [
