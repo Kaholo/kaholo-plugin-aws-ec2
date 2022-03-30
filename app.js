@@ -179,8 +179,8 @@ async function createVpcWorkflow(client, params, region) {
       params,
       {
         ...additionalParams,
-        GroupName: `${params.VpcId}-dedicated-security-group`,
-        Description: `A security group dedicated only for ${params.VpcId}`,
+        GroupName: `${additionalParams.VpcId}-dedicated-security-group`,
+        Description: `A security group dedicated only for ${additionalParams.VpcId}`,
       },
     );
 
