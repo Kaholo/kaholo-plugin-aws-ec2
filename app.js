@@ -1,521 +1,356 @@
-const {
-  runEc2Func, parseLegacyParam, getPortObj, waitForNatGateway, waitForEc2Resource,
-} = require("./helpers");
-const parsers = require("./parsers");
+const _ = require("lodash");
+const aws = require("aws-sdk");
+const awsPlugin = require("kaholo-aws-plugin");
+const { resolveSecurityGroupFunction } = require("./helpers");
 const { getInstanceTypes, listRegions, listSubnets } = require("./autocomplete");
+const payloadFuncs = require("./payload-functions");
 
-async function attachInternetGateway(action, settings) {
-  const params = {
-    InternetGatewayId: (action.params.gatewayId || "").trim(),
-    VpcId: (action.params.vpcId || "").trim(),
-    DryRun: action.params.dryRun || false,
-  };
-  if (!action.params.vpcId || !action.params.gatewayId) {
-    throw new Error("You need to provide a Subnet ID or a Gateway ID!");
-  }
-  return runEc2Func(action, settings, params, "attachInternetGateway");
-}
+const simpleAwsFunctions = {
+  createInstance: awsPlugin.generateAwsMethod("runInstances", payloadFuncs.prepareCreateInstancePayload),
+  startInstances: awsPlugin.generateAwsMethod("startInstances", payloadFuncs.prepareManageInstancesPayload),
+  stopInstances: awsPlugin.generateAwsMethod("stopInstances", payloadFuncs.prepareManageInstancesPayload),
+  rebootInstances: awsPlugin.generateAwsMethod("rebootInstances", payloadFuncs.prepareManageInstancesPayload),
+  terminateInstances: awsPlugin.generateAwsMethod("terminateInstances", payloadFuncs.prepareManageInstancesPayload),
+  describeInstances: awsPlugin.generateAwsMethod("describeInstances", payloadFuncs.prepareDescribeInstancesPayload),
+  createNatGateway: awsPlugin.generateAwsMethod("createNatGateway", payloadFuncs.prepareCreateNatGatewayPayload),
+  createRoute: awsPlugin.generateAwsMethod("createRoute", payloadFuncs.prepareCreateRoutePayload),
+  modifySubnetAttribute: awsPlugin.generateAwsMethod("modifySubnetAttribute"),
+  attachInternetGateway: awsPlugin.generateAwsMethod("attachInternetGateway", payloadFuncs.prepareAttachInternetGatewayPayload),
+  createSecurityGroup: awsPlugin.generateAwsMethod("createSecurityGroup", payloadFuncs.prepareCreateSecurityGroupPayload),
+  createKeyPair: awsPlugin.generateAwsMethod("createKeyPair", payloadFuncs.prepareManageKeyPairsPayload),
+  deleteKeyPair: awsPlugin.generateAwsMethod("deleteKeyPair", payloadFuncs.prepareManageKeyPairsPayload),
+  describeKeyPairs: awsPlugin.generateAwsMethod("describeKeyPairs"),
+  allocateAddress: awsPlugin.generateAwsMethod("allocateAddress", payloadFuncs.prepareAllocateAddressPayload),
+  associateAddress: awsPlugin.generateAwsMethod("associateAddress", payloadFuncs.prepareAssociateAddressPayload),
+  releaseAddress: awsPlugin.generateAwsMethod("releaseAddress", payloadFuncs.prepareReleaseAddressPayload),
+  deleteVpc: awsPlugin.generateAwsMethod("deleteVpc", payloadFuncs.prepareDeleteVpcPayload),
+  deleteSubnet: awsPlugin.generateAwsMethod("deleteSubnet", payloadFuncs.prepareDeleteSubnetPayload),
+};
 
-async function createInternetGateway(action, settings) {
-  const actionCopy = { ...action };
-  const params = {
-    DryRun: actionCopy.params.dryRun,
-  };
-  if (actionCopy.params.tags) {
-    params.TagSpecifications = [{ ResourceType: "internet-gateway", Tags: parsers.tags(actionCopy.params.tags) }];
-  }
-  const vpcId = parsers.string(actionCopy.params.vpcId);
-  let result = await runEc2Func(actionCopy, settings, params, "createInternetGateway");
-  if (vpcId) {
-    actionCopy.params.gatewayId = result.createInternetGateway.InternetGateway.InternetGatewayId;
-    result = { ...result, ...(await attachInternetGateway(actionCopy, settings)) };
-  }
-  return result;
-}
-
-async function associateRouteTable(action, settings) {
-  const actionCopy = { ...action };
-  const params = {
-    RouteTableId: (actionCopy.params.routeTableId || "").trim(),
-    DryRun: actionCopy.params.dryRun || false,
-  };
-  if (!params.RouteTableId) {
-    throw new Error("Route Table ID was not given!");
-  }
-  if (!actionCopy.params.subnetId && !actionCopy.params.gatewayId) {
-    throw new Error("You need to provide a Subnet ID or a Gateway ID!");
-  }
-  let result;
-  if (actionCopy.params.subnetId) {
-    // we need to associate subnet and gateway in seperate functions - otherwise fails...
-    const subParams = {
-      ...params,
-      SubnetId: (actionCopy.params.subnetId || "").trim(),
-    };
-    result = await runEc2Func(actionCopy, settings, subParams, "associateRouteTable");
-  }
-  if (actionCopy.params.gatewayId) {
-    const subParams = {
-      ...params,
-      GatewayId: (actionCopy.params.gatewayId || "").trim(),
-    };
-    if (result) {
-      const gatewayResult = await runEc2Func(actionCopy, settings, subParams, "associateRouteTable");
-      result = {
-        associateRouteTableToSubnet: result.associateRouteTable,
-        associateRouteTableToGateway: gatewayResult.associateRouteTable,
-      };
-    } else {
-      result = await runEc2Func(actionCopy, settings, subParams, "associateRouteTable");
-    }
-  }
-  return result;
-}
-
-async function createRouteTable(action, settings) {
-  const actionCopy = { ...action };
-  const params = {
-    VpcId: (actionCopy.params.vpcId || "").trim(),
-    DryRun: actionCopy.params.dryRun || false,
-  };
-  if (!params.VpcId) {
-    throw new Error("Didn't provide VPC ID!");
-  }
-  if (actionCopy.params.tags) {
-    params.TagSpecifications = [{ ResourceType: "route-table", Tags: parsers.tags(actionCopy.params.tags) }];
-  }
-
-  let result = await runEc2Func(actionCopy, settings, params, "createRouteTable");
-  if (actionCopy.params.subnetId || actionCopy.params.gatewayId) {
-    actionCopy.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
-    result = { ...result, ...(await associateRouteTable(actionCopy, settings)) };
-  }
-  return result;
-}
-
-function handleInstanceTags(action) {
-  const tagSpecifications = [];
-  if (action.params.TAGS_SPECIFICATION) {
-    tagSpecifications.push({
-      ResourceType: "instance",
-      Tags: parseLegacyParam(action.params.TAGS_SPECIFICATION, parsers.tags),
-    });
-  }
-  if (action.params.NAME_TAG) {
-    const nameTag = {
-      Key: "Name",
-      Value: parsers.string(action.params.NAME_TAG),
-    };
-    if (tagSpecifications.length > 0) {
-      tagSpecifications[0].Tags.push(nameTag);
-    } else {
-      tagSpecifications.push({
-        ResourceType: "instance",
-        Tags: [nameTag],
-      });
-    }
-  }
-  return tagSpecifications;
-}
-
-async function createInstance(action, settings) {
-  const params = {
-    ImageId: parsers.string(action.params.IMAGE_ID),
-    InstanceType: parsers.string(action.params.INSTANCE_TYPE),
-    MinCount: parseInt(action.params.MIN_COUNT || 1, 10),
-    MaxCount: parseInt(action.params.MAX_COUNT || 1, 10),
-    KeyName: parsers.string(action.params.KEY_NAME),
-    SecurityGroupIds: parsers.array(action.params.SECURITY_GROUP_IDS),
-    SubnetId: parsers.string(action.params.subnetId),
-  };
-  const userData = parsers.string(action.params.userData);
-  if (userData) {
-    const buffer = Buffer.from(userData);
-    params.UserData = buffer.toString("base64");
-  }
-  if (params.MaxCount < params.MinCount) {
-    throw new Error("Max Count must be bigger or equal to Min Count");
-  }
-
-  params.TagSpecifications = handleInstanceTags(action, params);
-
-  return runEc2Func(action, settings, params, "runInstances");
-}
-
-async function manageInstances(action, settings) {
-  const params = {
-    InstanceIds: parseLegacyParam(action.params.INSTANCE_IDS, parsers.array),
-  };
-  if (params.InstanceIds.length === 0) {
-    throw new Error("You must provide at least one Instance ID");
-  }
-  return runEc2Func(action, settings, params, action.method.name);
-}
-
-async function callAwsNoParams(action, settings) {
-  return runEc2Func(action, settings, {}, action.method.name);
-}
-
-async function manageKeyPairs(action, settings) {
-  const params = {
-    KeyName: action.params.KEY_PAIR_NAME,
-  };
-  if (!params.KeyName) {
-    throw new Error("Must provide Key Name");
-  }
-  return runEc2Func(action, settings, params, action.method.name);
-}
-
-async function allocateAddress(action, settings) {
-  const params = {
-    Domain: action.params.DOMAIN,
-    Address: action.params.ADDRESS,
-    PublicIpv4Pool: action.params.PUBLICIPV4POOL,
-    DryRun: action.params.DRYRUN,
-  };
-  return runEc2Func(action, settings, params, "allocateAddress");
-}
-
-async function associateAddress(action, settings) {
-  const params = {
-    AllocationId: action.params.ALLOCATION_ID,
-    InstanceId: action.params.INSTANCE_ID,
-    PublicIp: action.params.PUBLIC_IP,
-    AllowReassociation: action.params.ALLOWREASSOCIATION,
-    DryRun: action.params.DRYRUN,
-    NetworkInterfaceId: action.params.NETWORK_INTERFACE_ID,
-    PrivateIpAddress: action.params.PRIVATE_IP_ADDRESS,
-  };
-  return runEc2Func(action, settings, params, "associateAddress");
-}
-
-async function releaseAddress(action, settings) {
-  const params = {
-    AllocationId: action.params.ALLOCATION_ID,
-    PublicIp: action.params.PUBLIC_IP,
-    DryRun: action.params.DRYRUN,
-  };
-  return runEc2Func(action, settings, params, "releaseAddress");
-}
-
-async function describeInstances(action, settings) {
-  const params = {
-    DryRun: action.params.DRYRUN,
-    MaxResults: action.params.MAX_RESULTS,
-    NextToken: action.params.NEXT_TOKEN,
-  };
-  if (action.params.INSTANCE_IDS) {
-    params.InstanceIds = parseLegacyParam(action.params.INSTANCE_IDS, parsers.array);
-  }
-  if (action.params.filters) {
-    if (!Array.isArray(action.params.filters)) {
-      throw new Error("Filters ids must be an array");
-    }
-    params.Filters = action.params.filters;
-  }
-  return runEc2Func(action, settings, params, "describeInstances");
-}
-
-async function createRoute(action, settings) {
-  const params = {
-    RouteTableId: parsers.string(action.params.routeTableId),
-    GatewayId: parsers.string(action.params.gatewayId),
-    NatGatewayId: parsers.string(action.params.natGatewayId),
-    InstanceId: parsers.string(action.params.instanceId),
-    DestinationCidrBlock: parsers.string(action.params.destinationCidrBlock),
-    DryRun: action.params.dryRun,
-  };
-  if (!params.RouteTableId || !params.DestinationCidrBlock) {
-    throw new Error("One of the required parameters was not given");
-  }
-  return runEc2Func(action, settings, params, "createRoute");
-}
-
-async function createSecurityGroup(action, settings) {
-  const params = {
-    GroupName: (action.params.name || "").trim(),
-    Description: (action.params.description || "").trim(),
-    VpcId: action.params.vpcId,
-    DryRun: action.params.dryRun || false,
-  };
-  if (!params.GroupName || !params.Description) {
-    throw new Error("One of the required parameters was not given!");
-  }
-  if (action.params.tags) {
-    params.TagSpecifications = [{ ResourceType: "security-group", Tags: parsers.tags(action.params.tags) }];
-  }
-  return runEc2Func(action, settings, params, "createSecurityGroup");
-}
-
-async function createVpc(action, settings) {
-  const actionCopy = { ...action };
-  const params = {
-    CidrBlock: actionCopy.params.cidrBlock,
-    AmazonProvidedIpv6CidrBlock: actionCopy.params.amazonProvidedIpv6CidrBlock || false,
-    InstanceTenancy: actionCopy.params.instanceTenancy || "default",
-    DryRun: actionCopy.params.dryRun || false,
-  };
-  if (!params.CidrBlock && !params.AmazonProvidedIpv6CidrBlock) {
-    throw new Error("Must provide CIDR Block or select AmazonProvidedIpv6CidrBlock");
-  }
-  if (actionCopy.params.tags) {
-    params.TagSpecifications = [{ ResourceType: "vpc", Tags: parsers.tags(actionCopy.params.tags) }];
-  }
-  let result = await runEc2Func(actionCopy, settings, params, "createVpc");
-  actionCopy.params.vpcId = result.createVpc.Vpc.VpcId; // for later use
-  if (actionCopy.params.createInternetGateway) {
-    // we use '...' since createInternetGateway can return multiple action results
-    result = { ...result, ...(await createInternetGateway(actionCopy, settings)) };
-  }
-  if (actionCopy.params.createRouteTable) {
-    actionCopy.params.gatewayId = undefined;
-    result = { ...result, ...(await createRouteTable(actionCopy, settings)) };
-    if (actionCopy.params.createInternetGateway) {
-      actionCopy.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
-      actionCopy.params.destinationCidrBlock = "0.0.0.0/0";
-      actionCopy.params.gatewayId = result.createInternetGateway.InternetGateway.InternetGatewayId;
-      result = { ...result, ...(await createRoute(actionCopy, settings)) };
-    }
-  }
-  if (actionCopy.params.createSecurityGroup) {
-    actionCopy.params.name = `${actionCopy.params.vpcId}-dedicated-security-group`;
-    actionCopy.params.description = `A security group dedicated only for ${actionCopy.params.vpcId}`;
-    result = { ...result, ...(await createSecurityGroup(actionCopy, settings)) };
-  }
-  return result;
-}
-
-async function createNatGateway(action, settings) {
-  const params = {
-    SubnetId: (action.params.subnetId || "").trim(),
-    AllocationId: action.params.allocationId,
-    DryRun: action.params.dryRun || false,
-  };
-  if (!params.SubnetId) {
-    throw new Error("One of the required parameters was not given!");
-  }
-  if (action.params.tags) {
-    params.TagSpecifications = [{ ResourceType: "natgateway", Tags: parsers.tags(action.params.tags) }];
-  }
-  return runEc2Func(action, settings, params, "createNatGateway");
-}
-
-async function createSubnet(action, settings) {
-  const actionCopy = { ...action };
-  const params = {
-    AvailabilityZone: parsers.string(actionCopy.params.availabilityZone),
-    CidrBlock: parsers.string(actionCopy.params.cidrBlock),
-    Ipv6CidrBlock: parsers.string(actionCopy.params.ipv6CidrBlock),
-    VpcId: parsers.string(actionCopy.params.vpcId),
-    OutpostArn: parsers.string(actionCopy.params.outpostArn),
-    DryRun: actionCopy.params.dryRun || false,
-  };
-  if (!(params.CidrBlock || params.Ipv6CidrBlock)) {
-    throw new Error("Must provide CIDR Block or IPv6 CIDR Block");
-  }
-  if (actionCopy.params.tags) {
-    params.TagSpecifications = [{ ResourceType: "subnet", Tags: parsers.tags(actionCopy.params.tags) }];
-  }
-
-  let result = await runEc2Func(actionCopy, settings, params, "createSubnet");
-  actionCopy.params.subnetId = result.createSubnet.Subnet.SubnetId;
-
-  if (actionCopy.params.allocationId) { // indicates that nat gateway is needed
-    result = { ...result, ...(await createNatGateway(actionCopy, settings)) };
-  }
-  if (actionCopy.params.routeTableId) {
-    result = { ...result, ...(await associateRouteTable(actionCopy, settings)) };
-  } else if (actionCopy.params.createPrivateRouteTable) {
-    result = { ...result, ...(await createRouteTable(actionCopy, settings)) };
-    if (result.createNatGateway) {
-      // if nat gateway also was created, connect to correct route
-      actionCopy.params.routeTableId = result.createRouteTable.RouteTable.RouteTableId;
-      actionCopy.params.natGatewayId = result.createNatGateway.NatGateway.NatGatewayId;
-      actionCopy.params.destinationCidrBlock = "0.0.0.0/0";
-      // wait for nat gateway to be available than create route
-      await waitForNatGateway(actionCopy, settings);
-      result = { ...result, ...(await createRoute(actionCopy, settings)) };
-    }
-  }
-  if (actionCopy.params.mapPublicIpOnLaunch) {
-    const chagneAttrParams = {
-      SubnetId: actionCopy.params.subnetId,
-      MapPublicIpOnLaunch: { Value: true },
-    };
-    result = { ...result, ...(await runEc2Func(actionCopy, settings, chagneAttrParams, "modifySubnetAttribute")) };
-  }
-  return result;
-}
-
-async function deleteVpc(action, settings) {
-  const params = {
-    VpcId: action.params.vpcId,
-    DryRun: action.params.dryRun,
-  };
-  return runEc2Func(action, settings, params, "deleteVpc");
-}
-
-async function deleteSubnet(action, settings) {
-  const params = {
-    SubnetId: action.params.subnetId,
-    DryRun: action.params.dryRun,
-  };
-  return runEc2Func(action, settings, params, "deleteSubnet");
-}
-
-async function modifyInstanceType(action, settings) {
-  const instanceIds = parsers.array(action.params.instanceIds);
-  const instanceType = { Value: parsers.autocomplete(action.params.instanceType) };
-  if (!instanceType.Value || !instanceIds || !instanceIds.length) {
-    throw new Error("Didn't provide one of the required fields");
-  }
-  return Promise.all(instanceIds.map((instanceId) => {
-    const params = {
+async function modifyInstanceType(client, params) {
+  return Promise.all(params.instanceIds.map((instanceId) => {
+    const payload = {
       InstanceId: instanceId,
-      InstanceType: instanceType,
+      InstanceType: { Value: params.instanceType },
     };
-    return runEc2Func(action, settings, params, "modifyInstanceAttribute", true);
+    return client.modifyInstanceAttribute(payload).promise();
   }));
 }
 
-async function addSecurityGroupRules(action, settings) {
-  const actionCopy = { ...action };
-  const arrays = ["cidrIps", "cidrIps6", "fromPorts", "toPorts"];
-  arrays.forEach((arrayName) => {
-    actionCopy.params[arrayName] = parsers.array((actionCopy.params[arrayName]));
-  });
-  const {
-    cidrIps, cidrIps6, fromPorts, toPorts, ipProtocol, description, ruleType,
-  } = actionCopy.params;
-  if (fromPorts.length === 0 || toPorts.length === 0) {
-    throw new Error("Must provide from and to ports!");
-  }
-  if (fromPorts.length !== toPorts.length) {
-    throw new Error("From Ports and To Ports must be the same length");
-  }
+async function modifyInstanceAttribute(client, params) {
+  return Promise.all(params.instanceIds.map((instanceId) => {
+    const payload = {
+      InstanceId: instanceId,
+      DryRun: params.dryRun,
+      [params.attribute]: {
+        Value: params.attributeValue,
+      },
+    };
 
-  const params = {
-    GroupId: parsers.string(actionCopy.params.groupId),
-    IpPermissions: fromPorts.map((fromPort, index) => getPortObj(
-      fromPort,
-      toPorts[index],
-      ipProtocol,
-      cidrIps,
-      cidrIps6,
-      description,
-    )),
-  };
-  if (!params.GroupId) {
-    throw new Error("Must provide Group ID");
-  }
-
-  let funcName;
-  switch (ruleType) {
-    case "Egress-Authorize":
-      funcName = "authorizeSecurityGroupEgress";
-      break;
-    case "Ingress-Revoke":
-      funcName = "revokeSecurityGroupIngress";
-      break;
-    case "Egress-Revoke":
-      funcName = "revokeSecurityGroupEgress";
-      break;
-    default:
-      funcName = "authorizeSecurityGroupIngress";
-  }
-
-  return runEc2Func(actionCopy, settings, params, funcName);
+    return client.modifyInstanceAttribute(payload).promise();
+  }));
 }
 
-async function createVolume(action, settings) {
-  const params = {
-    AvailabilityZone: parsers.string(action.params.availabilityZone),
-    VolumeType: action.params.volumeType,
-    Size: parsers.number(action.params.size),
-    Iops: parsers.number(action.params.iops),
-    SnapshotId: parsers.string(action.params.snapshotId),
-    OutpostArn: parsers.string(action.params.outpostArn),
-    Throughput: parsers.number(action.params.throughput),
-    Encrypted: parsers.boolean(action.params.encrypted),
-    KmsKeyId: parsers.string(action.params.kmsKeyId),
-    MultiAttachEnabled: parsers.boolean(action.params.multiAttachEnabled),
-    DryRun: parsers.boolean(action.params.dryRun),
-  };
-  if ((!params.AvailabilityZone && !params.OutpostArn) || !params.VolumeType) {
-    throw new Error("One of the required parameters was not given");
+async function associateRouteTable(client, params, region) {
+  const awsAssociateRouteTableToSubnet = awsPlugin.generateAwsMethod("associateRouteTable", payloadFuncs.prepareAssociateRouteTableToSubnetPayload);
+  const awsAssociateRouteTableToGateway = awsPlugin.generateAwsMethod("associateRouteTable", payloadFuncs.prepareAssociateRouteTableToGatewayPayload);
+
+  let result = {};
+
+  if (params.subnetId) {
+    result = {
+      associateRouteTableToSubnet:
+      (await awsAssociateRouteTableToSubnet(client, params, region)).associateRouteTable,
+    };
   }
-  let result = await runEc2Func(action, settings, params, "createVolume");
-  if (!action.params.waitForEnd) {
+  if (params.gatewayId) {
+    result = _.merge(
+      result,
+      {
+        associateRouteTableToGateway:
+          (await awsAssociateRouteTableToGateway(client, params, region)).associateRouteTable,
+      },
+    );
+  }
+
+  return result;
+}
+
+async function createInternetGatewayWorkflow(client, params, region) {
+  const awsCreateInternetGateway = awsPlugin.generateAwsMethod("createInternetGateway", payloadFuncs.prepareCreateInternetGatewayPayload);
+  const result = { createInternetGateway: await awsCreateInternetGateway(client, params, region) };
+
+  if (params.vpcId) {
+    const attachInternetGatewayParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+      "attachInternetGateway",
+      params,
+      { InternetGatewayId: result.createInternetGateway.InternetGateway.InternetGatewayId },
+    );
+
+    return _.merge(
+      result,
+      {
+        attachInternetGateway:
+          await simpleAwsFunctions.attachInternetGateway(
+            client,
+            attachInternetGatewayParams,
+            region,
+          ),
+      },
+    );
+  }
+
+  return result;
+}
+
+async function createRouteTableWorkflow(client, params, region) {
+  const awsCreateRouteTable = awsPlugin.generateAwsMethod("createRouteTable", payloadFuncs.prepareCreateRouteTablePayload);
+  const result = { createRouteTable: await awsCreateRouteTable(client, params, region) };
+
+  if (params.subnetId || params.gatewayId) {
+    const associateRouteTableParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+      "associateRouteTable",
+      params,
+      { RouteTableId: result.createRouteTable.RouteTable.RouteTableId },
+    );
+
+    return _.merge(
+      result,
+      { associateRouteTable: await associateRouteTable(client, associateRouteTableParams, region) },
+    );
+  }
+
+  return result;
+}
+
+async function createVpcWorkflow(client, params, region) {
+  const awsCreateVpc = awsPlugin.generateAwsMethod("createVpc", payloadFuncs.prepareCreateVpcPayload);
+  let result = { createVpc: await awsCreateVpc(client, params, region) };
+
+  const additionalParams = {
+    vpcId: result.createVpc.Vpc.VpcId,
+  };
+
+  if (params.createInternetGateway) {
+    const createInternetGatewayParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+      "createInternetGateway",
+      params,
+      additionalParams,
+    );
+    result = _.merge(
+      result,
+      await createInternetGatewayWorkflow(client, createInternetGatewayParams, region),
+    );
+  }
+
+  if (params.createRouteTable) {
+    const createRouteTableParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+      "createRouteTable",
+      params,
+      additionalParams,
+    );
+
+    result = _.merge(
+      result,
+      createRouteTableWorkflow(client, createRouteTableParams, region),
+    );
+
+    if (params.createInternetGateway) {
+      const createRouteParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+        "createRoute",
+        params,
+        {
+          RouteTableId: additionalParams.createRouteTable.RouteTable.RouteTableId,
+          DestinationCidrBlock: "0.0.0.0/0",
+          GatewayId: additionalParams.createInternetGateway.InternetGateway.InternetGatewayId,
+        },
+      );
+
+      result = _.merge(
+        result,
+        { createRoute: await simpleAwsFunctions.createRoute(client, createRouteParams, region) },
+      );
+    }
+  }
+
+  if (params.createSecurityGroup) {
+    const createSecurityGroupParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+      "createSecurityGroup",
+      params,
+      {
+        ...additionalParams,
+        GroupName: `${additionalParams.vpcId}-dedicated-security-group`,
+        Description: `A security group dedicated only for ${additionalParams.vpcId}`,
+      },
+    );
+
+    result = _.merge(
+      result,
+      {
+        createSecurityGroup:
+          await simpleAwsFunctions.createSecurityGroup(client, createSecurityGroupParams, region),
+      },
+    );
+  }
+
+  return result;
+}
+
+async function createSubnetWorkflow(client, params, region) {
+  const awsCreateSubnet = awsPlugin.generateAwsMethod("createSubnet", payloadFuncs.prepareCreateSubnetPayload);
+  let result = { createSubnet: await awsCreateSubnet(client, params, region) };
+
+  const additionalParams = {
+    SubnetId: result.createSubnet.Subnet.SubnetId,
+  };
+
+  if (params.allocationId) {
+    const createNatGatewayParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+      "createNatGateway",
+      params,
+      additionalParams,
+    );
+    result = _.merge(
+      result,
+      {
+        createNatGateway:
+          await simpleAwsFunctions.createNatGateway(client, createNatGatewayParams, region),
+      },
+    );
+  }
+
+  if (params.routeTableId) {
+    const associateRouteTableParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+      "associateRouteTable",
+      params,
+      additionalParams,
+    );
+
+    result = _.merge(
+      result,
+      { associateRouteTable: await associateRouteTable(client, associateRouteTableParams, region) },
+    );
+  } else if (params.createPrivateRouteTable) {
+    const createRouteTableParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+      "createRouteTable",
+      params,
+      additionalParams,
+    );
+
+    result = _.merge(
+      result,
+      await createRouteTableWorkflow(client, createRouteTableParams, region),
+    );
+
+    if (result.createNatGateway) {
+      await client.waitFor("natGatewayAvailable", {
+        NatGatewayIds: [result.createNatGateway.NatGateway.NatGatewayId],
+      }).promise();
+
+      const createRouteParams = awsPlugin.helpers.prepareParametersForAnotherMethodCall(
+        "createRoute",
+        params,
+        {
+          SubnetId: additionalParams.SubnetId,
+          RouteTableId: additionalParams.createRouteTable.RouteTable.RouteTableId,
+          NatGatewayId: additionalParams.createNatGateway.NatGateway.NatGatewayId,
+          DestinationCidrBlock: "0.0.0.0/0",
+        },
+      );
+
+      result = _.merge(
+        result,
+        { createRoute: await simpleAwsFunctions.createRoute(client, createRouteParams, region) },
+      );
+    }
+  }
+
+  if (params.mapPublicIpOnLaunch) {
+    const modifySubnetAttributeParams = {
+      ...additionalParams,
+      MapPublicIpOnLaunch: { Value: true },
+    };
+
+    result = _.merge(
+      result,
+      {
+        modifySubnetAttribute:
+          await simpleAwsFunctions.modifySubnetAttribute(
+            client,
+            modifySubnetAttributeParams,
+            region,
+          ),
+      },
+    );
+  }
+
+  return result;
+}
+
+async function createVolume(client, params, region) {
+  const awsCreateVolume = awsPlugin.generateAwsMethod(
+    "createVolume",
+    payloadFuncs.prepareCreateVolumePayload,
+  );
+  let result = { createVolume: await awsCreateVolume(client, params, region) };
+
+  if (!params.waitForEnd) {
     return result;
   }
-  result = await waitForEc2Resource(action, "volumeAvailable", { VolumeIds: [result.createVolume.VolumeId] });
+
+  result = await client.waitFor("volumeAvailable", {
+    VolumeIds: [result.createVolume.VolumeId],
+  }).promise();
+
   return { createVolume: result.Volumes[0] };
 }
 
-async function createSnapshot(action, settings) {
-  const params = {
-    VolumeId: parsers.string(action.params.volumeId),
-    Description: parsers.string(action.params.description),
-    OutpostArn: parsers.string(action.params.outpostArn),
-    DryRun: parsers.boolean(action.params.dryRun),
-  };
-  if (!params.VolumeId) {
-    throw new Error("Must provide volume ID to create the snapshot of!");
-  }
-  let result = await runEc2Func(action, settings, params, "createSnapshot");
-  if (!action.params.waitForEnd) {
+async function createSnapshot(client, params, region) {
+  const awsCreateSnapshot = awsPlugin.generateAwsMethod(
+    "createSnapshot",
+    payloadFuncs.prepareCreateSnapshotPayload,
+  );
+  let result = { createSnapshot: await awsCreateSnapshot(client, params, region) };
+
+  if (!params.waitForEnd) {
     return result;
   }
-  result = await waitForEc2Resource(action, "snapshotCompleted", { SnapshotIds: [result.createSnapshot.SnapshotId] });
+
+  result = await client.waitFor("snapshotCompleted", {
+    SnapshotIds: [result.createSnapshot.SnapshotId],
+  }).promise();
+
   return { createSnapshot: result.Snapshots[0] };
 }
 
-async function modifyInstanceAttribute(action, settings) {
-  const instanceIds = parsers.array(action.params.instanceIds);
-  return Promise.all(instanceIds.map((instanceId) => {
-    const params = {
-      InstanceId: instanceId,
-      DryRun: parsers.boolean(action.params.dryRun),
-    };
+async function addSecurityGroupRules(client, params) {
+  const payload = payloadFuncs.prepareAddSecurityGroupRulesPayload(params);
+  const funcName = resolveSecurityGroupFunction(params.ruleType);
 
-    params[action.params.attribute] = {};
-    params[action.params.attribute].Value = parsers.string(action.params.attributeValue);
-
-    return runEc2Func(action, settings, params, "modifyInstanceAttribute");
-  }));
+  return client[funcName](payload).promise();
 }
 
 module.exports = {
-  createInstance,
-  startInstances: manageInstances,
-  stopInstances: manageInstances,
-  rebootInstances: manageInstances,
-  describeKeyPairs: callAwsNoParams,
-  createKeyPair: manageKeyPairs,
-  deleteKeyPair: manageKeyPairs,
-  allocateAddress,
-  associateAddress,
-  releaseAddress,
-  describeInstances,
-  terminateInstances: manageInstances,
-  createVpc,
-  createSubnet,
-  deleteSubnet,
-  deleteVpc,
-  modifyInstanceType,
-  createInternetGateway,
-  createRouteTable,
-  createNatGateway,
-  createSecurityGroup,
-  associateRouteTable,
-  attachInternetGateway,
-  addSecurityGroupRules,
-  createRoute,
-  createVolume,
-  createSnapshot,
-  // auto complete
-  getInstanceTypes,
-  listRegions,
-  listSubnets,
-  modifyInstanceAttribute,
+  ...awsPlugin.bootstrap(
+    aws.EC2,
+    {
+      ...simpleAwsFunctions,
+      modifyInstanceType,
+      modifyInstanceAttribute,
+      createVpc: createVpcWorkflow,
+      createSubnet: createSubnetWorkflow,
+      createInternetGateway: createInternetGatewayWorkflow,
+      createRouteTable: createRouteTableWorkflow,
+      associateRouteTable,
+      createVolume,
+      createSnapshot,
+      addSecurityGroupRules,
+    },
+    {
+      getInstanceTypes,
+      listRegions,
+      listSubnets,
+    },
+  ),
+
 };

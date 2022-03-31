@@ -5,7 +5,7 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "2.8.0",
+  "version": "2.9.0",
   "description": "Integration with AWS EC2 API",
   "category": [
     "CLOUD",
@@ -27,6 +27,14 @@
       "description": "The default Access Key Secret to use to authenticate to AWS.",
       "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
       "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+    },
+    {
+      "name": "REGION",
+      "viewName": "Region",
+      "type": "string",
+      "description": "The region to execute the request in.",
+      "placeholder": "us-east-2",
+      "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
     }
   ],
   "methods": [
@@ -34,14 +42,6 @@
       "name": "createInstance",
       "viewName": "Create Instance",
       "params": [
-        {
-          "name": "NAME_TAG",
-          "viewName": "Name",
-          "type": "string",
-          "description": "Set the \"Name\" tag of the created instance for easier future reference.",
-          "placeholder": "my-new-instance",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
-        },
         {
           "name": "AWS_ACCESS_KEY_ID",
           "viewName": "Access Key",
@@ -96,6 +96,7 @@
           "name": "SECURITY_GROUP_IDS",
           "viewName": "Security groups IDs",
           "type": "string",
+          "parserType": "array",
           "placeholder": "sg-33bb22aa",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html",
           "description": "Connect this instance to a security group. You will have to use a code or configuration to transfer the array to the API"
@@ -103,7 +104,7 @@
         {
           "name": "USER_DATA",
           "viewName": "User data",
-          "type": "string",
+          "type": "text",
           "placeholder": "/folder/script.sh\n#!/bin/sh\nyum update -y",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html",
           "description": "Option of passing user data to the instance that can be used to perform common automated configuration tasks and even run scripts after the instance starts."
@@ -112,6 +113,9 @@
           "name": "MIN_COUNT",
           "viewName": "minimum of instances",
           "type": "string",
+          "parserType": "number",
+          "required": true,
+          "default": "1",
           "placeholder": "1",
           "description": "The minimum number of instances to launch (by default 1)."
         },
@@ -119,6 +123,9 @@
           "name": "MAX_COUNT",
           "viewName": "maximum of instances",
           "type": "string",
+          "parserType": "number",
+          "required": true,
+          "default": "1",
           "placeholder": "1",
           "description": "The maximum number of instances to launch. The default is 1."
         },
@@ -131,6 +138,14 @@
           "placeholder": "192.168.255.255",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html",
           "description": "If specified, host the instance on the specified Subnet."
+        },
+        {
+          "name": "NAME_TAG",
+          "viewName": "Name",
+          "type": "string",
+          "description": "Set the \"Name\" tag of the created instance for easier future reference.",
+          "placeholder": "my-new-instance",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
           "name": "TAGS_SPECIFICATION",
@@ -176,6 +191,8 @@
           "name": "INSTANCE_IDS",
           "viewName": "Instance ids (array)",
           "type": "text",
+          "parserType": "array",
+          "required": true,
           "placeholder": "i-1234567a",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
           "description": "The ID of the instance(s) to start."
@@ -216,6 +233,8 @@
           "name": "INSTANCE_IDS",
           "viewName": "Instance ids (array)",
           "type": "text",
+          "parserType": "array",
+          "required": true,
           "placeholder": "i-1234567a",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
           "description": "The ID of the instance(s) to stop."
@@ -256,6 +275,8 @@
           "name": "INSTANCE_IDS",
           "viewName": "Instance ids (array)",
           "type": "text",
+          "parserType": "array",
+          "required": true,
           "placeholder": "i-1234567a",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
           "description": "The ID of the instance(s) to reboot."
@@ -296,6 +317,8 @@
           "name": "INSTANCE_IDS",
           "viewName": "Instance Ids",
           "type": "string",
+          "parserType": "array",
+          "required": true,
           "placeholder": "i-1234567a",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
           "description": "The ID of the instance(s) to terminate."
@@ -303,8 +326,8 @@
       ]
     },
     {
-      "name": "describeKeyPairs",
-      "viewName": "Describe Key Pairs",
+      "name": "describeInstances",
+      "viewName": "Describe Instances",
       "params": [
         {
           "name": "AWS_ACCESS_KEY_ID",
@@ -331,6 +354,209 @@
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
+        },
+        {
+          "name": "INSTANCE_IDS",
+          "viewName": "Instance Ids",
+          "type": "text",
+          "parserType": "array",
+          "description": "The IDs of the instances. Can be an array of instances.",
+          "placeholder": "i-1234567a",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html"
+        },
+        {
+          "name": "filters",
+          "viewName": "Filters (Array)",
+          "type": "text",
+          "parserType": "array",
+          "description": "Array of filters",
+          "placeholder": "eyJNYXJrZXIiOiBudWxsLCAiYm90b190cnVuY2F0ZV9hbW91bnQiOiAxfQ==",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html"
+        },
+        {
+          "name": "DRYRUN",
+          "viewName": "Dry Run",
+          "type": "boolean",
+          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
+        }
+      ]
+    },
+    {
+      "name": "modifyInstanceType",
+      "viewName": "Modify Instance Type",
+      "params": [
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access Key",
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request.",
+          "placeholder": "AKIAIOSFODNN7EXAMPLE",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret Key",
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
+          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listRegions",
+          "description": "The region to execute the request in.",
+          "placeholder": "us-east-2",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
+        },
+        {
+          "name": "instanceIds",
+          "viewName": "Instance IDs",
+          "type": "text",
+          "parserType": "array",
+          "required": true,
+          "description": "Accepts either a string with one or multiple instance IDs each separated with a new line, or an array of instance ID strings passed from the code layer.",
+          "placeholder": "i-1234567a"
+        },
+        {
+          "name": "instanceType",
+          "viewName": "Instance Type",
+          "type": "autocomplete",
+          "required": true,
+          "autocompleteType": "function",
+          "functionName": "getInstanceTypes",
+          "description": "The machine type you want to launch for example: t2.micro",
+          "placeholder": "c5.large",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html"
+        }
+      ]
+    },
+    {
+      "name": "modifyInstanceAttribute",
+      "viewName": "Modify Instance Attribute",
+      "params": [
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access Key",
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request.",
+          "placeholder": "AKIAIOSFODNN7EXAMPLE",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret Key",
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
+          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listRegions",
+          "description": "The region to execute the request in.",
+          "placeholder": "us-east-2",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
+        },
+        {
+          "name": "instanceIds",
+          "viewName": "Instance IDs",
+          "type": "text",
+          "parserType": "array",
+          "required": true,
+          "description": "Accepts either a string with one or multiple instance IDs each separated with a new line, or an array of instance ID strings passed from the code layer.",
+          "placeholder": "i-1234567a"
+        },
+        {
+          "name": "attribute",
+          "viewName": "Attribute",
+          "required": true,
+          "learnUrl": "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html",
+          "type": "options",
+          "options": [
+            {
+              "id": "InstanceType",
+              "name": "InstanceType"
+            },
+            {
+              "id": "Kernel",
+              "name": "Kernel"
+            },
+            {
+              "id": "Ramdisk",
+              "name": "Ramdisk"
+            },
+            {
+              "id": "UserData",
+              "name": "UserData"
+            },
+            {
+              "id": "DisableApiTermination",
+              "name": "DisableApiTermination"
+            },
+            {
+              "id": "InstanceInitiatedShutdownBehavior",
+              "name": "InstanceInitiatedShutdownBehavior"
+            },
+            {
+              "id": "RootDeviceName",
+              "name": "RootDeviceName"
+            },
+            {
+              "id": "BlockDeviceMapping",
+              "name": "BlockDeviceMapping"
+            },
+            {
+              "id": "ProductCodes",
+              "name": "ProductCodes"
+            },
+            {
+              "id": "SourceDestCheck",
+              "name": "SourceDestCheck"
+            },
+            {
+              "id": "GroupSet",
+              "name": "GroupSet"
+            },
+            {
+              "id": "EbsOptimized",
+              "name": "EbsOptimized"
+            },
+            {
+              "id": "SriovNetSupport",
+              "name": "SriovNetSupport"
+            },
+            {
+              "id": "EnaSupport",
+              "name": "EnaSupport"
+            },
+            {
+              "id": "EnclaveOptions",
+              "name": "EnclaveOptions"
+            }
+          ]
+        },
+        {
+          "name": "attributeValue",
+          "viewName": "Attribute value",
+          "type": "string",
+          "required": true,
+          "placeholder": "m1.large",
+          "learnUrl": "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html",
+          "description": "The new value of an attribute."
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean",
+          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "learnUrl": "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html"
         }
       ]
     },
@@ -368,6 +594,7 @@
           "name": "KEY_PAIR_NAME",
           "viewName": "Key pair name",
           "type": "string",
+          "required": true,
           "placeholder": "my_max_256_chars_key_pair",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html",
           "description": "A descriptive name for the Key pair."
@@ -408,9 +635,42 @@
           "name": "KEY_PAIR_NAME",
           "viewName": "Key pair name",
           "type": "string",
+          "required": true,
           "placeholder": "my_max_256_chars_key_pair",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html",
           "description": "The name of the Key pair to delete."
+        }
+      ]
+    },
+    {
+      "name": "describeKeyPairs",
+      "viewName": "Describe Key Pairs",
+      "params": [
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access Key",
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request.",
+          "placeholder": "AKIAIOSFODNN7EXAMPLE",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret Key",
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
+          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listRegions",
+          "description": "The region to execute the request in.",
+          "placeholder": "us-east-2",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         }
       ]
     },
@@ -630,76 +890,6 @@
       ]
     },
     {
-      "name": "describeInstances",
-      "viewName": "Describe Instances",
-      "params": [
-        {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
-          "viewName": "Region",
-          "type": "autocomplete",
-          "autocompleteType": "function",
-          "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
-        },
-        {
-          "name": "INSTANCE_IDS",
-          "viewName": "Instance Ids",
-          "type": "string",
-          "description": "The IDs of the instances. Can be an array of instances.",
-          "placeholder": "i-1234567a",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html"
-        },
-        {
-          "name": "filters",
-          "viewName": "Filters (Array)",
-          "type": "string",
-          "description": "Array of filters",
-          "placeholder": "eyJNYXJrZXIiOiBudWxsLCAiYm90b190cnVuY2F0ZV9hbW91bnQiOiAxfQ==",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html"
-        },
-        {
-          "name": "DRYRUN",
-          "viewName": "Dry Run",
-          "type": "boolean",
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
-        },
-        {
-          "name": "MAX_RESULTS",
-          "viewName": "Max Results",
-          "type": "int",
-          "description": "Maximum number of instances to return.",
-          "placeholder": "100",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html"
-        },
-        {
-          "name": "NEXT_TOKEN",
-          "viewName": "Next Token",
-          "type": "string",
-          "description": "Use the specified token to get the instances. Used for paging.",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html"
-        }
-      ]
-    },
-    {
       "name": "createVpc",
       "viewName": "Create VPC",
       "params": [
@@ -741,6 +931,7 @@
           "name": "amazonProvidedIpv6CidrBlock",
           "viewName": "Amazon Provided IPV6 Block",
           "type": "boolean",
+          "default": false,
           "description": "Requests an Amazon-provided IPv6 CIDR block with a /56 prefix length for the VPC. You cannot specify the range of IP addresses, or the size of the CIDR block.",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/block-device-mapping-concepts.html"
         },
@@ -748,6 +939,7 @@
           "name": "instanceTenancy",
           "viewName": "Instance Tenancy",
           "type": "options",
+          "default": "default",
           "options": [
             {
               "id": "default",
@@ -801,6 +993,54 @@
       ]
     },
     {
+      "name": "deleteVpc",
+      "viewName": "Delete VPC",
+      "params": [
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access Key",
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request.",
+          "placeholder": "AKIAIOSFODNN7EXAMPLE",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret Key",
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
+          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listRegions",
+          "description": "The region to execute the request in.",
+          "placeholder": "us-east-2",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
+        },
+        {
+          "name": "vpcId",
+          "viewName": "VPC ID",
+          "type": "string",
+          "required": true,
+          "description": "The ID of the VPC.",
+          "placeholder": "vpc-2f09a348",
+          "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean",
+          "description": "checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html "
+        }
+      ]
+    },
+    {
       "name": "createSubnet",
       "viewName": "Create Subnet",
       "params": [
@@ -834,6 +1074,7 @@
           "name": "vpcId",
           "viewName": "VPC ID",
           "type": "string",
+          "required": true,
           "description": "The ID of the VPC.",
           "placeholder": "vpc-2f09a348",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html "
@@ -918,53 +1159,6 @@
       ]
     },
     {
-      "name": "deleteVpc",
-      "viewName": "Delete VPC",
-      "params": [
-        {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
-          "viewName": "Region",
-          "type": "autocomplete",
-          "autocompleteType": "function",
-          "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
-        },
-        {
-          "name": "vpcId",
-          "viewName": "VPC ID",
-          "type": "string",
-          "description": "The ID of the VPC.",
-          "placeholder": "vpc-2f09a348",
-          "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
-        },
-        {
-          "name": "dryRun",
-          "viewName": "Dry Run",
-          "type": "boolean",
-          "description": "checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html "
-        }
-      ]
-    },
-    {
       "name": "deleteSubnet",
       "viewName": "Delete Subnet",
       "params": [
@@ -998,6 +1192,7 @@
           "name": "subnetId",
           "viewName": "Subnet ID",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listSubnets",
           "description": "The ID of the subnet.",
@@ -1014,8 +1209,8 @@
       ]
     },
     {
-      "name": "modifyInstanceType",
-      "viewName": "Modify Instance Type",
+      "name": "createNatGateway",
+      "viewName": "Create NAT Gateway",
       "params": [
         {
           "name": "AWS_ACCESS_KEY_ID",
@@ -1044,21 +1239,39 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "instanceIds",
-          "viewName": "Instance IDs",
-          "type": "text",
-          "description": "Accepts either a string with one or multiple instance IDs each separated with a new line, or an array of instance ID strings passed from the code layer.",
-          "placeholder": "i-1234567a"
+          "name": "subnetId",
+          "viewName": "Subnet ID",
+          "type": "autocomplete",
+          "required": true,
+          "autocompleteType": "function",
+          "functionName": "listSubnets",
+          "description": "The subnet to create this NAT Gateway in.",
+          "placeholder": "192.168.255.255",
+          "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html"
         },
         {
-          "name": "instanceType",
-          "viewName": "Instance Type",
-          "type": "autocomplete",
-          "autocompleteType": "function",
-          "functionName": "getInstanceTypes",
-          "description": "The machine type you want to launch for example: t2.micro",
-          "placeholder": "c5.large",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html"
+          "name": "allocationId",
+          "viewName": "Allocation ID",
+          "type": "string",
+          "required": true,
+          "description": "The allocation ID of an Elastic IP address to associate with the NAT gateway. If the Elastic IP address is associated with another resource, you must first disassociate it.",
+          "placeholder": "eipalloc-12345678",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-addresses.html"
+        },
+        {
+          "name": "tags",
+          "viewName": "Tags",
+          "type": "text",
+          "description": "If specified, tag the NAT Gateway with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values separate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }.",
+          "placeholder": "TeamA",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean",
+          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
     },
@@ -1118,6 +1331,144 @@
       ]
     },
     {
+      "name": "attachInternetGateway",
+      "viewName": "Attach Internet Gateway",
+      "params": [
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access Key",
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request.",
+          "placeholder": "AKIAIOSFODNN7EXAMPLE",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret Key",
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
+          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listRegions",
+          "description": "The region to execute the request in.",
+          "placeholder": "us-east-2",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
+        },
+        {
+          "name": "gatewayId",
+          "viewName": "Gateway ID",
+          "type": "string",
+          "required": true,
+          "description": "The ID of the internet gateway to attach to the VPC.",
+          "placeholder": "igw-c0a643a9",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/attach-internet-gateway.html"
+        },
+        {
+          "name": "vpcId",
+          "viewName": "VPC ID",
+          "type": "string",
+          "required": true,
+          "description": "The ID of the VPC to attach the internet gateway to.",
+          "placeholder": "vpc-2f09a348",
+          "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean",
+          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
+        }
+      ]
+    },
+    {
+      "name": "createRoute",
+      "viewName": "Create Route",
+      "params": [
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access Key",
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request.",
+          "placeholder": "AKIAIOSFODNN7EXAMPLE",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret Key",
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
+          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listRegions",
+          "description": "The region to execute the request in.",
+          "placeholder": "us-east-2",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
+        },
+        {
+          "name": "routeTableId",
+          "viewName": "Route Table ID",
+          "type": "string",
+          "required": true,
+          "description": "The ID of the route table to create the route in.",
+          "placeholder": "rtb-09ba434c1b1234567",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-route-tables.html"
+        },
+        {
+          "name": "gatewayId",
+          "viewName": "Gateway ID",
+          "type": "string",
+          "description": "ID of an internet gateway. If specified, make the Internet Gateway specify the target of the route.",
+          "placeholder": "igw-c0a643a9",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/attach-internet-gateway.html"
+        },
+        {
+          "name": "natGatewayId",
+          "viewName": "NAT Gateway ID",
+          "type": "string",
+          "description": "ID of a NAT gateway. If specified, make the NAT Gateway specify the target of the route.",
+          "placeholder": "0.0.0.0/0",
+          "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html"
+        },
+        {
+          "name": "instanceId",
+          "viewName": "Instance ID",
+          "type": "string",
+          "description": "ID of an Instance. If specified, make the Instance specify the target of the route.",
+          "placeholder": "i-1234567a",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html"
+        },
+        {
+          "name": "destinationCidrBlock",
+          "viewName": "Destination CIDR Block",
+          "type": "string",
+          "required": true,
+          "description": "This route will target all IPv4 addresses in the specified IP block.",
+          "placeholder": "127.168.0.0/16",
+          "learnUrl": "https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createRoute-property"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean",
+          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
+        }
+      ]
+    },
+    {
       "name": "createRouteTable",
       "viewName": "Create Route Table",
       "params": [
@@ -1151,6 +1502,7 @@
           "name": "vpcId",
           "viewName": "VPC ID",
           "type": "string",
+          "required": true,
           "description": "The VPC to create this Route Table in.",
           "placeholder": "vpc-2f09a348",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
@@ -1178,142 +1530,6 @@
           "viewName": "tags",
           "type": "text",
           "description": "If specified, tag the Route Table with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values separate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. ",
-          "placeholder": "TeamA",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
-        },
-        {
-          "name": "dryRun",
-          "viewName": "Dry Run",
-          "type": "boolean",
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
-        }
-      ]
-    },
-    {
-      "name": "createNatGateway",
-      "viewName": "Create NAT Gateway",
-      "params": [
-        {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
-          "viewName": "Region",
-          "type": "autocomplete",
-          "autocompleteType": "function",
-          "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
-        },
-        {
-          "name": "subnetId",
-          "viewName": "Subnet ID",
-          "type": "autocomplete",
-          "autocompleteType": "function",
-          "functionName": "listSubnets",
-          "description": "The subnet to create this NAT Gateway in.",
-          "placeholder": "192.168.255.255",
-          "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html"
-        },
-        {
-          "name": "allocationId",
-          "viewName": "Allocation ID",
-          "type": "string",
-          "description": "The allocation ID of an Elastic IP address to associate with the NAT gateway. If the Elastic IP address is associated with another resource, you must first disassociate it.",
-          "placeholder": "eipalloc-12345678",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-addresses.html"
-        },
-        {
-          "name": "tags",
-          "viewName": "Tags",
-          "type": "text",
-          "description": "If specified, tag the NAT Gateway with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values separate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }.",
-          "placeholder": "TeamA",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
-        },
-        {
-          "name": "dryRun",
-          "viewName": "Dry Run",
-          "type": "boolean",
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
-        }
-      ]
-    },
-    {
-      "name": "createSecurityGroup",
-      "viewName": "Create Security Group",
-      "params": [
-        {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
-          "viewName": "Region",
-          "type": "autocomplete",
-          "autocompleteType": "function",
-          "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
-        },
-        {
-          "name": "name",
-          "viewName": "Name",
-          "type": "string",
-          "description": "The name of the new security group to create.",
-          "placeholder": "security-grp-1",
-          "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
-        },
-        {
-          "name": "description",
-          "viewName": "Description",
-          "type": "text",
-          "description": "The description of the security group.",
-          "placeholder": "This is my organization's security group.",
-          "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
-        },
-        {
-          "name": "vpcId",
-          "viewName": "VPC ID",
-          "type": "string",
-          "description": "The ID of the VPC. Required for EC2-VPC Security Group.",
-          "placeholder": "vpc-2f09a348",
-          "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
-        },
-        {
-          "name": "tags",
-          "viewName": "Tags",
-          "type": "text",
-          "description": "If specified, tag the Security Group with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values separate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }.",
           "placeholder": "TeamA",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
@@ -1360,6 +1576,7 @@
           "name": "routeTableId",
           "viewName": "Route Table ID",
           "type": "string",
+          "required": true,
           "description": "The ID of the route table to associate.\n\n5. Subnet ID (String)Optional- If specified, associate the route table with the specified subnet.",
           "placeholder": "192.168.255.255",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html"
@@ -1383,272 +1600,7 @@
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/attach-internet-gateway.html"
         },
         {
-          "name": "dryRun",
-          "viewName": "Dry Run",
-          "type": "boolean",
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
-        }
-      ]
-    },
-    {
-      "name": "attachInternetGateway",
-      "viewName": "Attach Internet Gateway",
-      "params": [
-        {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
-          "viewName": "Region",
-          "type": "autocomplete",
-          "autocompleteType": "function",
-          "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
-        },
-        {
-          "name": "gatewayId",
-          "viewName": "Gateway ID",
-          "type": "string",
-          "description": "The ID of the internet gateway to attach to the VPC.",
-          "placeholder": "igw-c0a643a9",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/attach-internet-gateway.html"
-        },
-        {
-          "name": "vpcId",
-          "viewName": "VPC ID",
-          "type": "string",
-          "description": "The ID of the VPC to attach the internet gateway to.",
-          "placeholder": "vpc-2f09a348",
-          "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
-        }
-      ]
-    },
-    {
-      "name": "addSecurityGroupRules",
-      "viewName": "Add Security Group Rules",
-      "params": [
-        {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
-          "viewName": "Region",
-          "type": "autocomplete",
-          "autocompleteType": "function",
-          "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
-        },
-        {
-          "name": "groupId",
-          "viewName": "Group ID",
-          "type": "string",
-          "description": "The ID of the security group to add the rules to.",
-          "placeholder": "sg-33bb22aa",
-          "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
-        },
-        {
-          "name": "ruleType",
-          "viewName": "Rule Type",
-          "type": "options",
-          "options": [
-            {
-              "id": "Ingress-Authorize",
-              "name": "Ingress-Authorize"
-            },
-            {
-              "id": "Egress-Authorize",
-              "name": "Egress-Authorize"
-            },
-            {
-              "id": "Ingress-Revoke",
-              "name": "Ingress-Revoke"
-            },
-            {
-              "id": "Egress-Revoke",
-              "name": "Egress-Revoke"
-            }
-          ],
-          "description": "The type of rules to create.\nPossible Values are: Ingress-Authorize/Egress-Authorize/Ingress-Revoke/Egress-Revoke. Default Value is Ingress-Authorize.",
-          "placeholder": "Ingress-Authorize",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-groups.html"
-        },
-        {
-          "name": "cidrIps",
-          "viewName": "CIDR IPv4 Blocks",
-          "type": "text",
-          "description": "The IP v6 ranges in CIDR notation to apply to the rule(To authorize\\revoke). To enter multiple values separate each with a new line.",
-          "placeholder": "10.2.0.0/16",
-          "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html"
-        },
-        {
-          "name": "cidrIps6",
-          "viewName": "CIDR IPv6 Blocks",
-          "type": "text",
-          "description": "The IP v6 ranges in CIDR notation to apply to the rule(To authorize\revoke). To enter multiple values separate each with a new line.",
-          "placeholder": "2002::1234:abcd:ffff:c0a8:101/64"
-        },
-        {
-          "name": "fromPorts",
-          "viewName": "From Ports",
-          "type": "text",
-          "description": "The source ports to apply the rule to. To enter multiple values separate each with a new line. If specified the same number of ports as 'From Ports' map each port in 'From Ports' to a port specified here. If not, map each port on 'From Ports' to all ports specified here.For example: \n* From Ports: 22, 80. To Ports: 22, 80. => 2 rules, 22->22, 80->80.\n* From Ports: 80, 8080. To Ports: 80. => 2 rules, 80->80, 8080->80.",
-          "placeholder": "8009",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-group-rules.html"
-        },
-        {
-          "name": "toPorts",
-          "viewName": "To Ports",
-          "type": "text",
-          "description": "The target ports to apply the rule to. To enter multiple values separate each with a new line.",
-          "placeholder": "8090",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-group-rules.html"
-        },
-        {
-          "name": "ipProtocol",
-          "viewName": "Ip Protocol",
-          "type": "options",
-          "options": [
-            {
-              "id": "All",
-              "name": "All"
-            },
-            {
-              "id": "TCP",
-              "name": "TCP"
-            },
-            {
-              "id": "UDP",
-              "name": "UDP"
-            },
-            {
-              "id": "ICMP",
-              "name": "ICMP"
-            }
-          ],
-          "description": "The IP Protocol to apply to this rule(either authorized\\revoke access for this protocol).",
-          "placeholder": "TCP",
-          "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html"
-        },
-        {
-          "name": "description",
-          "viewName": "Description",
-          "type": "text",
-          "description": "The description of the rules created.",
-          "placeholder": "This is my organization's security group.",
-          "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
-        },
-        {
-          "name": "dryRun",
-          "viewName": "Dry Run",
-          "type": "boolean",
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
-        }
-      ]
-    },
-    {
-      "name": "createRoute",
-      "viewName": "Create Route",
-      "params": [
-        {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
-          "viewName": "Region",
-          "type": "autocomplete",
-          "autocompleteType": "function",
-          "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
-        },
-        {
-          "name": "routeTableId",
-          "viewName": "Route Table ID",
-          "type": "string",
-          "description": "The ID of the route table to create the route in.",
-          "placeholder": "rtb-09ba434c1b1234567",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-route-tables.html"
-        },
-        {
-          "name": "gatewayId",
-          "viewName": "Gateway ID",
-          "type": "string",
-          "description": "ID of an internet gateway. If specified, make the Internet Gateway specify the target of the route.",
-          "placeholder": "igw-c0a643a9",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/attach-internet-gateway.html"
-        },
-        {
-          "name": "natGatewayId",
-          "viewName": "NAT Gateway ID",
-          "type": "string",
-          "description": "ID of a NAT gateway. If specified, make the NAT Gateway specify the target of the route.",
-          "placeholder": "0.0.0.0/0",
-          "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html"
-        },
-        {
-          "name": "instanceId",
-          "viewName": "Instance ID",
-          "type": "string",
-          "description": "ID of an Instance. If specified, make the Instance specify the target of the route.",
-          "placeholder": "i-1234567a",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html"
-        },
-        {
-          "name": "destinationCidrBlock",
-          "viewName": "Destination CIDR Block",
-          "type": "string",
-          "description": "This route will target all IPv4 addresses in the specified IP block.",
-          "placeholder": "127.168.0.0/16",
-          "learnUrl": "https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createRoute-property"
-        },
-        {
-          "name": "dryRun",
+          "name": "DryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
@@ -1690,6 +1642,7 @@
           "name": "availabilityZone",
           "viewName": "Availability Zone",
           "type": "string",
+          "required": true,
           "description": "The Availability Zone in which to create the volume.",
           "placeholder": "us-west-2-lax-1a",
           "learnUrl": "https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/RegionsAndAZs.html"
@@ -1841,6 +1794,7 @@
           "name": "volumeId",
           "viewName": "Volume ID",
           "type": "string",
+          "required": true,
           "placeholder": "vol-1234567890abcdef0",
           "description": "The ID of the volume to create the snapshot of.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-volumes.html"
@@ -1877,8 +1831,8 @@
       ]
     },
     {
-      "name": "modifyInstanceAttribute",
-      "viewName": "Modify Instance Attribute",
+      "name": "createSecurityGroup",
+      "viewName": "Create Security Group",
       "params": [
         {
           "name": "AWS_ACCESS_KEY_ID",
@@ -1907,94 +1861,188 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
-          "name": "instanceIds",
-          "viewName": "Instance IDs",
-          "type": "text",
-          "description": "Accepts either a string with one or multiple instance IDs each separated with a new line, or an array of instance ID strings passed from the code layer.",
-          "placeholder": "i-1234567a"
-        },
-        {
-          "name": "attribute",
-          "viewName": "Attribute",
-          "learnUrl": "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html",
-          "type": "options",
-          "options": [
-            {
-              "id": "InstanceType",
-              "name": "InstanceType"
-            },
-            {
-              "id": "Kernel",
-              "name": "Kernel"
-            },
-            {
-              "id": "Ramdisk",
-              "name": "Ramdisk"
-            },
-            {
-              "id": "UserData",
-              "name": "UserData"
-            },
-            {
-              "id": "DisableApiTermination",
-              "name": "DisableApiTermination"
-            },
-            {
-              "id": "InstanceInitiatedShutdownBehavior",
-              "name": "InstanceInitiatedShutdownBehavior"
-            },
-            {
-              "id": "RootDeviceName",
-              "name": "RootDeviceName"
-            },
-            {
-              "id": "BlockDeviceMapping",
-              "name": "BlockDeviceMapping"
-            },
-            {
-              "id": "ProductCodes",
-              "name": "ProductCodes"
-            },
-            {
-              "id": "SourceDestCheck",
-              "name": "SourceDestCheck"
-            },
-            {
-              "id": "GroupSet",
-              "name": "GroupSet"
-            },
-            {
-              "id": "EbsOptimized",
-              "name": "EbsOptimized"
-            },
-            {
-              "id": "SriovNetSupport",
-              "name": "SriovNetSupport"
-            },
-            {
-              "id": "EnaSupport",
-              "name": "EnaSupport"
-            },
-            {
-              "id": "EnclaveOptions",
-              "name": "EnclaveOptions"
-            }
-          ]
-        },
-        {
-          "name": "attributeValue",
-          "viewName": "Attribute value",
+          "name": "name",
+          "viewName": "Name",
           "type": "string",
-          "placeholder": "m1.large",
-          "learnUrl": "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html",
-          "description": "The new value of an attribute."
+          "required": true,
+          "description": "The name of the new security group to create.",
+          "placeholder": "security-grp-1",
+          "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
+        },
+        {
+          "name": "description",
+          "viewName": "Group description",
+          "type": "text",
+          "required": true,
+          "description": "The description of the security group.",
+          "placeholder": "This is my organization's security group.",
+          "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
+        },
+        {
+          "name": "vpcId",
+          "viewName": "VPC ID",
+          "type": "string",
+          "description": "The ID of the VPC. Required for EC2-VPC Security Group.",
+          "placeholder": "vpc-2f09a348",
+          "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
+        },
+        {
+          "name": "tags",
+          "viewName": "Tags",
+          "type": "text",
+          "description": "If specified, tag the Security Group with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values separate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }.",
+          "placeholder": "TeamA",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
-          "learnUrl": "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html"
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
+        }
+      ]
+    },
+    {
+      "name": "addSecurityGroupRules",
+      "viewName": "Add Security Group Rules",
+      "params": [
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "viewName": "Access Key",
+          "type": "vault",
+          "description": "The Access Key ID to use to authenticate to AWS for this request.",
+          "placeholder": "AKIAIOSFODNN7EXAMPLE",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "viewName": "Secret Key",
+          "type": "vault",
+          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
+          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+        },
+        {
+          "name": "REGION",
+          "viewName": "Region",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listRegions",
+          "description": "The region to execute the request in.",
+          "placeholder": "us-east-2",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
+        },
+        {
+          "name": "groupId",
+          "viewName": "Group ID",
+          "type": "string",
+          "required": true,
+          "description": "The ID of the security group to add the rules to.",
+          "placeholder": "sg-33bb22aa",
+          "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
+        },
+        {
+          "name": "ruleType",
+          "viewName": "Rule Type",
+          "type": "options",
+          "options": [
+            {
+              "id": "Ingress-Authorize",
+              "name": "Ingress-Authorize"
+            },
+            {
+              "id": "Egress-Authorize",
+              "name": "Egress-Authorize"
+            },
+            {
+              "id": "Ingress-Revoke",
+              "name": "Ingress-Revoke"
+            },
+            {
+              "id": "Egress-Revoke",
+              "name": "Egress-Revoke"
+            }
+          ],
+          "description": "The type of rules to create.\nPossible Values are: Ingress-Authorize/Egress-Authorize/Ingress-Revoke/Egress-Revoke. Default Value is Ingress-Authorize.",
+          "placeholder": "Ingress-Authorize",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-groups.html"
+        },
+        {
+          "name": "cidrIps",
+          "viewName": "CIDR IPv4 Blocks",
+          "type": "text",
+          "parserType": "array",
+          "description": "The IP v6 ranges in CIDR notation to apply to the rule(To authorize\\revoke). To enter multiple values separate each with a new line.",
+          "placeholder": "10.2.0.0/16",
+          "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html"
+        },
+        {
+          "name": "cidrIps6",
+          "viewName": "CIDR IPv6 Blocks",
+          "type": "text",
+          "parserType": "array",
+          "description": "The IP v6 ranges in CIDR notation to apply to the rule(To authorize\revoke). To enter multiple values separate each with a new line.",
+          "placeholder": "2002::1234:abcd:ffff:c0a8:101/64"
+        },
+        {
+          "name": "fromPorts",
+          "viewName": "From Ports",
+          "type": "text",
+          "parserType": "array",
+          "description": "The source ports to apply the rule to. To enter multiple values separate each with a new line. If specified the same number of ports as 'From Ports' map each port in 'From Ports' to a port specified here. If not, map each port on 'From Ports' to all ports specified here.For example: \n* From Ports: 22, 80. To Ports: 22, 80. => 2 rules, 22->22, 80->80.\n* From Ports: 80, 8080. To Ports: 80. => 2 rules, 80->80, 8080->80.",
+          "placeholder": "8009",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-group-rules.html"
+        },
+        {
+          "name": "toPorts",
+          "viewName": "To Ports",
+          "type": "text",
+          "parserType": "array",
+          "description": "The target ports to apply the rule to. To enter multiple values separate each with a new line.",
+          "placeholder": "8090",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-group-rules.html"
+        },
+        {
+          "name": "ipProtocol",
+          "viewName": "Ip Protocol",
+          "type": "options",
+          "options": [
+            {
+              "id": "All",
+              "name": "All"
+            },
+            {
+              "id": "TCP",
+              "name": "TCP"
+            },
+            {
+              "id": "UDP",
+              "name": "UDP"
+            },
+            {
+              "id": "ICMP",
+              "name": "ICMP"
+            }
+          ],
+          "description": "The IP Protocol to apply to this rule(either authorized\\revoke access for this protocol).",
+          "placeholder": "TCP",
+          "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html"
+        },
+        {
+          "name": "description",
+          "viewName": "Description",
+          "type": "text",
+          "description": "The description of the rules created.",
+          "placeholder": "This is my organization's security group.",
+          "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
+        },
+        {
+          "name": "dryRun",
+          "viewName": "Dry Run",
+          "type": "boolean",
+          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
     }
