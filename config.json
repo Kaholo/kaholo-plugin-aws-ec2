@@ -370,7 +370,7 @@
           "type": "text",
           "parserType": "array",
           "description": "Array of filters",
-          "placeholder": "eyJNYXJrZXIiOiBudWxsLCAiYm90b190cnVuY2F0ZV9hbW91bnQiOiAxfQ==",
+          "placeholder": "[{\"Name\": \"instance-state-name\",\"Values\": [\"running\"]}]",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html"
         },
         {

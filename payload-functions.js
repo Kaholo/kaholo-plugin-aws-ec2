@@ -1,6 +1,6 @@
 const { helpers } = require("kaholo-aws-plugin");
 const _ = require("lodash");
-const { strToBase64 } = require("./helpers");
+const { strToBase64, parseObjectLikeParam } = require("./helpers");
 
 function prepareCreateInstancePayload(params) {
   if (params.MAX_COUNT < params.MIN_COUNT) {
@@ -35,11 +35,16 @@ function prepareManageInstancesPayload(params) {
 }
 
 function prepareDescribeInstancesPayload(params) {
-  return {
-    InstanceIds: params.INSTANCE_IDS,
-    Filters: params.filters,
+  const payload = {
     DryRun: params.dryRun,
   };
+  if (params.filters) {
+    payload.Filters = parseObjectLikeParam(params.filters);
+  }
+  if (params.INSTANCE_IDS) {
+    payload.InstanceIds = params.INSTANCE_IDS;
+  }
+  return payload;
 }
 
 function prepareCreateVpcPayload(params) {
