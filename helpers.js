@@ -18,19 +18,17 @@ function resolveSecurityGroupFunction(ruleType) {
   }
 }
 
-function parseObjectLikeParam(param) {
-  if (_.isPlainObject(param)) {
-    return param;
-  }
+function tryParseJson(v) {
+  if (!_.isString(v)) { return v; }
   try {
-    return JSON.parse(param);
+    return JSON.parse(v);
   } catch {
-    throw new Error(`Error occurred while trying to parse value "${param}" to JSON object.`);
+    throw new Error(`Error occurred while trying to parse value "${v}" to JSON object.`);
   }
 }
 
 module.exports = {
   strToBase64,
   resolveSecurityGroupFunction,
-  parseObjectLikeParam,
+  tryParseJson,
 };
