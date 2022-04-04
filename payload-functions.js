@@ -170,11 +170,24 @@ function prepareDeleteSubnetPayload(params) {
   };
 }
 
-function prepareAddSecurityGroupRulesPayload(params) {
-  if (params.fromPorts.length !== params.toPorts.length) {
+function validateAddSecurityGroupRulesParams(params) {
+  if (params.fromPorts?.length !== params.toPorts?.length) {
     throw new Error("From Ports and To Ports must be the same length");
   }
+  const allowedPortsForProtocolAll = ["*", "-1", "0-65535"];
+  const areFromPortsLegal = params.fromPorts?.every?.((port) => (
+    allowedPortsForProtocolAll.includes(port)
+  ));
+  const areToPortsLegal = params.toPorts?.every?.((port) => (
+    allowedPortsForProtocolAll.includes(port)
+  ));
+  if (params.ipProtocol === "All" && !(areFromPortsLegal && !areToPortsLegal)) {
+    throw new Error("Specifying All IP Protocols allows all traffic and cannot be restricted by Port Range. If you intend to allow a specific Port Range, please use TCP or UDP instead.");
+  }
+}
 
+function prepareAddSecurityGroupRulesPayload(params) {
+  validateAddSecurityGroupRulesParams(params);
   const ipv6Ranges = params.cidrIps6.map((CidrIpv6) => ({
     CidrIpv6,
     Description: params.description,
@@ -185,16 +198,22 @@ function prepareAddSecurityGroupRulesPayload(params) {
     Description: params.description,
   }));
 
-  return helpers.removeUndefinedAndEmpty({
+  const mappedPorts = params.fromPorts?.map ? params.fromPorts.map((fromPort, index) => ({
+    FromPort: fromPort,
+    ToPort: params.toPorts[index],
+    IpProtocol: params.ipProtocol,
+  })) : [];
+
+  const IpPermissions = params.ipProtocol === "All" ? [{ IpProtocol: "All" }] : mappedPorts;
+  const payload = helpers.removeUndefinedAndEmpty({
     GroupId: params.groupId,
-    IpPermissions: params.fromPorts.map((fromPort, index) => ({
-      FromPort: fromPort,
-      ToPort: params.toPorts[index],
-      IpProtocol: params.ipProtocol,
-    })),
-    Ipv6Ranges: ipv6Ranges,
-    IpRanges: ipRanges,
+    IpPermissions,
   });
+  if (params.ipProtocol !== "ICMP") {
+    payload.Ipv6Ranges = ipv6Ranges;
+    payload.IpRanges = ipRanges;
+  }
+  return payload;
 }
 
 function prepareManageKeyPairsPayload(params) {
