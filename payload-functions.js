@@ -1,6 +1,7 @@
 const { helpers } = require("kaholo-aws-plugin");
 const _ = require("lodash");
 const { strToBase64, parseObjectLikeParam } = require("./helpers");
+const { AWS_DEFAULT_MAX_RESULTS } = require("./consts.json");
 
 function prepareCreateInstancePayload(params) {
   if (params.MAX_COUNT < params.MIN_COUNT) {
@@ -43,6 +44,11 @@ function prepareDescribeInstancesPayload(params) {
   }
   if (params.INSTANCE_IDS) {
     payload.InstanceIds = params.INSTANCE_IDS;
+  } else {
+    payload.MaxResults = AWS_DEFAULT_MAX_RESULTS;
+  }
+  if (params.nextToken) {
+    payload.NextToken = params.nextToken;
   }
   return payload;
 }

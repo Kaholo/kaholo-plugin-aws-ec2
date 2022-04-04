@@ -379,6 +379,13 @@
           "type": "boolean",
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
+        },
+        {
+          "name": "GET_ALL_RECURSIVELY",
+          "viewName": "Get All Results",
+          "type": "boolean",
+          "description": "Check this if you have more than 1000 instances and want to fetch them all at once.",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html"
         }
       ]
     },
