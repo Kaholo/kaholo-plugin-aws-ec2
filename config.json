@@ -384,7 +384,7 @@
           "name": "GET_ALL_RECURSIVELY",
           "viewName": "Get All Results",
           "type": "boolean",
-          "description": "Check this if you have more than 1000 instances and want to fetch them all at once.",
+          "description": "Check this if you want to more than 1000 instances at once.",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html"
         }
       ]
