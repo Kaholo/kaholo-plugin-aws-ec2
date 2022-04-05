@@ -181,7 +181,7 @@ function validateAddSecurityGroupRulesParams(params) {
   const areToPortsLegal = params.toPorts?.every?.((port) => (
     allowedPortsForProtocolAll.includes(port)
   ));
-  if (params.ipProtocol === "All" && !(areFromPortsLegal && !areToPortsLegal)) {
+  if (params.ipProtocol === "All" && !(areFromPortsLegal && areToPortsLegal)) {
     throw new Error("Specifying All IP Protocols allows all traffic and cannot be restricted by Port Range. If you intend to allow a specific Port Range, please use TCP or UDP instead.");
   }
 }
