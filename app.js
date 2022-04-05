@@ -29,7 +29,7 @@ const simpleAwsFunctions = {
 async function describeInstances(client, params, region) {
   const awsDescribeInstances = awsPlugin.generateAwsMethod("describeInstances", payloadFuncs.prepareDescribeInstancesPayload);
   if (!params.GET_ALL_RECURSIVELY) {
-    return _.omit(await awsDescribeInstances(client, params, region), "NextToken");
+    return awsDescribeInstances(client, params, region);
   }
   const getAllInstancesRecursively = async (nextToken) => {
     const result = await awsDescribeInstances(client, { ...params, nextToken }, region);
