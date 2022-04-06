@@ -1,6 +1,7 @@
 const { helpers } = require("kaholo-aws-plugin");
 const _ = require("lodash");
-const { strToBase64 } = require("./helpers");
+const { strToBase64, tryParseJson } = require("./helpers");
+const { AWS_DEFAULT_MAX_RESULTS } = require("./consts.json");
 
 function prepareCreateInstancePayload(params) {
   if (params.MAX_COUNT < params.MIN_COUNT) {
@@ -35,11 +36,21 @@ function prepareManageInstancesPayload(params) {
 }
 
 function prepareDescribeInstancesPayload(params) {
-  return {
-    InstanceIds: params.INSTANCE_IDS,
-    Filters: params.filters,
+  const payload = {
     DryRun: params.dryRun,
   };
+  if (params.filters) {
+    payload.Filters = tryParseJson(params.filters);
+  }
+  if (params.INSTANCE_IDS) {
+    payload.InstanceIds = params.INSTANCE_IDS;
+  } else {
+    payload.MaxResults = AWS_DEFAULT_MAX_RESULTS;
+  }
+  if (params.nextToken) {
+    payload.NextToken = params.nextToken;
+  }
+  return payload;
 }
 
 function prepareCreateVpcPayload(params) {
