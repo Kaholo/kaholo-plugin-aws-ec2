@@ -19,7 +19,7 @@ function resolveSecurityGroupFunction(ruleType) {
 }
 
 function tryParseJson(v) {
-  if (!_.isString(v)) { return v; }
+  if (_.isPlainObject(v)) { return v; }
   try {
     return JSON.parse(v);
   } catch {
