@@ -11,7 +11,6 @@ const simpleAwsFunctions = {
   stopInstances: awsPlugin.generateAwsMethod("stopInstances", payloadFuncs.prepareManageInstancesPayload),
   rebootInstances: awsPlugin.generateAwsMethod("rebootInstances", payloadFuncs.prepareManageInstancesPayload),
   terminateInstances: awsPlugin.generateAwsMethod("terminateInstances", payloadFuncs.prepareManageInstancesPayload),
-  describeInstances: awsPlugin.generateAwsMethod("describeInstances", payloadFuncs.prepareDescribeInstancesPayload),
   createNatGateway: awsPlugin.generateAwsMethod("createNatGateway", payloadFuncs.prepareCreateNatGatewayPayload),
   createRoute: awsPlugin.generateAwsMethod("createRoute", payloadFuncs.prepareCreateRoutePayload),
   modifySubnetAttribute: awsPlugin.generateAwsMethod("modifySubnetAttribute"),
@@ -26,6 +25,22 @@ const simpleAwsFunctions = {
   deleteVpc: awsPlugin.generateAwsMethod("deleteVpc", payloadFuncs.prepareDeleteVpcPayload),
   deleteSubnet: awsPlugin.generateAwsMethod("deleteSubnet", payloadFuncs.prepareDeleteSubnetPayload),
 };
+
+async function describeInstances(client, params, region) {
+  const awsDescribeInstances = awsPlugin.generateAwsMethod("describeInstances", payloadFuncs.prepareDescribeInstancesPayload);
+  if (!params.GET_ALL_RECURSIVELY) {
+    return awsDescribeInstances(client, params, region);
+  }
+  const getAllInstancesRecursively = async (nextToken) => {
+    const result = await awsDescribeInstances(client, { ...params, nextToken }, region);
+    if (result.NextToken) {
+      const recursiveResult = await getAllInstancesRecursively(result.NextToken);
+      return [...result.Reservations, ...recursiveResult];
+    }
+    return result.Reservations;
+  };
+  return { Reservations: await getAllInstancesRecursively() };
+}
 
 async function modifyInstanceType(client, params) {
   return Promise.all(params.instanceIds.map((instanceId) => {
@@ -345,6 +360,7 @@ module.exports = {
       createVolume,
       createSnapshot,
       addSecurityGroupRules,
+      describeInstances,
     },
     {
       getInstanceTypes,
