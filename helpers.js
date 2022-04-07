@@ -27,10 +27,6 @@ function tryParseJson(v) {
   }
 }
 
-function randomString() {
-  return Math.random().toString(36).slice(2);
-}
-
 async function removeSecurityGroupEgressRules(client, { securityGroupId }) {
   // Get security group rules
   const { SecurityGroupRules: groupRules } = await client.describeSecurityGroupRules({
@@ -54,6 +50,5 @@ module.exports = {
   strToBase64,
   resolveSecurityGroupFunction,
   tryParseJson,
-  randomString,
   removeSecurityGroupEgressRules,
 };
