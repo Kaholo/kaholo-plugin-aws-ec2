@@ -1,12 +1,11 @@
 const _ = require("lodash");
 const aws = require("aws-sdk");
 const awsPlugin = require("kaholo-aws-plugin");
-const { resolveSecurityGroupFunction } = require("./helpers");
+const { resolveSecurityGroupFunction, createDedicatedSecurityGroup } = require("./helpers");
 const { getInstanceTypes, listRegions, listSubnets } = require("./autocomplete");
 const payloadFuncs = require("./payload-functions");
 
 const simpleAwsFunctions = {
-  createInstance: awsPlugin.generateAwsMethod("runInstances", payloadFuncs.prepareCreateInstancePayload),
   startInstances: awsPlugin.generateAwsMethod("startInstances", payloadFuncs.prepareManageInstancesPayload),
   stopInstances: awsPlugin.generateAwsMethod("stopInstances", payloadFuncs.prepareManageInstancesPayload),
   rebootInstances: awsPlugin.generateAwsMethod("rebootInstances", payloadFuncs.prepareManageInstancesPayload),
@@ -25,6 +24,17 @@ const simpleAwsFunctions = {
   deleteVpc: awsPlugin.generateAwsMethod("deleteVpc", payloadFuncs.prepareDeleteVpcPayload),
   deleteSubnet: awsPlugin.generateAwsMethod("deleteSubnet", payloadFuncs.prepareDeleteSubnetPayload),
 };
+
+async function createInstance(client, params, region) {
+  // Create a dedicated security group for the instance
+  const { securityGroupId } = await createDedicatedSecurityGroup(client, params);
+  // Create instance
+  const awsCreateInstance = awsPlugin.generateAwsMethod("runInstances", payloadFuncs.prepareCreateInstancePayload);
+  return awsCreateInstance(client, {
+    ...params,
+    DEDICATED_SECURITY_GROUP_ID: securityGroupId,
+  }, region);
+}
 
 async function describeInstances(client, params, region) {
   const awsDescribeInstances = awsPlugin.generateAwsMethod("describeInstances", payloadFuncs.prepareDescribeInstancesPayload);
@@ -361,6 +371,7 @@ module.exports = {
       createSnapshot,
       addSecurityGroupRules,
       describeInstances,
+      createInstance,
     },
     {
       getInstanceTypes,
