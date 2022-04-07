@@ -1904,7 +1904,7 @@
         {
           "name": "DISALLOW_OUTBOUND_TRAFFIC",
           "viewName": "Disallow All Outbound Traffic",
-          "description": "Disallow all outgoing traffic from instance. Default is false.",
+          "description": "Disallow all outgoing traffic. Default is false.",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html",
           "type": "boolean"
         },
