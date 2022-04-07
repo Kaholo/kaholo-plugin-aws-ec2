@@ -36,7 +36,9 @@ async function listSubnets(query, params, client) {
     (subnet) => subnet.VpcId.includes(query)
       || subnet.AvailabilityZone.includes(query)
       || subnet.SubnetId.includes(query),
-  ).map((subnet) => autocomplete.toAutocompleteItemFromPrimitive(createSubnetText(subnet)));
+  ).map((subnet) => (
+    autocomplete.toAutocompleteItemFromPrimitive(subnet.SubnetId, createSubnetText(subnet))
+  ));
 }
 
 module.exports = {
