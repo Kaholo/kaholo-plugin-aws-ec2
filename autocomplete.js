@@ -1,5 +1,6 @@
 const _ = require("lodash");
 const { autocomplete } = require("kaholo-aws-plugin");
+const { createSubnetText } = require("./helpers");
 
 async function getInstanceTypes(query, params, client, region) {
   const payload = {
@@ -27,7 +28,9 @@ async function listSubnets(query, params, client) {
     (subnet) => subnet.VpcId.includes(query)
       || subnet.AvailabilityZone.includes(query)
       || subnet.SubnetId.includes(query),
-  ).map((subnet) => autocomplete.toAutocompleteItemFromPrimitive(subnet.SubnetId));
+  ).map((subnet) => (
+    autocomplete.toAutocompleteItemFromPrimitive(subnet.SubnetId, createSubnetText(subnet))
+  ));
 }
 
 module.exports = {
