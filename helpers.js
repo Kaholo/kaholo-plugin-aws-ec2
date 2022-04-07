@@ -27,8 +27,19 @@ function tryParseJson(v) {
   }
 }
 
+function createSubnetText(subnet) {
+  const textSegments = [subnet.SubnetId];
+  const subnetName = subnet.Tags.find(({ Key }) => Key === "Name");
+  if (subnetName) {
+    textSegments.push(subnetName.Value);
+  }
+  textSegments.push(subnet.AvailabilityZone);
+  return textSegments.join(" | ");
+}
+
 module.exports = {
   strToBase64,
   resolveSecurityGroupFunction,
   tryParseJson,
+  createSubnetText,
 };
