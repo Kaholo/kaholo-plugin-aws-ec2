@@ -31,33 +31,23 @@ function randomString() {
   return Math.random().toString(36).slice(2);
 }
 
-async function createDedicatedSecurityGroup(client, params) {
-  const securityGroupName = (params.NAME_TAG ? `${params.NAME_TAG}-` : "") + randomString();
-  const securityGroupDescription = `Dedicated security group${params.NAME_TAG ? ` for instance ${params.NAME_TAG}` : ""}`;
-  const { GroupId: securityGroupId } = await client.createSecurityGroup({
-    GroupName: securityGroupName,
-    Description: securityGroupDescription,
+async function removeSecurityGroupEgressRules(client, { securityGroupId }) {
+  // Get security group rules
+  const { SecurityGroupRules: groupRules } = await client.describeSecurityGroupRules({
+    Filters: [{
+      Name: "group-id",
+      Values: [securityGroupId],
+    }],
   }).promise();
-  // Remove outbound rules
-  if (params.DISALLOW_OUTBOUND_TRAFFIC) {
-    // Get security group rules
-    const { SecurityGroupRules: groupRules } = await client.describeSecurityGroupRules({
-      Filters: [{
-        Name: "group-id",
-        Values: [securityGroupId],
-      }],
-    }).promise();
-    // Filter out the egress rules and map the ids
-    const groupRuleIds = groupRules
-      .filter((rule) => rule.IsEgress)
-      .map((rule) => rule.SecurityGroupRuleId);
-    // Revoke the rules
-    await client.revokeSecurityGroupEgress({
-      GroupId: securityGroupId,
-      SecurityGroupRuleIds: groupRuleIds,
-    }).promise();
-  }
-  return { securityGroupId };
+  // Filter out the egress rules and map the ids
+  const groupRuleIds = groupRules
+    .filter((rule) => rule.IsEgress)
+    .map((rule) => rule.SecurityGroupRuleId);
+  // Revoke the rules
+  return client.revokeSecurityGroupEgress({
+    GroupId: securityGroupId,
+    SecurityGroupRuleIds: groupRuleIds,
+  }).promise();
 }
 
 module.exports = {
@@ -65,5 +55,5 @@ module.exports = {
   resolveSecurityGroupFunction,
   tryParseJson,
   randomString,
-  createDedicatedSecurityGroup,
+  removeSecurityGroupEgressRules,
 };

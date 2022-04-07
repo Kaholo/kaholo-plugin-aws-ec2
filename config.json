@@ -154,13 +154,6 @@
           "placeholder": "ResourceType=volume\nResourceEnv=dev",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_TagSpecification.html",
           "description": "The tags to apply to the resources during launch. "
-        },
-        {
-          "name": "DISALLOW_OUTBOUND_TRAFFIC",
-          "viewName": "Disallow All Outbound Traffic",
-          "description": "Disallow all outgoing traffic from instance. Default is false.",
-          "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html",
-          "type": "boolean"
         }
       ]
     },
@@ -1907,6 +1900,13 @@
           "description": "If specified, tag the Security Group with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values separate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }.",
           "placeholder": "TeamA",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
+        },
+        {
+          "name": "DISALLOW_OUTBOUND_TRAFFIC",
+          "viewName": "Disallow All Outbound Traffic",
+          "description": "Disallow all outgoing traffic from instance. Default is false.",
+          "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html",
+          "type": "boolean"
         },
         {
           "name": "dryRun",

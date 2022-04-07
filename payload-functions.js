@@ -16,16 +16,11 @@ function prepareCreateInstancePayload(params) {
     });
   }
 
-  const securityGroupIds = [
-    params.DEDICATED_SECURITY_GROUP_ID,
-    ...(params.SECURITY_GROUP_IDS || []),
-  ];
-
   return {
     ImageId: params.IMAGE_ID,
     InstanceType: params.INSTANCE_TYPE,
     KeyName: params.KEY_NAME,
-    SecurityGroupIds: securityGroupIds,
+    SecurityGroupIds: params.SECURITY_GROUP_IDS,
     UserData: strToBase64(params.USER_DATA),
     MinCount: params.MIN_COUNT,
     MaxCount: params.MAX_COUNT,

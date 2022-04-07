@@ -1,11 +1,12 @@
 const _ = require("lodash");
 const aws = require("aws-sdk");
 const awsPlugin = require("kaholo-aws-plugin");
-const { resolveSecurityGroupFunction, createDedicatedSecurityGroup } = require("./helpers");
+const { resolveSecurityGroupFunction, removeSecurityGroupEgressRules } = require("./helpers");
 const { getInstanceTypes, listRegions, listSubnets } = require("./autocomplete");
 const payloadFuncs = require("./payload-functions");
 
 const simpleAwsFunctions = {
+  createInstance: awsPlugin.generateAwsMethod("runInstances", payloadFuncs.prepareCreateInstancePayload),
   startInstances: awsPlugin.generateAwsMethod("startInstances", payloadFuncs.prepareManageInstancesPayload),
   stopInstances: awsPlugin.generateAwsMethod("stopInstances", payloadFuncs.prepareManageInstancesPayload),
   rebootInstances: awsPlugin.generateAwsMethod("rebootInstances", payloadFuncs.prepareManageInstancesPayload),
@@ -14,7 +15,6 @@ const simpleAwsFunctions = {
   createRoute: awsPlugin.generateAwsMethod("createRoute", payloadFuncs.prepareCreateRoutePayload),
   modifySubnetAttribute: awsPlugin.generateAwsMethod("modifySubnetAttribute"),
   attachInternetGateway: awsPlugin.generateAwsMethod("attachInternetGateway", payloadFuncs.prepareAttachInternetGatewayPayload),
-  createSecurityGroup: awsPlugin.generateAwsMethod("createSecurityGroup", payloadFuncs.prepareCreateSecurityGroupPayload),
   createKeyPair: awsPlugin.generateAwsMethod("createKeyPair", payloadFuncs.prepareManageKeyPairsPayload),
   deleteKeyPair: awsPlugin.generateAwsMethod("deleteKeyPair", payloadFuncs.prepareManageKeyPairsPayload),
   describeKeyPairs: awsPlugin.generateAwsMethod("describeKeyPairs"),
@@ -25,15 +25,13 @@ const simpleAwsFunctions = {
   deleteSubnet: awsPlugin.generateAwsMethod("deleteSubnet", payloadFuncs.prepareDeleteSubnetPayload),
 };
 
-async function createInstance(client, params, region) {
-  // Create a dedicated security group for the instance
-  const { securityGroupId } = await createDedicatedSecurityGroup(client, params);
-  // Create instance
-  const awsCreateInstance = awsPlugin.generateAwsMethod("runInstances", payloadFuncs.prepareCreateInstancePayload);
-  return awsCreateInstance(client, {
-    ...params,
-    DEDICATED_SECURITY_GROUP_ID: securityGroupId,
-  }, region);
+async function createSecurityGroup(client, params, region) {
+  const awsCreateSecurityGroup = awsPlugin.generateAwsMethod("createSecurityGroup", payloadFuncs.prepareCreateSecurityGroupPayload);
+  const securityGroup = await awsCreateSecurityGroup(client, params, region);
+  if (params.DISALLOW_OUTBOUND_TRAFFIC) {
+    await removeSecurityGroupEgressRules(client, { securityGroupId: securityGroup.GroupId });
+  }
+  return securityGroup;
 }
 
 async function describeInstances(client, params, region) {
@@ -371,7 +369,7 @@ module.exports = {
       createSnapshot,
       addSecurityGroupRules,
       describeInstances,
-      createInstance,
+      createSecurityGroup,
     },
     {
       getInstanceTypes,
