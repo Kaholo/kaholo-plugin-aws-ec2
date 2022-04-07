@@ -1,5 +1,6 @@
 const _ = require("lodash");
 const { autocomplete } = require("kaholo-aws-plugin");
+const { createSubnetText } = require("./helpers");
 
 async function getInstanceTypes(query, params, client, region) {
   const payload = {
@@ -22,15 +23,6 @@ async function getInstanceTypes(query, params, client, region) {
 
 async function listSubnets(query, params, client) {
   const subnets = await client.describeSubnets().promise();
-  const createSubnetText = (subnet) => {
-    const textSegments = [subnet.SubnetId];
-    const subnetName = subnet.Tags.find(({ Key }) => Key === "Name");
-    if (subnetName) {
-      textSegments.push(subnetName.Value);
-    }
-    textSegments.push(subnet.AvailabilityZone);
-    return textSegments.join(" | ");
-  };
 
   return subnets.Subnets.filter(
     (subnet) => subnet.VpcId.includes(query)
