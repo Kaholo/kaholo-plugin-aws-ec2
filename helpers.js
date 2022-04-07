@@ -32,7 +32,7 @@ function randomString() {
 }
 
 async function createDedicatedSecurityGroup(client, params) {
-  const securityGroupName = (params.NAME_TAG ? `${params.NAME_TAG}-` : "") + randomString(); // Instance name or a random string
+  const securityGroupName = (params.NAME_TAG ? `${params.NAME_TAG}-` : "") + randomString();
   const securityGroupDescription = `Dedicated security group${params.NAME_TAG ? ` for instance ${params.NAME_TAG}` : ""}`;
   const { GroupId: securityGroupId } = await client.createSecurityGroup({
     GroupName: securityGroupName,
