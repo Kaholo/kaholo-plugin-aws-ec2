@@ -8,7 +8,6 @@ const payloadFuncs = require("./payload-functions");
 const simpleAwsFunctions = {
   createInstance: awsPlugin.generateAwsMethod("runInstances", payloadFuncs.prepareCreateInstancePayload),
   startInstances: awsPlugin.generateAwsMethod("startInstances", payloadFuncs.prepareManageInstancesPayload),
-  stopInstances: awsPlugin.generateAwsMethod("stopInstances", payloadFuncs.prepareManageInstancesPayload),
   rebootInstances: awsPlugin.generateAwsMethod("rebootInstances", payloadFuncs.prepareManageInstancesPayload),
   terminateInstances: awsPlugin.generateAwsMethod("terminateInstances", payloadFuncs.prepareManageInstancesPayload),
   createNatGateway: awsPlugin.generateAwsMethod("createNatGateway", payloadFuncs.prepareCreateNatGatewayPayload),
@@ -25,6 +24,20 @@ const simpleAwsFunctions = {
   deleteVpc: awsPlugin.generateAwsMethod("deleteVpc", payloadFuncs.prepareDeleteVpcPayload),
   deleteSubnet: awsPlugin.generateAwsMethod("deleteSubnet", payloadFuncs.prepareDeleteSubnetPayload),
 };
+
+async function stopInstances(client, params, region) {
+  const awsStopInstances = awsPlugin.generateAwsMethod("stopInstances", payloadFuncs.prepareManageInstancesPayload);
+  const stopResult = await awsStopInstances(client, params, region);
+  if (params.WAIT_FOR_STOP) {
+    const waitResult = await client.waitFor("instanceStopped", { InstanceIds: params.INSTANCE_IDS }).promise();
+    // TODO:
+    // Currently only console.error is able to log messages in
+    // the Activity Log, console.info should be used here instead
+    console.error("CurrentState is stopped for all instances.");
+    return waitResult;
+  }
+  return stopResult;
+}
 
 async function describeInstances(client, params, region) {
   const awsDescribeInstances = awsPlugin.generateAwsMethod("describeInstances", payloadFuncs.prepareDescribeInstancesPayload);
@@ -361,6 +374,7 @@ module.exports = {
       createSnapshot,
       addSecurityGroupRules,
       describeInstances,
+      stopInstances,
     },
     {
       getInstanceTypes,
