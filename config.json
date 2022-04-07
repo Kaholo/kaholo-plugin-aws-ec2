@@ -238,6 +238,12 @@
           "placeholder": "i-1234567a",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
           "description": "The ID of the instance(s) to stop."
+        },
+        {
+          "name": "WAIT_FOR_STOP",
+          "viewName": "Wait for Stopped State",
+          "description": "Wait for the specified instances to stop.",
+          "type": "boolean"
         }
       ]
     },
