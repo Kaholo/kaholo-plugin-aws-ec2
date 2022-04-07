@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const aws = require("aws-sdk");
 const awsPlugin = require("kaholo-aws-plugin");
-const { resolveSecurityGroupFunction, removeSecurityGroupEgressRules } = require("./helpers");
+const { resolveSecurityGroupFunction } = require("./helpers");
 const { getInstanceTypes, listRegions, listSubnets } = require("./autocomplete");
 const payloadFuncs = require("./payload-functions");
 
@@ -28,7 +28,22 @@ async function createSecurityGroup(client, params, region) {
   const awsCreateSecurityGroup = awsPlugin.generateAwsMethod("createSecurityGroup", payloadFuncs.prepareCreateSecurityGroupPayload);
   const securityGroup = await awsCreateSecurityGroup(client, params, region);
   if (params.DISALLOW_OUTBOUND_TRAFFIC) {
-    await removeSecurityGroupEgressRules(client, { securityGroupId: securityGroup.GroupId });
+    // Get security group rules
+    const { SecurityGroupRules: groupRules } = await client.describeSecurityGroupRules({
+      Filters: [{
+        Name: "group-id",
+        Values: [securityGroup.GroupId],
+      }],
+    }).promise();
+    // Filter out the egress rules and map the ids
+    const groupRuleIds = groupRules
+      .filter((rule) => rule.IsEgress)
+      .map((rule) => rule.SecurityGroupRuleId);
+    // Revoke the rules
+    await client.revokeSecurityGroupEgress({
+      GroupId: securityGroup.GroupId,
+      SecurityGroupRuleIds: groupRuleIds,
+    }).promise();
   }
   return securityGroup;
 }

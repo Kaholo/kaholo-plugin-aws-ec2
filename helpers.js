@@ -27,25 +27,6 @@ function tryParseJson(v) {
   }
 }
 
-async function removeSecurityGroupEgressRules(client, { securityGroupId }) {
-  // Get security group rules
-  const { SecurityGroupRules: groupRules } = await client.describeSecurityGroupRules({
-    Filters: [{
-      Name: "group-id",
-      Values: [securityGroupId],
-    }],
-  }).promise();
-  // Filter out the egress rules and map the ids
-  const groupRuleIds = groupRules
-    .filter((rule) => rule.IsEgress)
-    .map((rule) => rule.SecurityGroupRuleId);
-  // Revoke the rules
-  return client.revokeSecurityGroupEgress({
-    GroupId: securityGroupId,
-    SecurityGroupRuleIds: groupRuleIds,
-  }).promise();
-}
-
 function createSubnetText(subnet) {
   const textSegments = [subnet.SubnetId];
   const subnetName = subnet.Tags.find(({ Key }) => Key === "Name");
@@ -60,6 +41,5 @@ module.exports = {
   strToBase64,
   resolveSecurityGroupFunction,
   tryParseJson,
-  removeSecurityGroupEgressRules,
   createSubnetText,
 };
