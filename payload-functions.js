@@ -182,49 +182,87 @@ function prepareDeleteSubnetPayload(params) {
 }
 
 function validateAddSecurityGroupRulesParams(params) {
-  if (params.fromPorts?.length !== params.toPorts?.length) {
-    throw new Error("From Ports and To Ports must be the same length");
+  if (params.ipProtocol !== "ICMP" && params.ipProtocol !== "All") {
+    if (!params.fromPorts?.length || !params.toPorts?.length) {
+      throw new Error(`From Ports and To Ports are required for ${params.ipProtocol} protocol.`);
+    }
+    if (params.fromPorts?.length !== params.toPorts?.length) {
+      throw new Error("From Ports and To Ports must be the same length.");
+    }
+  } else if (params.ipProtocol === "ICMP" && (params.fromPorts?.length || params.toPorts?.length)) {
+    throw new Error("Ports cannot be configured for protocol ICMP, use parameter \"ICMP Type\" instead.");
   }
-  const allowedPortsForProtocolAll = ["*", "-1", "0-65535"];
-  const areFromPortsLegal = params.fromPorts?.every?.((port) => (
-    allowedPortsForProtocolAll.includes(port)
-  ));
-  const areToPortsLegal = params.toPorts?.every?.((port) => (
-    allowedPortsForProtocolAll.includes(port)
-  ));
-  if (params.ipProtocol === "All" && !(areFromPortsLegal && areToPortsLegal)) {
-    throw new Error("Specifying All IP Protocols allows all traffic and cannot be restricted by Port Range. If you intend to allow a specific Port Range, please use TCP or UDP instead.");
+  if (params.ipProtocol === "All") {
+    const allowedPortsForProtocolAll = ["*", "-1", "0-65535"];
+    const areFromPortsLegal = !params.fromPorts?.length || params.fromPorts?.every?.((port) => (
+      allowedPortsForProtocolAll.includes(port)
+    ));
+    const areToPortsLegal = !params.toPorts?.length || params.toPorts?.every?.((port) => (
+      allowedPortsForProtocolAll.includes(port)
+    ));
+    if (!areFromPortsLegal || !areToPortsLegal) {
+      throw new Error("Specifying All IP Protocols allows all traffic and cannot be restricted by Port Range. If you intend to allow a specific Port Range, please use TCP or UDP instead.");
+    }
   }
 }
 
 function prepareAddSecurityGroupRulesPayload(params) {
   validateAddSecurityGroupRulesParams(params);
-  const ipv6Ranges = params.cidrIps6.map((CidrIpv6) => ({
+
+  const ipProtocol = params.ipProtocol === "All" ? -1 : params.ipProtocol.toLowerCase();
+  const ipv6Ranges = params.cidrIps6?.map((CidrIpv6) => helpers.removeUndefinedAndEmpty({
     CidrIpv6,
     Description: params.description,
   }));
-
-  const ipRanges = params.cidrIps.map((CidrIp) => ({
+  const ipRanges = params.cidrIps?.map((CidrIp) => helpers.removeUndefinedAndEmpty({
     CidrIp,
     Description: params.description,
   }));
 
-  const mappedPorts = params.fromPorts?.map ? params.fromPorts.map((fromPort, index) => ({
-    FromPort: fromPort,
-    ToPort: params.toPorts[index],
-    IpProtocol: params.ipProtocol,
-  })) : [];
-
-  const IpPermissions = params.ipProtocol === "All" ? [{ IpProtocol: "All" }] : mappedPorts;
-  const payload = helpers.removeUndefinedAndEmpty({
-    GroupId: params.groupId,
-    IpPermissions,
-  });
-  if (params.ipProtocol !== "ICMP") {
-    payload.Ipv6Ranges = ipv6Ranges;
-    payload.IpRanges = ipRanges;
+  if (ipProtocol === "icmp") {
+    const icmpPayload = {
+      GroupId: params.groupId,
+      IpPermissions: [{
+        IpProtocol: "icmp",
+        FromPort: params.icmpType,
+        ToPort: -1,
+        IpRanges: ipRanges,
+        Ipv6Ranges: ipv6Ranges,
+      }],
+    };
+    return helpers.removeUndefinedAndEmpty(icmpPayload);
   }
-  return payload;
+
+  const mappedPorts = (
+    params.fromPorts?.length && params.toPorts?.length
+      ? params.fromPorts.map((fromPort, index) => helpers.removeUndefinedAndEmpty({
+        FromPort: +fromPort,
+        ToPort: +params.toPorts[index],
+        IpProtocol: ipProtocol,
+        Ipv6Ranges: ipv6Ranges,
+        IpRanges: ipRanges,
+      }))
+      : []
+  );
+
+  const ipPermissions = (
+    ipProtocol === -1
+      ? [
+        helpers.removeUndefinedAndEmpty({
+          IpProtocol: "-1",
+          IpRanges: ipRanges,
+          Ipv6Ranges: ipv6Ranges,
+        }),
+      ]
+      : mappedPorts
+  );
+
+  const payload = {
+    GroupId: params.groupId,
+    IpPermissions: ipPermissions,
+  };
+
+  return helpers.removeUndefinedAndEmpty(payload);
 }
 
 function prepareManageKeyPairsPayload(params) {
