@@ -94,8 +94,8 @@
         },
         {
           "name": "SECURITY_GROUP_IDS",
-          "viewName": "Security groups IDs",
-          "type": "string",
+          "viewName": "Security Group IDs",
+          "type": "text",
           "parserType": "array",
           "placeholder": "sg-33bb22aa",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html",
