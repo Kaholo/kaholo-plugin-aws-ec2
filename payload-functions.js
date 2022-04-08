@@ -209,7 +209,7 @@ function validateAddSecurityGroupRulesParams(params) {
 function prepareAddSecurityGroupRulesPayload(params) {
   validateAddSecurityGroupRulesParams(params);
 
-  const ipProtocol = params.ipProtocol === "All" ? -1 : params.ipProtocol.toLowerCase();
+  const ipProtocol = params.ipProtocol === "All" ? "-1" : params.ipProtocol.toLowerCase();
   const ipv6Ranges = params.cidrIps6?.map((CidrIpv6) => helpers.removeUndefinedAndEmpty({
     CidrIpv6,
     Description: params.description,
@@ -219,43 +219,44 @@ function prepareAddSecurityGroupRulesPayload(params) {
     Description: params.description,
   }));
 
-  if (ipProtocol === "icmp") {
-    const icmpPayload = {
-      GroupId: params.groupId,
-      IpPermissions: [{
-        IpProtocol: "icmp",
-        FromPort: params.icmpType,
-        ToPort: -1,
-        IpRanges: ipRanges,
-        Ipv6Ranges: ipv6Ranges,
-      }],
-    };
-    return helpers.removeUndefinedAndEmpty(icmpPayload);
+  const ipPermissionsForAllProtocols = [
+    helpers.removeUndefinedAndEmpty({
+      IpProtocol: "-1",
+      IpRanges: ipRanges,
+      Ipv6Ranges: ipv6Ranges,
+    }),
+  ];
+  const ipPermissionsForIcmpProtocol = [
+    helpers.removeUndefinedAndEmpty({
+      IpProtocol: "icmp",
+      FromPort: params.icmpType,
+      ToPort: -1,
+      IpRanges: ipRanges,
+      Ipv6Ranges: ipv6Ranges,
+    }),
+  ];
+  const ipPermissionsForOtherProtocols = params.fromPorts?.map?.((fromPort, index) => (
+    helpers.removeUndefinedAndEmpty({
+      FromPort: +fromPort,
+      ToPort: +params.toPorts[index],
+      IpProtocol: ipProtocol,
+      Ipv6Ranges: ipv6Ranges,
+      IpRanges: ipRanges,
+    })
+  ));
+
+  let ipPermissions = [];
+  switch (ipProtocol) {
+    case "-1":
+      ipPermissions = ipPermissionsForAllProtocols;
+      break;
+    case "icmp":
+      ipPermissions = ipPermissionsForIcmpProtocol;
+      break;
+    default:
+      ipPermissions = ipPermissionsForOtherProtocols;
+      break;
   }
-
-  const mappedPorts = (
-    params.fromPorts?.length && params.toPorts?.length
-      ? params.fromPorts.map((fromPort, index) => helpers.removeUndefinedAndEmpty({
-        FromPort: +fromPort,
-        ToPort: +params.toPorts[index],
-        IpProtocol: ipProtocol,
-        Ipv6Ranges: ipv6Ranges,
-        IpRanges: ipRanges,
-      }))
-      : []
-  );
-
-  const ipPermissions = (
-    ipProtocol === -1
-      ? [
-        helpers.removeUndefinedAndEmpty({
-          IpProtocol: "-1",
-          IpRanges: ipRanges,
-          Ipv6Ranges: ipv6Ranges,
-        }),
-      ]
-      : mappedPorts
-  );
 
   const payload = {
     GroupId: params.groupId,
