@@ -287,7 +287,7 @@ function prepareCreateSnapshotPayload(params) {
   };
 }
 
-function prepareCreateTags(params) {
+function prepareCreateTagsPayload(params) {
   const awsFormattedTags = params.tags.map((tag) => {
     if (!tag.includes("=")) {
       throw new Error("Incorect tag's format: missing '='");
@@ -333,5 +333,5 @@ module.exports = {
   prepareReleaseAddressPayload,
   prepareCreateVolumePayload,
   prepareCreateSnapshotPayload,
-  prepareCreateTags,
+  prepareCreateTagsPayload,
 };

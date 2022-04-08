@@ -23,7 +23,7 @@ const simpleAwsFunctions = {
   releaseAddress: awsPlugin.generateAwsMethod("releaseAddress", payloadFuncs.prepareReleaseAddressPayload),
   deleteVpc: awsPlugin.generateAwsMethod("deleteVpc", payloadFuncs.prepareDeleteVpcPayload),
   deleteSubnet: awsPlugin.generateAwsMethod("deleteSubnet", payloadFuncs.prepareDeleteSubnetPayload),
-  createTags: awsPlugin.generateAwsMethod("createTags", payloadFuncs.prepareCreateTags),
+  createTags: awsPlugin.generateAwsMethod("createTags", payloadFuncs.prepareCreateTagsPayload),
 };
 
 async function stopInstances(client, params, region) {
