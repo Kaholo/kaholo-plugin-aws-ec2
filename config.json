@@ -807,22 +807,6 @@
           "description": "The IDs of the instances. Can be an array of instance IDs."
         },
         {
-          "name": "PUBLIC_IP",
-          "viewName": "Public Ip",
-          "type": "string",
-          "placeholder": "8.8.8.8",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html",
-          "description": "The Elastic IP address to associate with the instance. This is required for EC2-Classic."
-        },
-        {
-          "name": "ALLOW_REASSOCIATION",
-          "viewName": "Allow Reassociation",
-          "type": "boolean",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/associate-address.html",
-          "description": "Allows you to associate your Elastic IP with an instance after creation.",
-          "placeholder": "true/false"
-        },
-        {
           "name": "NETWORK_INTERFACE_ID",
           "viewName": "Network Interface Id",
           "type": "string",
