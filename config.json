@@ -1908,7 +1908,7 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
-          "name": "DISALLOW_OUTBOUND_TRAFFIC",
+          "name": "disallowOutboundTraffic",
           "viewName": "Disallow Any Outbound Traffic",
           "description": "Disallow any outgoing traffic. Default is false.",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html",

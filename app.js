@@ -27,7 +27,7 @@ const simpleAwsFunctions = {
 async function createSecurityGroup(client, params, region) {
   const awsCreateSecurityGroup = awsPlugin.generateAwsMethod("createSecurityGroup", payloadFuncs.prepareCreateSecurityGroupPayload);
   const securityGroup = await awsCreateSecurityGroup(client, params, region);
-  if (params.DISALLOW_OUTBOUND_TRAFFIC) {
+  if (params.disallowOutboundTraffic) {
     // Get security group rules
     const { SecurityGroupRules: groupRules } = await client.describeSecurityGroupRules({
       Filters: [{
