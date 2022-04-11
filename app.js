@@ -22,6 +22,7 @@ const simpleAwsFunctions = {
   releaseAddress: awsPlugin.generateAwsMethod("releaseAddress", payloadFuncs.prepareReleaseAddressPayload),
   deleteVpc: awsPlugin.generateAwsMethod("deleteVpc", payloadFuncs.prepareDeleteVpcPayload),
   deleteSubnet: awsPlugin.generateAwsMethod("deleteSubnet", payloadFuncs.prepareDeleteSubnetPayload),
+  createTags: awsPlugin.generateAwsMethod("createTags", payloadFuncs.prepareCreateTagsPayload),
 };
 
 async function createSecurityGroup(client, params, region) {
