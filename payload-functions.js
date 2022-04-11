@@ -1,7 +1,7 @@
 const { helpers } = require("kaholo-aws-plugin");
 const _ = require("lodash");
 const { strToBase64, tryParseJson } = require("./helpers");
-const { AWS_DEFAULT_MAX_RESULTS } = require("./consts.json");
+const { AWS_DEFAULT_MAX_RESULTS, AWS_MATCH_ALL_CODE } = require("./consts.json");
 
 function prepareCreateInstancePayload(params) {
   if (params.MAX_COUNT < params.MIN_COUNT) {
@@ -182,49 +182,81 @@ function prepareDeleteSubnetPayload(params) {
 }
 
 function validateAddSecurityGroupRulesParams(params) {
-  if (params.fromPorts?.length !== params.toPorts?.length) {
-    throw new Error("From Ports and To Ports must be the same length");
+  if (params.ipProtocol !== "ICMP" && params.ipProtocol !== "All") {
+    if (!params.fromPorts?.length || !params.toPorts?.length) {
+      throw new Error(`From Ports and To Ports are required for ${params.ipProtocol} protocol.`);
+    }
+    if (params.fromPorts?.length !== params.toPorts?.length) {
+      throw new Error("Please specify the same number of From Ports and To Ports.");
+    }
+  } else if (params.ipProtocol === "ICMP" && (params.fromPorts?.length || params.toPorts?.length)) {
+    throw new Error("Ports cannot be configured for protocol ICMP, use parameter \"ICMP Type\" instead.");
   }
-  const allowedPortsForProtocolAll = ["*", "-1", "0-65535"];
-  const areFromPortsLegal = params.fromPorts?.every?.((port) => (
-    allowedPortsForProtocolAll.includes(port)
-  ));
-  const areToPortsLegal = params.toPorts?.every?.((port) => (
-    allowedPortsForProtocolAll.includes(port)
-  ));
-  if (params.ipProtocol === "All" && !(areFromPortsLegal && areToPortsLegal)) {
-    throw new Error("Specifying All IP Protocols allows all traffic and cannot be restricted by Port Range. If you intend to allow a specific Port Range, please use TCP or UDP instead.");
+  if (params.ipProtocol === "All") {
+    const allowedPortsForProtocolAll = [AWS_MATCH_ALL_CODE, "*", "0-65535"];
+    const areFromPortsLegal = !params.fromPorts?.length || params.fromPorts?.every?.((port) => (
+      allowedPortsForProtocolAll.includes(port)
+    ));
+    const areToPortsLegal = !params.toPorts?.length || params.toPorts?.every?.((port) => (
+      allowedPortsForProtocolAll.includes(port)
+    ));
+    if (!areFromPortsLegal || !areToPortsLegal) {
+      throw new Error("Specifying All IP Protocols allows all traffic and cannot be restricted by Port Range. If you intend to allow a specific Port Range, please use TCP or UDP instead.");
+    }
   }
 }
 
 function prepareAddSecurityGroupRulesPayload(params) {
   validateAddSecurityGroupRulesParams(params);
-  const ipv6Ranges = params.cidrIps6.map((CidrIpv6) => ({
+
+  const ipProtocol = params.ipProtocol === "All" ? AWS_MATCH_ALL_CODE : params.ipProtocol.toLowerCase();
+  const ipv6Ranges = params.cidrIps6?.map((CidrIpv6) => helpers.removeUndefinedAndEmpty({
     CidrIpv6,
     Description: params.description,
   }));
-
-  const ipRanges = params.cidrIps.map((CidrIp) => ({
+  const ipv4Ranges = params.cidrIps?.map((CidrIp) => helpers.removeUndefinedAndEmpty({
     CidrIp,
     Description: params.description,
   }));
 
-  const mappedPorts = params.fromPorts?.map ? params.fromPorts.map((fromPort, index) => ({
-    FromPort: fromPort,
-    ToPort: params.toPorts[index],
-    IpProtocol: params.ipProtocol,
-  })) : [];
-
-  const IpPermissions = params.ipProtocol === "All" ? [{ IpProtocol: "All" }] : mappedPorts;
-  const payload = helpers.removeUndefinedAndEmpty({
-    GroupId: params.groupId,
-    IpPermissions,
-  });
-  if (params.ipProtocol !== "ICMP") {
-    payload.Ipv6Ranges = ipv6Ranges;
-    payload.IpRanges = ipRanges;
+  const ipRanges = {};
+  if (ipv4Ranges) {
+    ipRanges.IpRanges = ipv4Ranges;
   }
-  return payload;
+  if (ipv6Ranges) {
+    ipRanges.Ipv6Ranges = ipv6Ranges;
+  }
+
+  let ipPermissions = [];
+  switch (ipProtocol) {
+    case AWS_MATCH_ALL_CODE:
+      ipPermissions = [{
+        IpProtocol: AWS_MATCH_ALL_CODE,
+        ...ipRanges,
+      }];
+      break;
+    case "icmp":
+      ipPermissions = [{
+        IpProtocol: "icmp",
+        FromPort: params.icmpType,
+        ToPort: +AWS_MATCH_ALL_CODE,
+        ...ipRanges,
+      }];
+      break;
+    default:
+      ipPermissions = params.fromPorts?.map?.((fromPort, index) => ({
+        FromPort: +fromPort,
+        ToPort: +params.toPorts[index],
+        IpProtocol: ipProtocol,
+        ...ipRanges,
+      }));
+      break;
+  }
+
+  return {
+    GroupId: params.groupId,
+    IpPermissions: ipPermissions,
+  };
 }
 
 function prepareManageKeyPairsPayload(params) {
