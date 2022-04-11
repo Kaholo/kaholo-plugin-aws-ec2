@@ -191,7 +191,7 @@ function validateAddSecurityGroupRulesParams(params) {
   }
   if (params.ipProtocol === "All") {
     const allowedPortRangesForProtocolAll = [AWS_MATCH_ALL_CODE, "*", "0-65535"];
-    const arePortRangesLegal = !params.portRanges?.length || params.fromPorts?.every?.((port) => (
+    const arePortRangesLegal = !params.portRanges?.length || params.portRanges.every((port) => (
       allowedPortRangesForProtocolAll.includes(port)
     ));
     if (!arePortRangesLegal) {
