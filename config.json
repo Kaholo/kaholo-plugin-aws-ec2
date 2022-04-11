@@ -2050,6 +2050,130 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html"
         },
         {
+          "name": "icmpType",
+          "viewName": "ICMP Type",
+          "description": "ICMP types are used to identify control messages. Use this parameter if you chose ICMP protocol.",
+          "learnUrl": "https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol#Control_messages",
+          "placeholder": "All",
+          "type": "options",
+          "parserType": "number",
+          "default": "-1",
+          "options": [
+            {
+              "id": "-1",
+              "name": "All"
+            },
+            {
+              "id": "0",
+              "name": "Echo Reply"
+            },
+            {
+              "id": "3",
+              "name": "Destination Unreachable"
+            },
+            {
+              "id": "4",
+              "name": "Source Quench"
+            },
+            {
+              "id": "5",
+              "name": "Redirect Message"
+            },
+            {
+              "id": "6",
+              "name": "Alternate Host Address"
+            },
+            {
+              "id": "8",
+              "name": "Echo Request"
+            },
+            {
+              "id": "9",
+              "name": "Router Advertisement"
+            },
+            {
+              "id": "10",
+              "name": "Router Solicitation"
+            },
+            {
+              "id": "11",
+              "name": "Time Exceeded"
+            },
+            {
+              "id": "12",
+              "name": "Parameter Problem: Bad IP header"
+            },
+            {
+              "id": "13",
+              "name": "Timestamp"
+            },
+            {
+              "id": "14",
+              "name": "Timestamp Reply"
+            },
+            {
+              "id": "15",
+              "name": "Information Request"
+            },
+            {
+              "id": "16",
+              "name": "Information Reply"
+            },
+            {
+              "id": "17",
+              "name": "Address Mask Request"
+            },
+            {
+              "id": "18",
+              "name": "Address Mask Reply"
+            },
+            {
+              "id": "30",
+              "name": "Traceroute"
+            },
+            {
+              "id": "31",
+              "name": "Datagram Conversion Error"
+            },
+            {
+              "id": "32",
+              "name": "Mobile Host Redirect"
+            },
+            {
+              "id": "33",
+              "name": "Where Are You"
+            },
+            {
+              "id": "34",
+              "name": "Here I Am"
+            },
+            {
+              "id": "35",
+              "name": "Mobile Registration Request"
+            },
+            {
+              "id": "36",
+              "name": "Mobile Registration Reply"
+            },
+            {
+              "id": "37",
+              "name": "Domain Name Request"
+            },
+            {
+              "id": "38",
+              "name": "Domain Name Reply"
+            },
+            {
+              "id": "39",
+              "name": "SKIP Algorithm Discovery Protocol"
+            },
+            {
+              "id": "40",
+              "name": "Photuris, Security failures"
+            }
+          ]
+        },
+        {
           "name": "description",
           "viewName": "Description",
           "type": "text",
