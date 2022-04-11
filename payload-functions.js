@@ -319,6 +319,29 @@ function prepareCreateSnapshotPayload(params) {
   };
 }
 
+function prepareCreateTagsPayload(params) {
+  const awsFormattedTags = params.tags.map((tag) => {
+    if (!tag.includes("=")) {
+      throw new Error("Incorect tag's format: missing '='");
+    }
+
+    const [key, value] = tag.split("=");
+    if (!key) {
+      throw new Error("Incorect tag's format: missing key");
+    }
+    if (!value) {
+      throw new Error("Incorect tag's format: missing value");
+    }
+
+    return { Key: key, Value: value };
+  });
+
+  return {
+    Resources: [params.resourceId],
+    Tags: awsFormattedTags,
+  };
+}
+
 module.exports = {
   prepareCreateInstancePayload,
   prepareManageInstancesPayload,
@@ -342,4 +365,5 @@ module.exports = {
   prepareReleaseAddressPayload,
   prepareCreateVolumePayload,
   prepareCreateSnapshotPayload,
+  prepareCreateTagsPayload,
 };
