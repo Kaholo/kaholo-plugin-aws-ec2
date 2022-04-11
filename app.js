@@ -14,7 +14,6 @@ const simpleAwsFunctions = {
   createRoute: awsPlugin.generateAwsMethod("createRoute", payloadFuncs.prepareCreateRoutePayload),
   modifySubnetAttribute: awsPlugin.generateAwsMethod("modifySubnetAttribute"),
   attachInternetGateway: awsPlugin.generateAwsMethod("attachInternetGateway", payloadFuncs.prepareAttachInternetGatewayPayload),
-  createSecurityGroup: awsPlugin.generateAwsMethod("createSecurityGroup", payloadFuncs.prepareCreateSecurityGroupPayload),
   createKeyPair: awsPlugin.generateAwsMethod("createKeyPair", payloadFuncs.prepareManageKeyPairsPayload),
   deleteKeyPair: awsPlugin.generateAwsMethod("deleteKeyPair", payloadFuncs.prepareManageKeyPairsPayload),
   describeKeyPairs: awsPlugin.generateAwsMethod("describeKeyPairs"),
@@ -25,6 +24,30 @@ const simpleAwsFunctions = {
   deleteSubnet: awsPlugin.generateAwsMethod("deleteSubnet", payloadFuncs.prepareDeleteSubnetPayload),
   createTags: awsPlugin.generateAwsMethod("createTags", payloadFuncs.prepareCreateTagsPayload),
 };
+
+async function createSecurityGroup(client, params, region) {
+  const awsCreateSecurityGroup = awsPlugin.generateAwsMethod("createSecurityGroup", payloadFuncs.prepareCreateSecurityGroupPayload);
+  const securityGroup = await awsCreateSecurityGroup(client, params, region);
+  if (params.disallowOutboundTraffic) {
+    // Get security group rules
+    const { SecurityGroupRules: groupRules } = await client.describeSecurityGroupRules({
+      Filters: [{
+        Name: "group-id",
+        Values: [securityGroup.GroupId],
+      }],
+    }).promise();
+    // Filter out the egress rules and map the ids
+    const groupRuleIds = groupRules
+      .filter((rule) => rule.IsEgress)
+      .map((rule) => rule.SecurityGroupRuleId);
+    // Revoke the rules
+    await client.revokeSecurityGroupEgress({
+      GroupId: securityGroup.GroupId,
+      SecurityGroupRuleIds: groupRuleIds,
+    }).promise();
+  }
+  return securityGroup;
+}
 
 async function stopInstances(client, params, region) {
   const awsStopInstances = awsPlugin.generateAwsMethod("stopInstances", payloadFuncs.prepareManageInstancesPayload);
@@ -375,6 +398,7 @@ module.exports = {
       createSnapshot,
       addSecurityGroupRules,
       describeInstances,
+      createSecurityGroup,
       stopInstances,
     },
     {
