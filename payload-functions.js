@@ -1,7 +1,7 @@
 const { helpers } = require("kaholo-aws-plugin");
 const _ = require("lodash");
 const { strToBase64, tryParseJson } = require("./helpers");
-const { AWS_DEFAULT_MAX_RESULTS } = require("./consts.json");
+const { AWS_DEFAULT_MAX_RESULTS, AWS_MATCH_ALL_CODE } = require("./consts.json");
 
 function prepareCreateInstancePayload(params) {
   if (params.MAX_COUNT < params.MIN_COUNT) {
@@ -187,13 +187,13 @@ function validateAddSecurityGroupRulesParams(params) {
       throw new Error(`From Ports and To Ports are required for ${params.ipProtocol} protocol.`);
     }
     if (params.fromPorts?.length !== params.toPorts?.length) {
-      throw new Error("From Ports and To Ports must be the same length.");
+      throw new Error("Please specify the same number of From Ports and To Ports.");
     }
   } else if (params.ipProtocol === "ICMP" && (params.fromPorts?.length || params.toPorts?.length)) {
     throw new Error("Ports cannot be configured for protocol ICMP, use parameter \"ICMP Type\" instead.");
   }
   if (params.ipProtocol === "All") {
-    const allowedPortsForProtocolAll = ["*", "-1", "0-65535"];
+    const allowedPortsForProtocolAll = [AWS_MATCH_ALL_CODE, "*", "0-65535"];
     const areFromPortsLegal = !params.fromPorts?.length || params.fromPorts?.every?.((port) => (
       allowedPortsForProtocolAll.includes(port)
     ));
@@ -209,61 +209,54 @@ function validateAddSecurityGroupRulesParams(params) {
 function prepareAddSecurityGroupRulesPayload(params) {
   validateAddSecurityGroupRulesParams(params);
 
-  const ipProtocol = params.ipProtocol === "All" ? "-1" : params.ipProtocol.toLowerCase();
+  const ipProtocol = params.ipProtocol === "All" ? AWS_MATCH_ALL_CODE : params.ipProtocol.toLowerCase();
   const ipv6Ranges = params.cidrIps6?.map((CidrIpv6) => helpers.removeUndefinedAndEmpty({
     CidrIpv6,
     Description: params.description,
   }));
-  const ipRanges = params.cidrIps?.map((CidrIp) => helpers.removeUndefinedAndEmpty({
+  const ipv4Ranges = params.cidrIps?.map((CidrIp) => helpers.removeUndefinedAndEmpty({
     CidrIp,
     Description: params.description,
   }));
 
-  const ipPermissionsForAllProtocols = [
-    helpers.removeUndefinedAndEmpty({
-      IpProtocol: "-1",
-      IpRanges: ipRanges,
-      Ipv6Ranges: ipv6Ranges,
-    }),
-  ];
-  const ipPermissionsForIcmpProtocol = [
-    helpers.removeUndefinedAndEmpty({
-      IpProtocol: "icmp",
-      FromPort: params.icmpType,
-      ToPort: -1,
-      IpRanges: ipRanges,
-      Ipv6Ranges: ipv6Ranges,
-    }),
-  ];
-  const ipPermissionsForOtherProtocols = params.fromPorts?.map?.((fromPort, index) => (
-    helpers.removeUndefinedAndEmpty({
-      FromPort: +fromPort,
-      ToPort: +params.toPorts[index],
-      IpProtocol: ipProtocol,
-      Ipv6Ranges: ipv6Ranges,
-      IpRanges: ipRanges,
-    })
-  ));
+  const ipRanges = {};
+  if (ipv4Ranges) {
+    ipRanges.IpRanges = ipv4Ranges;
+  }
+  if (ipv6Ranges) {
+    ipRanges.Ipv6Ranges = ipv6Ranges;
+  }
 
   let ipPermissions = [];
   switch (ipProtocol) {
-    case "-1":
-      ipPermissions = ipPermissionsForAllProtocols;
+    case AWS_MATCH_ALL_CODE:
+      ipPermissions = [{
+        IpProtocol: AWS_MATCH_ALL_CODE,
+        ...ipRanges,
+      }];
       break;
     case "icmp":
-      ipPermissions = ipPermissionsForIcmpProtocol;
+      ipPermissions = [{
+        IpProtocol: "icmp",
+        FromPort: params.icmpType,
+        ToPort: +AWS_MATCH_ALL_CODE,
+        ...ipRanges,
+      }];
       break;
     default:
-      ipPermissions = ipPermissionsForOtherProtocols;
+      ipPermissions = params.fromPorts?.map?.((fromPort, index) => ({
+        FromPort: +fromPort,
+        ToPort: +params.toPorts[index],
+        IpProtocol: ipProtocol,
+        ...ipRanges,
+      }));
       break;
   }
 
-  const payload = {
+  return {
     GroupId: params.groupId,
     IpPermissions: ipPermissions,
   };
-
-  return helpers.removeUndefinedAndEmpty(payload);
 }
 
 function prepareManageKeyPairsPayload(params) {
