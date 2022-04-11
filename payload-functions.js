@@ -183,24 +183,18 @@ function prepareDeleteSubnetPayload(params) {
 
 function validateAddSecurityGroupRulesParams(params) {
   if (params.ipProtocol !== "ICMP" && params.ipProtocol !== "All") {
-    if (!params.fromPorts?.length || !params.toPorts?.length) {
-      throw new Error(`From Ports and To Ports are required for ${params.ipProtocol} protocol.`);
+    if (!params.portRanges?.length) {
+      throw new Error(`Protocol ${params.ipProtocol} requires a port range. Please use the Port Range parameter to specify a single port, range of ports, or "*" for all ports.`);
     }
-    if (params.fromPorts?.length !== params.toPorts?.length) {
-      throw new Error("Please specify the same number of From Ports and To Ports.");
-    }
-  } else if (params.ipProtocol === "ICMP" && (params.fromPorts?.length || params.toPorts?.length)) {
+  } else if (params.ipProtocol === "ICMP" && (params.portRanges?.length)) {
     throw new Error("Ports cannot be configured for protocol ICMP, use parameter \"ICMP Type\" instead.");
   }
   if (params.ipProtocol === "All") {
-    const allowedPortsForProtocolAll = [AWS_MATCH_ALL_CODE, "*", "0-65535"];
-    const areFromPortsLegal = !params.fromPorts?.length || params.fromPorts?.every?.((port) => (
-      allowedPortsForProtocolAll.includes(port)
+    const allowedPortRangesForProtocolAll = [AWS_MATCH_ALL_CODE, "*", "0-65535"];
+    const arePortRangesLegal = !params.portRanges?.length || params.fromPorts?.every?.((port) => (
+      allowedPortRangesForProtocolAll.includes(port)
     ));
-    const areToPortsLegal = !params.toPorts?.length || params.toPorts?.every?.((port) => (
-      allowedPortsForProtocolAll.includes(port)
-    ));
-    if (!areFromPortsLegal || !areToPortsLegal) {
+    if (!arePortRangesLegal) {
       throw new Error("Specifying All IP Protocols allows all traffic and cannot be restricted by Port Range. If you intend to allow a specific Port Range, please use TCP or UDP instead.");
     }
   }
@@ -243,20 +237,36 @@ function prepareAddSecurityGroupRulesPayload(params) {
         ...ipRanges,
       }];
       break;
-    default:
-      ipPermissions = params.fromPorts?.map?.((fromPort, index) => ({
-        FromPort: +fromPort,
-        ToPort: +params.toPorts[index],
+    default: {
+      const parsedPortRanges = params.portRanges.map(parseSinglePortRange);
+      ipPermissions = parsedPortRanges.map(({ fromPort, toPort }) => ({
+        FromPort: fromPort,
+        ToPort: toPort,
         IpProtocol: ipProtocol,
         ...ipRanges,
       }));
       break;
+    }
   }
 
   return {
     GroupId: params.groupId,
     IpPermissions: ipPermissions,
   };
+}
+
+function parseSinglePortRange(rawPortRange) {
+  if (/^\d+$/.test(rawPortRange)) {
+    return { fromPort: +rawPortRange, toPort: +rawPortRange };
+  }
+  if (/^\d+-\d+$/.test(rawPortRange)) {
+    const [fromPort, toPort] = rawPortRange.split("-").map(Number);
+    return { fromPort, toPort };
+  }
+  if (/^\*$/.test(rawPortRange)) {
+    return { fromPort: 0, toPort: 65535 };
+  }
+  throw new Error(`Invalid Port Range string specified: "${rawPortRange}". Valid examples include "*" (all ports), "80" (one port), and "8080-8099" (a range of 20 ports). To configure multiple ports not in a range, create a separate rule for each port.`);
 }
 
 function prepareManageKeyPairsPayload(params) {
