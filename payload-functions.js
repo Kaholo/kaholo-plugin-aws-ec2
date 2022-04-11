@@ -261,6 +261,9 @@ function parseSinglePortRange(rawPortRange) {
   }
   if (/^\d+-\d+$/.test(rawPortRange)) {
     const [fromPort, toPort] = rawPortRange.split("-").map(Number);
+    if (fromPort > toPort) {
+      throw new Error(`Ports in the "${rawPortRange}" range are defined in the wrong order.`);
+    }
     return { fromPort, toPort };
   }
   if (/^\*$/.test(rawPortRange)) {
