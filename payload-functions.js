@@ -1,6 +1,6 @@
 const { helpers } = require("kaholo-aws-plugin");
 const _ = require("lodash");
-const { strToBase64, tryParseJson } = require("./helpers");
+const { strToBase64, tryParseJson, parseSinglePortRange } = require("./helpers");
 const { AWS_DEFAULT_MAX_RESULTS, AWS_MATCH_ALL_CODE } = require("./consts.json");
 
 function prepareCreateInstancePayload(params) {
@@ -183,24 +183,18 @@ function prepareDeleteSubnetPayload(params) {
 
 function validateAddSecurityGroupRulesParams(params) {
   if (params.ipProtocol !== "ICMP" && params.ipProtocol !== "All") {
-    if (!params.fromPorts?.length || !params.toPorts?.length) {
-      throw new Error(`From Ports and To Ports are required for ${params.ipProtocol} protocol.`);
+    if (!params.portRanges?.length) {
+      throw new Error(`Protocol ${params.ipProtocol} requires a port range. Please use the Port Range parameter to specify a single port, range of ports, or "*" for all ports.`);
     }
-    if (params.fromPorts?.length !== params.toPorts?.length) {
-      throw new Error("Please specify the same number of From Ports and To Ports.");
-    }
-  } else if (params.ipProtocol === "ICMP" && (params.fromPorts?.length || params.toPorts?.length)) {
+  } else if (params.ipProtocol === "ICMP" && (params.portRanges?.length)) {
     throw new Error("Ports cannot be configured for protocol ICMP, use parameter \"ICMP Type\" instead.");
   }
   if (params.ipProtocol === "All") {
-    const allowedPortsForProtocolAll = [AWS_MATCH_ALL_CODE, "*", "0-65535"];
-    const areFromPortsLegal = !params.fromPorts?.length || params.fromPorts?.every?.((port) => (
-      allowedPortsForProtocolAll.includes(port)
+    const allowedPortRangesForProtocolAll = [AWS_MATCH_ALL_CODE, "*", "0-65535"];
+    const arePortRangesLegal = !params.portRanges?.length || params.portRanges.every((port) => (
+      allowedPortRangesForProtocolAll.includes(port)
     ));
-    const areToPortsLegal = !params.toPorts?.length || params.toPorts?.every?.((port) => (
-      allowedPortsForProtocolAll.includes(port)
-    ));
-    if (!areFromPortsLegal || !areToPortsLegal) {
+    if (!arePortRangesLegal) {
       throw new Error("Specifying All IP Protocols allows all traffic and cannot be restricted by Port Range. If you intend to allow a specific Port Range, please use TCP or UDP instead.");
     }
   }
@@ -243,14 +237,16 @@ function prepareAddSecurityGroupRulesPayload(params) {
         ...ipRanges,
       }];
       break;
-    default:
-      ipPermissions = params.fromPorts?.map?.((fromPort, index) => ({
-        FromPort: +fromPort,
-        ToPort: +params.toPorts[index],
+    default: {
+      const parsedPortRanges = params.portRanges.map(parseSinglePortRange);
+      ipPermissions = parsedPortRanges.map(({ fromPort, toPort }) => ({
+        FromPort: fromPort,
+        ToPort: toPort,
         IpProtocol: ipProtocol,
         ...ipRanges,
       }));
       break;
+    }
   }
 
   return {
@@ -278,8 +274,6 @@ function prepareAssociateAddressPayload(params) {
   return {
     AllocationId: params.ALLOCATION_ID,
     InstanceId: params.INSTANCE_ID,
-    PublicIp: params.PUBLIC_IP,
-    AllowReassociation: params.ALLOW_REASSOCIATION,
     NetworkInterfaceId: params.NETWORK_INTERFACE_ID,
     PrivateIpAddress: params.PRIVATE_IP_ADDRESS,
     DryRun: params.DRYRUN,
