@@ -5,7 +5,7 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "2.10.0",
+  "version": "2.11.0",
   "description": "Integration with AWS EC2 API",
   "category": [
     "CLOUD",
@@ -787,22 +787,6 @@
           "placeholder": "i-1234567a",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
           "description": "The IDs of the instances. Can be an array of instance IDs."
-        },
-        {
-          "name": "PUBLIC_IP",
-          "viewName": "Public Ip",
-          "type": "string",
-          "placeholder": "8.8.8.8",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html",
-          "description": "The Elastic IP address to associate with the instance. This is required for EC2-Classic."
-        },
-        {
-          "name": "ALLOW_REASSOCIATION",
-          "viewName": "Allow Reassociation",
-          "type": "boolean",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/associate-address.html",
-          "description": "Allows you to associate your Elastic IP with an instance after creation.",
-          "placeholder": "true/false"
         },
         {
           "name": "NETWORK_INTERFACE_ID",
@@ -1988,22 +1972,13 @@
           "placeholder": "2002::1234:abcd:ffff:c0a8:101/64"
         },
         {
-          "name": "fromPorts",
-          "viewName": "From Ports",
+          "name": "portRanges",
+          "viewName": "Port Ranges",
           "type": "text",
           "parserType": "array",
-          "description": "The source ports to apply the rule to. To enter multiple values separate each with a new line. If specified the same number of ports as 'From Ports' map each port in 'From Ports' to a port specified here. If not, map each port on 'From Ports' to all ports specified here.For example: \n* From Ports: 22, 80. To Ports: 22, 80. => 2 rules, 22->22, 80->80.\n* From Ports: 80, 8080. To Ports: 80. => 2 rules, 80->80, 8080->80.",
-          "placeholder": "8009",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-group-rules.html"
-        },
-        {
-          "name": "toPorts",
-          "viewName": "To Ports",
-          "type": "text",
-          "parserType": "array",
-          "description": "The target ports to apply the rule to. To enter multiple values separate each with a new line.",
-          "placeholder": "8090",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-group-rules.html"
+          "description": "Ranges of allowed ports for this rule. You can specify a range of ports or just one port. Please specify one range per line.",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-group-rules.html",
+          "placeholder": "8090\n9010-9015\n*"
         },
         {
           "name": "ipProtocol",
