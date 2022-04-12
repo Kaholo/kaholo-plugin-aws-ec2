@@ -975,20 +975,6 @@
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html"
         },
         {
-          "name": "createRouteTable",
-          "viewName": "Create Route Table",
-          "type": "boolean",
-          "description": "If true, create a Route Table inside this VPC. If a subnet or an internet gateway were also created automatically, associate the route table with whoever was created. Default value is false.",
-          "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html"
-        },
-        {
-          "name": "createSecurityGroup",
-          "viewName": "Create Security Group",
-          "type": "boolean",
-          "description": "If true, create a VPC-Security group, for this VPC. Default value is false.",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/create-security-group.html"
-        },
-        {
           "name": "tags",
           "viewName": "Tags",
           "type": "text",
