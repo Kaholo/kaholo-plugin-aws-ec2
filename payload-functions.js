@@ -274,8 +274,6 @@ function prepareAssociateAddressPayload(params) {
   return {
     AllocationId: params.ALLOCATION_ID,
     InstanceId: params.INSTANCE_ID,
-    PublicIp: params.PUBLIC_IP,
-    AllowReassociation: params.ALLOW_REASSOCIATION,
     NetworkInterfaceId: params.NETWORK_INTERFACE_ID,
     PrivateIpAddress: params.PRIVATE_IP_ADDRESS,
     DryRun: params.DRYRUN,
