@@ -1,6 +1,6 @@
 const { helpers } = require("kaholo-aws-plugin");
 const _ = require("lodash");
-const { strToBase64, tryParseJson } = require("./helpers");
+const { strToBase64, tryParseJson, parseSinglePortRange } = require("./helpers");
 const { AWS_DEFAULT_MAX_RESULTS, AWS_MATCH_ALL_CODE } = require("./consts.json");
 
 function prepareCreateInstancePayload(params) {
@@ -253,23 +253,6 @@ function prepareAddSecurityGroupRulesPayload(params) {
     GroupId: params.groupId,
     IpPermissions: ipPermissions,
   };
-}
-
-function parseSinglePortRange(rawPortRange) {
-  if (/^\d+$/.test(rawPortRange)) {
-    return { fromPort: +rawPortRange, toPort: +rawPortRange };
-  }
-  if (/^\d+-\d+$/.test(rawPortRange)) {
-    const [fromPort, toPort] = rawPortRange.split("-").map(Number);
-    if (fromPort > toPort) {
-      throw new Error(`Ports in the "${rawPortRange}" range are defined in the wrong order.`);
-    }
-    return { fromPort, toPort };
-  }
-  if (/^\*$/.test(rawPortRange)) {
-    return { fromPort: 0, toPort: 65535 };
-  }
-  throw new Error(`Invalid Port Range string specified: "${rawPortRange}". Valid examples include "*" (all ports), "80" (one port), and "8080-8099" (a range of 20 ports). To configure multiple ports not in a range, create a separate rule for each port.`);
 }
 
 function prepareManageKeyPairsPayload(params) {
