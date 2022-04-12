@@ -267,7 +267,7 @@ function prepareManageKeyPairsPayload(params) {
 
 function prepareAllocateAddressPayload(params) {
   return {
-    Domain: params.DOMAIN,
+    Domain: "vpc",
     Address: params.ADDRESS,
     PublicIpv4Pool: params.PUBLICIPV4POOL,
     DryRun: params.DRYRUN,
