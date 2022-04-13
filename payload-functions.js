@@ -57,7 +57,6 @@ function prepareCreateVpcPayload(params) {
   if (!params.cidrBlock && !params.amazonProvidedIpv6CidrBlock) {
     throw new Error("Must provide CIDR Block or select AmazonProvidedIpv6CidrBlock");
   }
-
   return {
     CidrBlock: params.cidrBlock,
     AmazonProvidedIpv6CidrBlock: params.amazonProvidedIpv6CidrBlock,
@@ -263,7 +262,7 @@ function prepareManageKeyPairsPayload(params) {
 
 function prepareAllocateAddressPayload(params) {
   return {
-    Domain: params.DOMAIN,
+    Domain: "vpc",
     Address: params.ADDRESS,
     PublicIpv4Pool: params.PUBLICIPV4POOL,
     DryRun: params.DRYRUN,
