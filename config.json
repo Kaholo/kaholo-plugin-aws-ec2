@@ -5,7 +5,7 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "2.11.0",
+  "version": "2.12.0",
   "description": "Integration with AWS EC2 API",
   "category": [
     "CLOUD",
@@ -716,24 +716,6 @@
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
-        },
-        {
-          "name": "DOMAIN",
-          "viewName": "Domain Type",
-          "type": "options",
-          "options": [
-            {
-              "id": "standard",
-              "name": "Standard"
-            },
-            {
-              "id": "vpc",
-              "name": "VPC"
-            }
-          ],
-          "placeholder": "Standard",
-          "description": "Indicates whether the Elastic IP address is for use with instances in a VPC or instances in EC2-Classic. Default: If the Region supports EC2-Classic, the default is standard. Otherwise, the default is vpc.",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html"
         },
         {
           "name": "ADDRESS",
