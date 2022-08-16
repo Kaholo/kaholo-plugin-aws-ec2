@@ -1,4 +1,4 @@
-const { helpers } = require("kaholo-aws-plugin");
+const { helpers } = require("@kaholo/aws-plugin-library");
 const _ = require("lodash");
 const { strToBase64, tryParseJson, parseSinglePortRange } = require("./helpers");
 const { AWS_DEFAULT_MAX_RESULTS, AWS_MATCH_ALL_CODE } = require("./consts.json");

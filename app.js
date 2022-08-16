@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const aws = require("aws-sdk");
-const awsPlugin = require("kaholo-aws-plugin");
+const awsPlugin = require("@kaholo/aws-plugin-library");
 const { resolveSecurityGroupFunction } = require("./helpers");
 const { getInstanceTypes, listRegions, listSubnets } = require("./autocomplete");
 const payloadFuncs = require("./payload-functions");

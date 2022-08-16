@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const { autocomplete } = require("kaholo-aws-plugin");
+const { autocomplete } = require("@kaholo/aws-plugin-library");
 const { createSubnetText } = require("./helpers");
 
 async function getInstanceTypes(query, params, client, region) {
