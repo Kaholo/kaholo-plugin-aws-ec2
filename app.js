@@ -406,6 +406,10 @@ module.exports = {
       listRegions,
       listSubnets,
     },
+    {
+      ACCESS_KEY: "accessKeyId",
+      SECRET_KEY: "secretAccessKey",
+      REGION: "region",
+    },
   ),
-
 };
