@@ -68,6 +68,7 @@ async function describeInstances(client, params, region) {
   if (!params.GET_ALL_RECURSIVELY) {
     return awsDescribeInstances(client, params, region);
   }
+
   const getAllInstancesRecursively = async (nextToken) => {
     const result = await awsDescribeInstances(client, { ...params, nextToken }, region);
     if (result.NextToken) {
@@ -76,7 +77,12 @@ async function describeInstances(client, params, region) {
     }
     return result.Reservations;
   };
-  return { Reservations: await getAllInstancesRecursively() };
+
+  const recursiveReservations = await getAllInstancesRecursively();
+
+  return {
+    Reservations: recursiveReservations,
+  };
 }
 
 async function modifyInstanceType(client, params) {
