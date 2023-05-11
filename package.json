@@ -10,7 +10,7 @@
   "author": "Kaholo team (Matan Kadosh)",
   "license": "ISC",
   "dependencies": {
-    "@kaholo/aws-plugin-library": "^2.0.0",
+    "@kaholo/aws-plugin-library": "github:Kaholo/aws-plugin-library#783cf23594d7ffb1a40f339789d448687adb59a0",
     "aws-sdk": "2.1109.0",
     "lodash": "4.17.21"
   },
