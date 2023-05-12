@@ -1,8 +1,13 @@
 const _ = require("lodash");
 const aws = require("aws-sdk");
 const awsPlugin = require("@kaholo/aws-plugin-library");
+
+const {
+  getInstanceTypes,
+  listRegions,
+  listSubnets,
+} = require("./autocomplete");
 const { resolveSecurityGroupFunction } = require("./helpers");
-const { getInstanceTypes, listRegions, listSubnets } = require("./autocomplete");
 const payloadFuncs = require("./payload-functions");
 
 const simpleAwsFunctions = {
@@ -373,34 +378,32 @@ async function addSecurityGroupRules(client, params) {
   return client[funcName](payload).promise();
 }
 
-module.exports = {
-  ...awsPlugin.bootstrap(
-    aws.EC2,
-    {
-      ...simpleAwsFunctions,
-      modifyInstanceType,
-      modifyInstanceAttribute,
-      createVpc: createVpcWorkflow,
-      createSubnet: createSubnetWorkflow,
-      createInternetGateway: createInternetGatewayWorkflow,
-      createRouteTable: createRouteTableWorkflow,
-      associateRouteTable,
-      createVolume,
-      createSnapshot,
-      addSecurityGroupRules,
-      describeInstances,
-      createSecurityGroup,
-      stopInstances,
-    },
-    {
-      getInstanceTypes,
-      listRegions,
-      listSubnets,
-    },
-    {
-      ACCESS_KEY: "accessKeyId",
-      SECRET_KEY: "secretAccessKey",
-      REGION: "region",
-    },
-  ),
-};
+module.exports = awsPlugin.bootstrap(
+  aws.EC2,
+  {
+    ...simpleAwsFunctions,
+    modifyInstanceType,
+    modifyInstanceAttribute,
+    createVpc: createVpcWorkflow,
+    createSubnet: createSubnetWorkflow,
+    createInternetGateway: createInternetGatewayWorkflow,
+    createRouteTable: createRouteTableWorkflow,
+    associateRouteTable,
+    createVolume,
+    createSnapshot,
+    addSecurityGroupRules,
+    describeInstances,
+    createSecurityGroup,
+    stopInstances,
+  },
+  {
+    getInstanceTypes,
+    listRegions,
+    listSubnets,
+  },
+  {
+    ACCESS_KEY: "accessKeyId",
+    SECRET_KEY: "secretAccessKey",
+    REGION: "region",
+  },
+);
