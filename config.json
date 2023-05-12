@@ -1,5 +1,6 @@
 {
   "name": "AmazonEC2",
+  "viewName": "AWS EC2",
   "type": "executer",
   "main": "app.js",
   "execProgram": "node",
