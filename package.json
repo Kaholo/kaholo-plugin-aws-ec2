@@ -5,12 +5,13 @@
   "scripts": {
     "test": "npx jest .",
     "lint": "npx eslint .",
-    "lint:fix": "npx eslint . --fix"
+    "lint:fix": "npx eslint . --fix",
+    "preinstall": "npm update @kaholo/aws-plugin-library"
   },
   "author": "Kaholo team (Matan Kadosh)",
   "license": "ISC",
   "dependencies": {
-    "@kaholo/aws-plugin-library": "github:Kaholo/aws-plugin-library#783cf23594d7ffb1a40f339789d448687adb59a0",
+    "@kaholo/aws-plugin-library": "^3.0.0",
     "aws-sdk": "2.1109.0",
     "lodash": "4.17.21"
   },
