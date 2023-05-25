@@ -66,6 +66,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -185,6 +186,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -227,6 +229,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -275,6 +278,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -317,6 +321,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -359,6 +364,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -423,6 +429,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -475,6 +482,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -601,6 +609,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -642,6 +651,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -683,6 +693,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         }
       ]
@@ -715,6 +726,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -770,6 +782,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -841,6 +854,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -896,6 +910,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -985,6 +1000,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1033,6 +1049,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1151,6 +1168,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1201,6 +1219,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1268,6 +1287,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1323,6 +1343,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1380,6 +1401,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1461,6 +1483,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1535,6 +1558,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1601,6 +1625,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1753,6 +1778,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1823,6 +1849,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1903,6 +1930,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -2161,6 +2189,7 @@
           "functionName": "listRegions",
           "description": "The region to execute the request in.",
           "placeholder": "us-east-2",
+          "default": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
