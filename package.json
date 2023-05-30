@@ -5,8 +5,7 @@
   "scripts": {
     "test": "npx jest .",
     "lint": "npx eslint .",
-    "lint:fix": "npx eslint . --fix",
-    "preinstall": "npm update @kaholo/aws-plugin-library"
+    "lint:fix": "npx eslint . --fix"
   },
   "author": "Kaholo team (Matan Kadosh)",
   "license": "ISC",
