@@ -7,11 +7,20 @@
   "exposeRoute": false,
   "imgUrl": "logo.png",
   "version": "2.13.0",
-  "description": "Integration with AWS EC2 API",
+  "description": "Elastic Compute Cloud - secure, resizable compute capacity in the cloud",
   "category": [
-    "CLOUD",
-    "COMPUTE"
+    "Compute"
   ],
+  "keywords": [
+    "amazon",
+    "instance",
+    "vm",
+    "cloud",
+    "virtual",
+    "machine",
+    "amazon",
+    "amazon"
+  ]
   "auth": {
     "authId": "awsAccount",
     "params": [
@@ -19,7 +28,7 @@
         "name": "accessKeyId",
         "viewName": "Access Key ID",
         "type": "vault",
-        "description": "The default AWS Access Key ID to use for authentication.",
+        "description": "AWS Access Key ID for authentication",
         "placeholder": "AKIAIOSFODNN7EXAMPLE",
         "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
       },
@@ -27,7 +36,7 @@
         "name": "secretAccessKey",
         "viewName": "Access Key Secret",
         "type": "vault",
-        "description": "The default AWS Access Key secret to use for authentication.",
+        "description": "AWS Access Key secret for authentication.",
         "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
         "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
       }
@@ -39,7 +48,7 @@
       "viewName": "Region",
       "type": "string",
       "required": false,
-      "description": "The ID of the default region to make requests on.",
+      "description": "An optional default AWS geographical region where resources will be managed",
       "learnUrl": "https://docs.aws.amazon.com/general/latest/gr/s3.html"
     }
   ],
@@ -54,8 +63,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where instance will be created",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -157,8 +166,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where instances will be started",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -183,8 +192,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where instance will be stopped",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -215,8 +224,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where instance will be rebooted",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -241,8 +250,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where instance will be terminated",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -267,8 +276,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where instance will be described",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -315,8 +324,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where instance will be modified",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -351,8 +360,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where instance attributes will be modified",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -461,8 +470,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where a key pair will be created",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -486,8 +495,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where a key pair will be deleted",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -511,8 +520,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where a key pair will be described",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         }
       ]
@@ -527,8 +536,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where an address will be allocated",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -566,8 +575,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where an address will be associated",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -621,8 +630,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where an address will be released",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -660,8 +669,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where a Virtual Private Cloud (VPC) will be created",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -733,8 +742,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where a Virtual Private Cloud (VPC) will be deleted",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -765,8 +774,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where a subnet will be created",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -867,8 +876,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where a subnet will be deleted",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -901,8 +910,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where a NAT Gateway will be created",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -952,8 +961,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where an Internet Gateway will be created",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -991,8 +1000,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where an Internet Gateway will be attached",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1032,8 +1041,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where a route will be created",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1097,8 +1106,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where a Route Table will be created",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1155,8 +1164,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where a route table will be associated",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1205,8 +1214,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where a volume will be created",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1341,8 +1350,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where an EBS snapshot will be created",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1395,8 +1404,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where a security group will be created",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1459,8 +1468,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where a security group rule will be added",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1701,8 +1710,8 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS geographical region where a tag will be created",
+          "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
