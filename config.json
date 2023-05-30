@@ -7,7 +7,7 @@
   "exposeRoute": false,
   "imgUrl": "logo.png",
   "version": "2.13.0",
-  "description": "Elastic Compute Cloud - secure, resizable compute capacity in the cloud",
+  "description": "Amazon EC2 - resizable compute capacity in the cloud",
   "category": [
     "Compute"
   ],
@@ -20,7 +20,7 @@
     "machine",
     "amazon",
     "amazon"
-  ]
+  ],
   "auth": {
     "authId": "awsAccount",
     "params": [
