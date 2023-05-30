@@ -38,6 +38,7 @@
       "name": "region",
       "viewName": "Region",
       "type": "string",
+      "required": false,
       "description": "The ID of the default region to make requests on.",
       "learnUrl": "https://docs.aws.amazon.com/general/latest/gr/s3.html"
     }
