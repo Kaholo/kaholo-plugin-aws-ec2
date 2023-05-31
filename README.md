@@ -1,27 +1,65 @@
-# kaholo-plugin-amazon-ec2
-Amazon EC2 plugin for Kaholo
-This plugin is based on [aws-sdk API](https://www.npmjs.com/package/aws-sdk) and you can view all resources on [github](https://github.com/aws/aws-sdk-js)
+# Kaholo AWS EC2 Plugin
+This plugin extends Kaholo's capabilities to interact with Amazon Web Services Elastic Compute Cloud (AWS EC2). The plugin makes use of npm package [aws-sdk API](https://www.npmjs.com/package/aws-sdk) to provide methods to create, start, stop, reboot, and terminate instances, and work with related virtual assets such as VPCs, IP addresses, key pairs, gateways, route tables, volumes, snapshots, and security groups.
+
+## Prerequisites
+To use this plugin you must have an account (either root or IAM) with Amazon Web Services (AWS) with sufficient permissions to work with EC2, and a pair of Access Keys associated with that account.
+
+## Plugin Settings
+To Access Plugin Settings, click on Settings | Plugins, find the "AWS EC2" plugin, and then click on the plugin's name, which is blue hypertext. There is only one plugin-level setting for AWS EC2, the default AWS region. If you specify a region here, e.g. `ap-southeast-1`, then newly created AWS EC2 actions will inherit that region by default. This is provided only as a convenience, and each action's region can be modified after creation if the configured default is not appropriate.
+
+## Plugin Account
+This plugin makes use of a Kaholo Account to manage authentication. This allows the authentication to be configured once and then conveniently selected from a drop-down on an action-by-action basis. The security-sensitive AWS Access Keys are stored encypted in the Kaholo vault to protect them from exposure in the UI, Activity Log, Final Result, and server logs. They may be stored in the vault before or during Kaholo Account creation.
+
+The same Kaholo Account can be used for several AWS-related Kaholo plugins. If you've already configured one, for example to use with AWS CLI Plugin, then no further account configuration is necessary.
+
+### Account Name
+Account Name is an arbitrary name to identify a specific Kaholo account. It is suggested to name it after the AWS IAM user name associated with the access keys, and/or the type(s) of AWS access granted to that user. The names of the ID and Secret components in the Vault are ideally named similarly.
+
+### Access Key ID (Vault)
+This is the Access Key ID as provided by AWS or the AWS administrator. While the ID is not technically a secret it is vaulted anyway for better security. An Access Key ID looks something like this:
+
+    AKIA3LQJ67DUTPFST5GM
+
+### Access Key Secret (Vault)
+This is the Access Key Secret as provided by AWS or the AWS administrator. This is a genuine secret and must be vaulted in the Kaholo Vault. An Access Key Secret looks something like this:
+
+    DByOuQgqqwUWa8Y4Wu3hE3HTWZB6+mQVt8Qs0Phv
 
 ## Method: Create Instance
+This method creates one or more new AWS instances.
 
-**Description**
+### Parameter: Name
+This sets the "Name" tag of the new instance to make it more easily identifiable in the AWS web console.
 
-This method will create a new AWS instance. This method calls ec2 [runInstance](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#runInstances-property)
+### Parameter: Region
+The AWS geographical region where instance will be created. This parameter has an autocomplete function so you may select the region using either the CLI-type ID string, for example `ap-southeast-1`, or the user-friendly location, e.g. "Asia Pacific (Singapore)". If using the code layer, use the CLI-type ID string. The availability zone, for example `ap-southeast-1a` vs `ap-southeast-1b`, is determined not by Region but by which Subnet is selected.
 
-**Parameters**
-1. Name (string) **Optional** - Set the "Name" tag of the created instance for easier future reference.
-2. Access Key (Vault) **Optional** - This is a parameter taken from the vault to access AWS
-3. Secret Key  (Vault) **Optional** - This is a parameter taken from the vault to access AWS
-4. Region (Options) **Required** - Select a region from the appeard list.
-5. Image ID (String) **Required** - If you already have an AMI ready for launch
-6. Instance type (String) **Required** - The machine type you want to launce for example: t2.micro
-7. Key name (String) **Optional** - Add a key-pair in order to connect to the new server.
-8. Security Group ID (Text/Array) **Required** - connect this instance to a security group. You will have to use a code (code or configuration) to transfer array to the api.
-9. User data (String) **Optional** - Schell script to run on the instance on start.
-10. Minimum of instances (Int) **Optional** - The minimum number of instances to launch (by default 1).
-11. Maximum of instances (Int) **Optional**- The maximum number of instances to launch (by default 1).
-12. Subnet ID (String) **Optional**- If specified, host the instance on the specified Subnet.
-13. Tags specifications (Text/Object) **Optional** - The tags to apply to the resources during launch. 
+### Parameter: AMI
+Every instance is based on an AMI image, which determines the initial operating system and software configuration of the instance. AMI images are unique to each Region and instance architecture so the AMI provided must be one available in the Region selected and must also match the instance type selected. AMI's are identified by their CLI-type ID string, for example `ami-0df7a207adb9748c7` is Ubuntu 22.04 LTS for amd64 in region `ap-southeast-1`. This AMI will not work for an ARM instance such as `a1-medium` or in a region other than `ap-southeast-1`.
+
+### Parameter: Instance Type
+Instance Type determines types and quantities of compute resources are available to the instance, including CPU, RAM, GPU, disk and network bandwidth. It also determines the cost of the instance. For example, `t4g.large` instances have 2 vCPU of Arm-based AWS Graviton2 processors and 8 GB RAM. Not all instance types are available in all regions. See the [AWS Website](https://aws.amazon.com/ec2/instance-types/) for more details about instance types.
+
+### Parameter: Key Pair Name
+Key Pairs are RSA or ED25519 public/private keys configured in AWS, each Key Pair being valid only in the region where it was configured. This plugin can also be used to create a Key Pair using method "Create Key Pair". The Key Pair specified here determines which SSH private key will have access to the instance. For Windows instances the private key is required to decrypt the Administrator password for RDP. Key Pair names are arbitrary, e.g. "Olivia's Singapore Region Keys".
+
+### Parameter: Subnet
+Subnet determines both the VPC and availability zone where the instance will be created. Only a subnet within the specified Region will work for this parameter. Subnet choice also has effects such as which routes are available and whether or not an instance gets an external IP address. A subnet is identified by its CLI-type ID string, e.g. `subnet-07da61f7da6132651`.
+
+### Parameter: Security Groups
+Security Groups are sets of firewall rules configured in AWS. The specified Security Group(s) must match the VPC of the specified Subnet. A security group is identified by its CLI-type ID string, e.g. `sg-0332f2a6e5c4be523`.
+
+### Parameter: Tags Specification
+Tags other than or including "Name" may be optionally specified here as one-per-line key=value pairs. Tags are used to logically organize instances for various reasons. For more information see the [AWS Documentation on Tags](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html).
+
+### Parameter: User Data
+User Data is up to 16Kb of base64-encoded data that is typically some kind of initial configuration or startup instructions for the new instance. For more information about user data see the [AWS Documentation on User Data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-add-user-data.html).
+
+### Parameter: Minimum Instances
+If launching more than one or a variable number of instances this is the minimum quantity of instances to launch.
+
+### Parameter: Maximum Instances
+If launching more than one or a variable number of instances this is the maximum quantity of instances to launch.
 
 ## Method: Start Instance
 
@@ -445,3 +483,168 @@ Modify the instance attribute. This method calls ec2 [ModifyInstanceAttribute](h
 5. attribute - (option) choose the attribute to modify
 6. attributeValue (string) specify the new value of an attribute
 7. Dry Run (Boolean) - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
+
+      "viewName": "Start Instances",
+          "viewName": "Region",
+          "viewName": "Instance ids (array)",
+      "viewName": "Stop Instances",
+          "viewName": "Region",
+          "viewName": "Instance ids (array)",
+          "viewName": "Wait for Stopped State",
+      "viewName": "Reboot Instances",
+          "viewName": "Region",
+          "viewName": "Instance ids (array)",
+      "viewName": "Terminate Instances",
+          "viewName": "Region",
+          "viewName": "Instance Ids",
+      "viewName": "Describe Instances",
+          "viewName": "Region",
+          "viewName": "Instance Ids",
+          "viewName": "Filters (Array)",
+          "viewName": "Dry Run",
+          "viewName": "Get All Results",
+      "viewName": "Modify Instance Type",
+          "viewName": "Region",
+          "viewName": "Instance IDs",
+          "viewName": "Instance Type",
+      "viewName": "Modify Instance Attribute",
+          "viewName": "Region",
+          "viewName": "Instance IDs",
+          "viewName": "Attribute",
+          "viewName": "Attribute value",
+          "viewName": "Dry Run",
+      "viewName": "Create Key Pair",
+          "viewName": "Region",
+          "viewName": "Key pair name",
+      "viewName": "Delete Key Pair",
+          "viewName": "Region",
+          "viewName": "Key pair name",
+      "viewName": "Describe Key Pairs",
+          "viewName": "Region",
+      "viewName": "Allocate An Address",
+          "viewName": "Region",
+          "viewName": "Address",
+          "viewName": "Public IPv4 Pool",
+          "viewName": "Dry Run",
+      "viewName": "Associate An Address",
+          "viewName": "Region",
+          "viewName": "Allocation Id",
+          "viewName": "Instance Id",
+          "viewName": "Network Interface Id",
+          "viewName": "Private Ip Address",
+          "viewName": "Dry Run",
+      "viewName": "Release An Address",
+          "viewName": "Region",
+          "viewName": "Allocation Id",
+          "viewName": "Public Ip",
+          "viewName": "Dry Run",
+      "viewName": "Create VPC",
+          "viewName": "Region",
+          "viewName": "CIDR Block",
+          "viewName": "Amazon Provided IPV6 Block",
+          "viewName": "Instance Tenancy",
+          "viewName": "Create Internet Gateway",
+          "viewName": "Tags",
+          "viewName": "Dry Run",
+      "viewName": "Delete VPC",
+          "viewName": "Region",
+          "viewName": "VPC ID",
+          "viewName": "Dry Run",
+      "viewName": "Create Subnet",
+          "viewName": "Region",
+          "viewName": "VPC ID",
+          "viewName": "Route Table ID",
+          "viewName": "Availability Zone",
+          "viewName": "CIDR Block",
+          "viewName": "IPv6 CIDR Block",
+          "viewName": "Outpost ARN",
+          "viewName": "NAT Gateway Allocation ID",
+          "viewName": "Create Private Route Table",
+          "viewName": "Map Public IP On Launch",
+          "viewName": "Tags",
+          "viewName": "Dry Run",
+      "viewName": "Delete Subnet",
+          "viewName": "Region",
+          "viewName": "Subnet ID",
+          "viewName": "Dry Run",
+      "viewName": "Create NAT Gateway",
+          "viewName": "Region",
+          "viewName": "Subnet ID",
+          "viewName": "Allocation ID",
+          "viewName": "Tags",
+          "viewName": "Dry Run",
+      "viewName": "Create Internet Gateway",
+          "viewName": "Region",
+          "viewName": "VPC ID",
+          "viewName": "Tags",
+          "viewName": "Dry Run",
+      "viewName": "Attach Internet Gateway",
+          "viewName": "Region",
+          "viewName": "Gateway ID",
+          "viewName": "VPC ID",
+          "viewName": "Dry Run",
+      "viewName": "Create Route",
+          "viewName": "Region",
+          "viewName": "Route Table ID",
+          "viewName": "Gateway ID",
+          "viewName": "NAT Gateway ID",
+          "viewName": "Instance ID",
+          "viewName": "Destination CIDR Block",
+          "viewName": "Dry Run",
+      "viewName": "Create Route Table",
+          "viewName": "Region",
+          "viewName": "VPC ID",
+          "viewName": "Subnet ID",
+          "viewName": "Gateway ID",
+          "viewName": "tags",
+          "viewName": "Dry Run",
+      "viewName": "Associate Route Table",
+          "viewName": "Region",
+          "viewName": "Route Table ID",
+          "viewName": "Subnet ID",
+          "viewName": "Gateway ID",
+          "viewName": "Dry Run",
+      "viewName": "Create Volume",
+          "viewName": "Region",
+          "viewName": "Availability Zone",
+          "viewName": "Volume Type",
+          "viewName": "Size(In GBs)",
+          "viewName": "IOPS",
+          "viewName": "Create From Snapshot(ID)",
+          "viewName": "Outpost ARN",
+          "viewName": "Throughput",
+          "viewName": "Is Encrypted",
+          "viewName": "KMS Key ID",
+          "viewName": "Multi Attach Enabled",
+          "viewName": "Dry Run",
+          "viewName": "Wait Until Operation End",
+      "viewName": "Create EBS Snapshot",
+          "viewName": "Region",
+          "viewName": "Volume ID",
+          "viewName": "Description",
+          "viewName": "Outpost ARN",
+          "viewName": "Dry Run",
+          "viewName": "Wait Until Operation End",
+      "viewName": "Create Security Group",
+          "viewName": "Region",
+          "viewName": "Name",
+          "viewName": "Group description",
+          "viewName": "VPC ID",
+          "viewName": "Tags",
+          "viewName": "Disallow Any Outbound Traffic",
+          "viewName": "Dry Run",
+      "viewName": "Add Security Group Rules",
+          "viewName": "Region",
+          "viewName": "Group ID",
+          "viewName": "Rule Type",
+          "viewName": "CIDR IPv4 Blocks",
+          "viewName": "CIDR IPv6 Blocks",
+          "viewName": "Port Ranges",
+          "viewName": "Ip Protocol",
+          "viewName": "ICMP Type",
+          "viewName": "Description",
+          "viewName": "Dry Run",
+      "viewName": "Create Tags",
+          "viewName": "Region",
+          "viewName": "Resource ID",
+          "viewName": "Tags",
