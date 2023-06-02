@@ -543,25 +543,25 @@
         },
         {
           "name": "ADDRESS",
-          "viewName": "Address",
+          "viewName": "BYOIP Address (optional)",
           "type": "string",
+          "description": "A specific address from a Bring your own IP (BYOIP) address pool, if using BYOIP and a specific address assignment is needed",
           "placeholder": "192.168.20.20",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html",
-          "description": "The Elastic IP address to recover or an IPv4 address from an address pool."
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-byoip.html"
         },
         {
           "name": "PUBLICIPV4POOL",
-          "viewName": "Public IPv4 Pool",
+          "viewName": "BYOIP Address Pool (optional)",
           "type": "string",
+          "description": "The ID of a Bring your own IP (BYOIP) address pool to select an arbitrary available address from that pool",
           "placeholder": "ipv4pool-ec2-1234567890abcdef0",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-public-ipv4-pools.html",
-          "description": "The ID of an address pool that you own. Use this parameter to let Amazon EC2 select an address from the address pool. To specify a specific address from the address pool, use the Address parameter instead."
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-public-ipv4-pools.html"
         },
         {
           "name": "DRYRUN",
           "viewName": "Dry Run",
           "type": "boolean",
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "If enabled, this tests the allocation request with AWS to check for potential errors without actually allocating any address.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
@@ -576,7 +576,7 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "AWS geographical region where an address will be associated",
+          "description": "AWS geographical region where an address will be associated with an instance",
           "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
@@ -584,39 +584,39 @@
           "name": "ALLOCATION_ID",
           "viewName": "Allocation Id",
           "type": "string",
-          "placeholder": "eipalloc-12345678",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-addresses.html",
-          "description": "The allocation ID. This is required for EC2-VPC."
+          "description": "The allocation ID of the address to be associated with an instance",
+          "placeholder": "eipalloc-06b93fa7325c0c27d",
+          "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-addresses.html"
         },
         {
           "name": "INSTANCE_ID",
           "viewName": "Instance Id",
           "type": "string",
-          "placeholder": "i-1234567a",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
-          "description": "The IDs of the instances. Can be an array of instance IDs."
+          "description": "The ID of the instance to which the address should be associated",
+          "placeholder": "i-0b73423d9f27eac48",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html"
         },
         {
           "name": "NETWORK_INTERFACE_ID",
           "viewName": "Network Interface Id",
           "type": "string",
-          "placeholder": "eni-0070b14946example",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html",
-          "description": "The ID of the network interface. If the instance has more than one network interface, you must specify a network interface ID."
+          "description": "The ID of a specific network interface, required only if the instance has more than one",
+          "placeholder": "eni-0951507dccd1aae25",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html"
         },
         {
           "name": "PRIVATE_IP_ADDRESS",
           "viewName": "Private Ip Address",
           "type": "string",
-          "placeholder": "172.20.20.20",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html",
-          "description": "The primary or secondary private IP address to associate with the Elastic IP address."
+          "description": "The private IP address to associate with the Elastic IP address, required only if the instance has more than one.",
+          "placeholder": "10.48.0.16",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html"
         },
         {
           "name": "DRYRUN",
           "viewName": "Dry Run",
           "type": "boolean",
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "If enabled, this tests the association request with AWS to check for potential errors without actually associating any address.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
@@ -631,7 +631,7 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "AWS geographical region where an address will be released",
+          "description": "AWS geographical region of the address to be released",
           "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
@@ -639,23 +639,15 @@
           "name": "ALLOCATION_ID",
           "viewName": "Allocation Id",
           "type": "string",
-          "description": "The allocation ID. This is required for EC2-VPC.",
-          "placeholder": "eipalloc-12345678",
+          "description": "The allocation ID of the address to be released",
+          "placeholder": "eipalloc-06b93fa7325c0c27d",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-addresses.html"
-        },
-        {
-          "name": "PUBLIC_IP",
-          "viewName": "Public Ip",
-          "type": "string",
-          "description": "The Elastic IP address to associate with the instance. This is required for EC2-Classic.",
-          "placeholder": "8.8.8.8",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html"
         },
         {
           "name": "DRYRUN",
           "viewName": "Dry Run",
           "type": "boolean",
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "If enabled, this tests the release request with AWS to check for potential errors without actually releasing any address.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
