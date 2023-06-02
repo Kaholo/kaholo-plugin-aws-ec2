@@ -6,7 +6,7 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "2.13.0",
+  "version": "2.13.0-KP-1196",
   "description": "Amazon EC2 - resizable compute capacity in the cloud",
   "category": [
     "Compute"
@@ -49,6 +49,7 @@
       "type": "string",
       "required": false,
       "description": "An optional default AWS geographical region where resources will be managed",
+      "placeholder": "us-east-1",
       "learnUrl": "https://docs.aws.amazon.com/general/latest/gr/s3.html"
     }
   ],
@@ -57,6 +58,14 @@
       "name": "createInstance",
       "viewName": "Create Instance",
       "params": [
+        {
+          "name": "NAME_TAG",
+          "viewName": "Name",
+          "type": "string",
+          "description": "Set the \"Name\" tag of the created instance for easier future reference.",
+          "placeholder": "my-new-instance",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
+        },
         {
           "name": "region",
           "viewName": "Region",
@@ -69,15 +78,15 @@
         },
         {
           "name": "IMAGE_ID",
-          "viewName": "Image id",
+          "viewName": "AMI",
           "type": "string",
           "placeholder": "ami-0effcafbe4e502297",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html",
-          "description": "Amazon Machine Image (AMI) provides the information required to launch an instance."
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html",
+          "description": "Amazon Machine Image (AMI) provides the base image (operating system) for the instance."
         },
         {
           "name": "INSTANCE_TYPE",
-          "viewName": "instance type",
+          "viewName": "Instance Type",
           "type": "string",
           "placeholder": "c5.large",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html",
@@ -85,15 +94,25 @@
         },
         {
           "name": "KEY_NAME",
-          "viewName": "Key name",
+          "viewName": "Key Pair Name",
           "type": "string",
           "placeholder": "my_max_256_chars_key_pair",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html",
           "description": "If specified, encrypt the volume created for this instance using the specified Key pair."
         },
         {
+          "name": "subnetId",
+          "viewName": "Subnet",
+          "type": "autocomplete",
+          "autocompleteType": "function",
+          "functionName": "listSubnets",
+          "placeholder": "192.168.255.255",
+          "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html",
+          "description": "If specified, host the instance on the specified Subnet."
+        },
+        {
           "name": "SECURITY_GROUP_IDS",
-          "viewName": "Security Group IDs",
+          "viewName": "Security Groups",
           "type": "text",
           "parserType": "array",
           "placeholder": "sg-33bb22aa",
@@ -101,8 +120,16 @@
           "description": "Connect this instance to a security group. You will have to use a code or configuration to transfer the array to the API"
         },
         {
+          "name": "TAGS_SPECIFICATION",
+          "viewName": "Tags Specification",
+          "type": "text",
+          "placeholder": "ResourceType=volume\nResourceEnv=dev",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_TagSpecification.html",
+          "description": "The tags to apply to the resources during launch. "
+        },
+        {
           "name": "USER_DATA",
-          "viewName": "User data",
+          "viewName": "User Data",
           "type": "text",
           "placeholder": "/folder/script.sh\n#!/bin/sh\nyum update -y",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html",
@@ -110,7 +137,7 @@
         },
         {
           "name": "MIN_COUNT",
-          "viewName": "minimum of instances",
+          "viewName": "Minimum Instances",
           "type": "string",
           "parserType": "number",
           "required": true,
@@ -120,39 +147,13 @@
         },
         {
           "name": "MAX_COUNT",
-          "viewName": "maximum of instances",
+          "viewName": "Maximum Instances",
           "type": "string",
           "parserType": "number",
           "required": true,
           "default": "1",
           "placeholder": "1",
           "description": "The maximum number of instances to launch. The default is 1."
-        },
-        {
-          "name": "subnetId",
-          "viewName": "Subnet ID",
-          "type": "autocomplete",
-          "autocompleteType": "function",
-          "functionName": "listSubnets",
-          "placeholder": "192.168.255.255",
-          "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html",
-          "description": "If specified, host the instance on the specified Subnet."
-        },
-        {
-          "name": "NAME_TAG",
-          "viewName": "Name",
-          "type": "string",
-          "description": "Set the \"Name\" tag of the created instance for easier future reference.",
-          "placeholder": "my-new-instance",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
-        },
-        {
-          "name": "TAGS_SPECIFICATION",
-          "viewName": "Tags Specification",
-          "type": "text",
-          "placeholder": "ResourceType=volume\nResourceEnv=dev",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_TagSpecification.html",
-          "description": "The tags to apply to the resources during launch. "
         }
       ]
     },
@@ -172,13 +173,13 @@
         },
         {
           "name": "INSTANCE_IDS",
-          "viewName": "Instance ids (array)",
+          "viewName": "Instance IDs",
           "type": "text",
           "parserType": "array",
           "required": true,
-          "placeholder": "i-1234567a",
+          "placeholder": "i-0b73423d9f27eac48\ni-0875d1248b871540d",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
-          "description": "The ID of the instance(s) to start."
+          "description": "The IDs of the instances to start, one per line"
         }
       ]
     },
@@ -198,13 +199,13 @@
         },
         {
           "name": "INSTANCE_IDS",
-          "viewName": "Instance ids (array)",
+          "viewName": "Instance IDs",
           "type": "text",
           "parserType": "array",
           "required": true,
-          "placeholder": "i-1234567a",
+          "placeholder": "i-0b73423d9f27eac48\ni-0875d1248b871540d",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
-          "description": "The ID of the instance(s) to stop."
+          "description": "The IDs of the instances to stop, one per line"
         },
         {
           "name": "WAIT_FOR_STOP",

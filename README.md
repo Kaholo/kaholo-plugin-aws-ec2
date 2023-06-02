@@ -61,78 +61,36 @@ If launching more than one or a variable number of instances this is the minimum
 ### Parameter: Maximum Instances
 If launching more than one or a variable number of instances this is the maximum quantity of instances to launch.
 
-## Method: Start Instance
+## Method: Start Instances
+This method starts one or more AWS EC2 instances.
 
-**Description**
+### Parameter: Instance IDs
+The instance ID of the instance(s) to be started. To start more than one instance, list their instance IDs one per line. If using the code layer pass the list of instances as an array of strings.
 
-Starts an Amazon EBS-backed instance that you've previously stopped.
-This method calls ec2 [startinstance](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#startInstances-property)
+## Method: Stop Instances
+This method stops one or more AWS EC2 instances.
 
-**Parameters**
-1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a paramer taken from the vault to access AWS
-3. Region - The region which you want to launch the instance.
-4. Instances Ids - The IDs of the instances. Can be an array of instances.
+### Parameter: Instance IDs
+The instance ID of the instance(s) to be stopped. To stop more than one instance, list their instance IDs one per line. If using the code layer pass the list of instances as an array of strings.
 
-## Method: Stop Instance
+## Method: Reboot Instances
+This method reboots one or more AWS EC2 instances.
 
-**Description**
-
-Stops an Amazon EBS-backed instance. This method calls ec2 [stopInstance](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#stopInstances-property)
-
-**Parameters**
-1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a paramer taken from the vault to access AWS
-3. Region
-4. Instances Ids - The IDs of the instances. Can be an array of instances.
+### Parameter: Instance IDs
+The instance ID of the instance(s) to be rebooted. To reboot more than one instance, list their instance IDs one per line. If using the code layer pass the list of instances as an array of strings.
 
 ## Method: Terminate Instances
+This method terminates one or more AWS EC2 instances. Termination is the shutdown and deletion of an instance.
 
-**Description**
+### Parameter: Instance IDs
+The instance ID of the instance(s) to be terminated. To terminate more than one instance, list their instance IDs one per line. If using the code layer pass the list of instances as an array of strings.
 
-Terminate EC2 instances. This method calls ec2 [terminateInstance](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#terminateInstances-property)
+## Method: Describe Key Pairs
+This method describes an existing Key Pair. Key Pairs are a paired set of either RSA or ED25519 public/private encryption keys used to control SSH access and decrypt Windows passwords. The private key is held by an individual user and the public key is held by AWS. The pair is given a user-friendly name, which is used in key-related methods of this plugin.
 
-**Parameters**
-1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a paramer taken from the vault to access AWS
-3. Region
-4. Instances Ids - Array of Instance IDs.
-
-## Method: Reboot Instance
-
-**Description**
-
-Requests a reboot of the specified instances. This operation is asynchronous; it only queues a request to reboot the specified instances. This method calls ec2 [rebootInstance](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#rebootInstances-property)
-
-**Parameters**
-1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a paramer taken from the vault to access AWS
-3. Region
-4. Instances Ids - The IDs of the instances. Can be an array of instances.
-
-## Describe Key Pair
-
-**Description**
-
-Describes the specified key pairs or all of your key pairs.. This method calls ec2 [describeKeyPair](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeKeyPairs-property)
-
-**Parameters**
-1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a paramer taken from the vault to access AWS
-3. Region
+### Parameter: 
 
 ## Method: Create Key Pair
-
-**Description**
-
-This methods will create a new Key Pair This method calls ec2 [createKeyPair](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createKeyPair-property)
-
-**Parameters**
-1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a paramer taken from the vault to access AWS
-3. Region
-4. Key Pair name - the name for the new key-pair
-
 ## Method: Delete Key Pair
 
 **Description**
