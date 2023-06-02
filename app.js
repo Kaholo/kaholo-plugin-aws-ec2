@@ -21,7 +21,7 @@ const simpleAwsFunctions = {
   attachInternetGateway: awsPlugin.generateAwsMethod("attachInternetGateway", payloadFuncs.prepareAttachInternetGatewayPayload),
   createKeyPair: awsPlugin.generateAwsMethod("createKeyPair", payloadFuncs.prepareManageKeyPairsPayload),
   deleteKeyPair: awsPlugin.generateAwsMethod("deleteKeyPair", payloadFuncs.prepareManageKeyPairsPayload),
-  describeKeyPairs: awsPlugin.generateAwsMethod("describeKeyPairs"),
+  describeKeyPairs: awsPlugin.generateAwsMethod("describeKeyPairs", payloadFuncs.prepareManageKeyPairsPayload),
   allocateAddress: awsPlugin.generateAwsMethod("allocateAddress", payloadFuncs.prepareAllocateAddressPayload),
   associateAddress: awsPlugin.generateAwsMethod("associateAddress", payloadFuncs.prepareAssociateAddressPayload),
   releaseAddress: awsPlugin.generateAwsMethod("releaseAddress", payloadFuncs.prepareReleaseAddressPayload),

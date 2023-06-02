@@ -255,9 +255,12 @@ function prepareAddSecurityGroupRulesPayload(params) {
 }
 
 function prepareManageKeyPairsPayload(params) {
-  return {
-    KeyName: params.KEY_PAIR_NAME,
-  };
+  if (params.KEY_PAIR_NAME) {
+    return {
+      KeyName: params.KEY_PAIR_NAME,
+    };
+  }
+  return {};
 }
 
 function prepareAllocateAddressPayload(params) {
