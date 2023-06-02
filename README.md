@@ -86,22 +86,28 @@ This method terminates one or more AWS EC2 instances. Termination is the shutdow
 The instance ID of the instance(s) to be terminated. To terminate more than one instance, list their instance IDs one per line. If using the code layer pass the list of instances as an array of strings.
 
 ## Method: Describe Key Pairs
-This method describes an existing Key Pair. Key Pairs are a paired set of either RSA or ED25519 public/private encryption keys used to control SSH access and decrypt Windows passwords. The private key is held by an individual user and the public key is held by AWS. The pair is given a user-friendly name, which is used in key-related methods of this plugin.
+This method describes all existing Key Pairs. Key Pairs are a paired set of either RSA or ED25519 public/private encryption keys used to control SSH access and decrypt Windows passwords. The private key is held by an individual user and the public key is held by AWS. The pair is given a user-friendly name, `KeyName`, which is used in key-related methods of this plugin.
 
-### Parameter: 
+The described Key Pairs do NOT include the private key, because AWS has no record of the private key. If the private key has been lost, it must be replaced with a new Key Pair using the methods [documented by AWS](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/TroubleshootingInstancesConnecting.html#replacing-lost-key-pair). Alternatively, if the private key has been added to the Kaholo Vault, it may be recoverable from there. [Contact Kaholo](https://kaholo.io/contact/) for details.
+
+An example Key Pair:
+
+    KeyPairId: "key-03bef99f4306a0da0"
+    KeyFingerprint: "78:6a:18:a9:9c:3b:85:18:75:41:27:35:85:5b:e2:ce:34:a5:c7:26"
+    KeyName: "test alpha"
+    KeyType: "rsa"
 
 ## Method: Create Key Pair
+This method creates a new Key Pair. Upon creation the private key, or `KeyMaterial`, of the Key Pair is provided only once in Final Result. The private key is meant to be a secret guarded by an individual user. AWS retains no record of the private key so if lost the Key Pair becomes useless. Using this method, the private key gets recorded in the Final result of the Kaholo execution. If that presents a security risk ensure your pipeline manages it, e.g. delete the Key Pair and instances that use it when the pipeline has finished, or ensure the instances and/or Kaholo Final Result are sufficiently low-risk and/or protected from access by would-be attackers. To avoid risk entirely use the AWS Web Console or command-line CLI to create new Key Pairs instead.
+
+### Parameter: Key Pair Name
+This is an arbitrary user-friendly name for the new Key Pair, e.g. "DevOps Admin (East Region)"
+
 ## Method: Delete Key Pair
+This method deletes a Key Pair. The corresponding private key will continue to work for existing instances, but new instances will be unable to use the deleted Key. This is reversible - if the private key exists it can be used to generate a public key which can be imported to AWS as a Key Pair with the same KeyName as the previously deleted Key Pair.
 
-**Description**
-
-This method will delete a Key Pair. This method calls ec2 [deleteKeyPair](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#deleteKeyPair-property)
-
-**Parameters**
-1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a paramer taken from the vault to access AWS
-3. Region
-4. Key Pair name - the name of the key-pair
+### Parameter: Key Pair Name
+This is the user-friendly name for the Key Pair to be deleted, property `KeyName`.
 
 ## Method: Allocate an address
 
