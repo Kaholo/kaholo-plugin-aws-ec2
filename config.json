@@ -6,7 +6,7 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "2.13.0-KP-1196",
+  "version": "2.13.0",
   "description": "Amazon EC2 - resizable compute capacity in the cloud",
   "category": [
     "Compute"
@@ -576,7 +576,7 @@
           "type": "autocomplete",
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "AWS geographical region where an address will be associated with an instance",
+          "description": "AWS geographical region where an address will be associated with an instance or network interface",
           "placeholder": "us-east-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },

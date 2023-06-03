@@ -119,37 +119,40 @@ If you have a Bring your own IP (BYOIP) address pool, this parameter is a specif
 If you have a Bring your own IP (BYOIP) address pool, to select an arbitrary available address from that pool, specify the pool's ID here. Leave the parameter empty to allocate a specific BYOIP address or an arbitrary address from Amazon's pool of addresses.
 
 ### Parameter: Dry Run
+If enabled, this tests the allocation request with AWS to check for potential errors without actually allocating any address.
 
 ## Method: Associate Address
 This method associates an Elastic IP address with an instance or a network interface. To create an Elastic IP address, use method "Allocate Address".
 
-**Parameters**
-1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a paramer taken from the vault to access AWS
-3. Region
-4. Allocation ID - The allocation ID. This is required for EC2-VPC.
-5. Instance ID - The ID of the instance. This is required for EC2-Classic.
-6. Public IP - The Elastic IP address to associate with the instance. This is required for EC2-Classic.
-7. Allow Reassociation (Boolean) - For a VPC in an EC2-Classic account, specify true to allow an Elastic IP address that is already associated with an instance or network interface to be reassociated with the specified instance or network interface.
-8. DryRun (Boolean) - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.
-9. Network InterfaceID - The ID of the network interface. If the instance has more than one network interface, you must specify a network interface ID.
-10. Private IP Address - The primary or secondary private IP address to associate with the Elastic IP address. 
+### Parameter: Region
+The AWS geographical region where an address will be associated with an instance or network interface.
 
+### Parameter: Allocation ID
+The allocation ID of the IP address to be associated with an instance or network interface. Allocation ID is property `AllocationId` found in the Final Result of method "Allocate Address". For example, `eipalloc-06b93fa7325c0c27d`.
 
-## Method: Release an address
+### Parameter: Instance ID
+The instance ID of an AWS EC2 instance to which the Elastic IP address will be associated. This is the most commonly used option. If the instance has more than one network interface or private IP address and the Elastic IP address is to be associated with a specific interface or private IP, use parameters "Network Interface ID" or "Private IP Address" instead. Instance ID is given as `Instances[0].InstanceId` in the Final Result of method "Create Instance", where `0` is the first element of an array of instances created. For example, `i-002107513641fde32`.
 
-**Description**
+### Parameter: Network Interface ID
+The Network Interface ID of an AWS EC2 instance to which the address will be associated. This parameter is used if the instance has more than one network interface and the Elastic IP address must be associated with one specific network interface. Network Interface ID is given as `Instances[0].NetworkInterfaces[0].NetworkInterfaceId` in the Final Result of method "Create Instance", where `0` is the first element of an array of instances/network interfaces created. For example, `eni-08a62d0b9e98fc07c`. If there is only one network interface, it may be easier to use parameter "Instance ID" instead.
 
-Releases the specified Elastic IP address. This method calls ec2 [releaseAddress](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#releaseAddress-property)
+### Parameter: Private IP Address
+The Private IP Address of an AWS EC2 instance to which the address will be associated. This parameter is used if the instance has more than one private IP address and the Elastic IP address must be associated with a specific one. Private IP address is given as `Reservations[0].Instances[0].NetworkInterfaces[0].PrivateIpAddresses[0].PrivateIpAddress` in the Final Result of method "Describe Instances", where `0` is the first member of an array of potentially multiple instances, interfaces, private ip addresses, etc. For example, `10.48.0.105`. If there is only one private IP address, it may be easier to use parameter "Instance ID" instead.
 
-**Parameters**
+### Parameter: Dry Run
+If enabled, this tests the association request with AWS to check for potential errors without actually associating any address.
 
-1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a paramer taken from the vault to access AWS
-3. Region 
-4. Allocation ID - The allocation ID. Required for EC2-VPC.
-5. Public IP - The Elastic IP address. Required for EC2-Classic.
-6. DryRun (Boolean) - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.
+## Method: Release Address
+This method releases the specified Elastic IP address. An address cannot be released while in use, e.g. while associated with an instance. In this example the instance might be terminated first, and then the address may be released. Releasing Elastic IP addresses is done as a housekeeping measure and to reduce costs, because AWS charges a premium for allocated Elastic IP addresses that are NOT in use.
+
+### Parameter: Region
+The AWS geographical region of the address to be released.
+
+### Parameter: Allocation ID
+The allocation ID of the IP address to be released. Allocation ID is property `AllocationId` found in the Final Result of method "Allocate Address". For example, `eipalloc-06b93fa7325c0c27d`.
+
+### Parameter: Dry Run
+If enabled, this tests the release request with AWS to check for potential errors without actually releasing any address.
 
 ## Method: Describe instance
 
