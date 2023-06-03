@@ -529,7 +529,7 @@
     },
     {
       "name": "allocateAddress",
-      "viewName": "Allocate An Address",
+      "viewName": "Allocate Address",
       "params": [
         {
           "name": "region",
@@ -568,7 +568,7 @@
     },
     {
       "name": "associateAddress",
-      "viewName": "Associate An Address",
+      "viewName": "Associate Address",
       "params": [
         {
           "name": "region",
@@ -623,7 +623,7 @@
     },
     {
       "name": "releaseAddress",
-      "viewName": "Release An Address",
+      "viewName": "Release Address",
       "params": [
         {
           "name": "region",

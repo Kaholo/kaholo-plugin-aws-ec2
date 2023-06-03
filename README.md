@@ -109,26 +109,19 @@ This method deletes a Key Pair. The corresponding private key will continue to w
 ### Parameter: Key Pair Name
 This is the user-friendly name for the Key Pair to be deleted, property `KeyName`.
 
-## Method: Allocate an address
+## Method: Allocate Address
+This method allocates an IP address. If no parameters are provided, the allocted address comes from Amazon's pool of IPv4 addresses. If public or private address pools are associated with the AWS account, parameters are used to select specific IP addresses from those pools.
 
-**Desciption**
+### Parameter: BYOIP Address (optional)
+If you have a Bring your own IP (BYOIP) address pool, this parameter is a specific available address from that pool. To select an arbitrary available address from that pool instead, use "BYOIP Address Pool" instead. Leave both parameters empty to allocate an arbitrary address from Amazon's pool of addresses.
 
-Allocates an Elastic IP address to your AWS account. This method calls ec2 [allocateAddress](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#allocateAddress-property)
+### Parameter: BYOIP Address Pool (optional)
+If you have a Bring your own IP (BYOIP) address pool, to select an arbitrary available address from that pool, specify the pool's ID here. Leave the parameter empty to allocate a specific BYOIP address or an arbitrary address from Amazon's pool of addresses.
 
-**Parameters**
-1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a paramer taken from the vault to access AWS
-3. Region
-4. Domain Type (options) - The type of domain to allocate the address for. Can either be standard for regular ec2 instances, or "VPN" if it's for an instance inside a VPN.
-5. Address - (string) The Elastic IP address to recover or an IPv4 address from an address pool.
-6. PublicPV4Pool - The ID of an address pool that you own. Use this parameter to let Amazon EC2 select an address from the address pool. To specify a specific ```address``` from the address pool, use the Address parameter instead.
-7. DryRun - (Boolean) Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.
+### Parameter: Dry Run
 
-## Method: Associate an Address
-
-**Desciption**
-
-Associates an Elastic IP address with an instance or a network interface. Before you can use an Elastic IP address, you must allocate it to your account. This method calls ec2 [associateAddress](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#associateAddress-property)
+## Method: Associate Address
+This method associates an Elastic IP address with an instance or a network interface. To create an Elastic IP address, use method "Allocate Address".
 
 **Parameters**
 1. Access Key - This is a parameter taken from the vault to access AWS
