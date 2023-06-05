@@ -347,6 +347,7 @@
     {
       "name": "modifyInstanceAttribute",
       "viewName": "Modify Instance Attribute",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -523,6 +524,7 @@
     {
       "name": "allocateAddress",
       "viewName": "Allocate Address",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -562,6 +564,7 @@
     {
       "name": "associateAddress",
       "viewName": "Associate Address",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -617,6 +620,7 @@
     {
       "name": "releaseAddress",
       "viewName": "Release Address",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -648,6 +652,7 @@
     {
       "name": "createVpc",
       "viewName": "Create VPC",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -721,6 +726,7 @@
     {
       "name": "deleteVpc",
       "viewName": "Delete VPC",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -753,6 +759,7 @@
     {
       "name": "createSubnet",
       "viewName": "Create Subnet",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -855,6 +862,7 @@
     {
       "name": "deleteSubnet",
       "viewName": "Delete Subnet",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -889,6 +897,7 @@
     {
       "name": "createNatGateway",
       "viewName": "Create NAT Gateway",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -940,6 +949,7 @@
     {
       "name": "createInternetGateway",
       "viewName": "Create Internet Gateway",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -979,6 +989,7 @@
     {
       "name": "attachInternetGateway",
       "viewName": "Attach Internet Gateway",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -1020,6 +1031,7 @@
     {
       "name": "createRoute",
       "viewName": "Create Route",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -1085,6 +1097,7 @@
     {
       "name": "createRouteTable",
       "viewName": "Create Route Table",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -1143,6 +1156,7 @@
     {
       "name": "associateRouteTable",
       "viewName": "Associate Route Table",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -1193,6 +1207,7 @@
     {
       "name": "createVolume",
       "viewName": "Create Volume",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -1329,6 +1344,7 @@
     {
       "name": "createSnapshot",
       "viewName": "Create EBS Snapshot",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -1383,6 +1399,7 @@
     {
       "name": "createSecurityGroup",
       "viewName": "Create Security Group",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
@@ -1447,6 +1464,7 @@
     {
       "name": "addSecurityGroupRules",
       "viewName": "Add Security Group Rules",
+      "allowEmptyResult": true,
       "params": [
         {
           "name": "region",
