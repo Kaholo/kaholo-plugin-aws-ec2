@@ -56,7 +56,7 @@
   "methods": [
     {
       "name": "createInstance",
-      "viewName": "Create Instance",
+      "viewName": "Create Instances",
       "params": [
         {
           "name": "NAME_TAG",
@@ -235,7 +235,7 @@
           "type": "text",
           "parserType": "array",
           "required": true,
-          "placeholder": "i-1234567a",
+          "placeholder": "i-005cde82b1e6f579a",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
           "description": "The ID of the instance(s) to reboot."
         }
@@ -261,7 +261,7 @@
           "type": "string",
           "parserType": "array",
           "required": true,
-          "placeholder": "i-1234567a",
+          "placeholder": "i-005cde82b1e6f579a",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
           "description": "The ID of the instance(s) to terminate."
         }
@@ -287,7 +287,7 @@
           "type": "text",
           "parserType": "array",
           "description": "The IDs of the instances. Can be an array of instances.",
-          "placeholder": "i-1234567a",
+          "placeholder": "i-0256a126b3eefa9c2",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html"
         },
         {
@@ -298,13 +298,6 @@
           "description": "Array of filters",
           "placeholder": "[{\"Name\": \"instance-state-name\",\"Values\": [\"running\"]}]",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html"
-        },
-        {
-          "name": "DRYRUN",
-          "viewName": "Dry Run",
-          "type": "boolean",
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
-          "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         },
         {
           "name": "GET_ALL_RECURSIVELY",
@@ -336,7 +329,7 @@
           "parserType": "array",
           "required": true,
           "description": "Accepts either a string with one or multiple instance IDs each separated with a new line, or an array of instance ID strings passed from the code layer.",
-          "placeholder": "i-1234567a"
+          "placeholder": "i-005cde82b1e6f579a"
         },
         {
           "name": "instanceType",
@@ -372,7 +365,7 @@
           "parserType": "array",
           "required": true,
           "description": "Accepts either a string with one or multiple instance IDs each separated with a new line, or an array of instance ID strings passed from the code layer.",
-          "placeholder": "i-1234567a"
+          "placeholder": "i-005cde82b1e6f579a"
         },
         {
           "name": "attribute",
@@ -1068,7 +1061,7 @@
           "viewName": "Instance ID",
           "type": "string",
           "description": "ID of an Instance. If specified, make the Instance specify the target of the route.",
-          "placeholder": "i-1234567a",
+          "placeholder": "i-005cde82b1e6f579a",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html"
         },
         {

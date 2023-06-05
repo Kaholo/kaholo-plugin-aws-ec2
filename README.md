@@ -85,6 +85,59 @@ This method terminates one or more AWS EC2 instances. Termination is the shutdow
 ### Parameter: Instance IDs
 The instance ID of the instance(s) to be terminated. To terminate more than one instance, list their instance IDs one per line. If using the code layer pass the list of instances as an array of strings.
 
+## Method: Describe Instances
+This method describes existing AWS EC2 Instances.
+
+### Parameter: Region
+The AWS geographical region where instance(s) will be described. This parameter has an autocomplete function so you may select the region using either the CLI-type ID string, for example `ap-southeast-1`, or the user-friendly location, e.g. "Asia Pacific (Singapore)". If using the code layer, use the CLI-type ID string.
+
+### Parameter: Instance IDs
+One or more specific Instance IDs to describe, as text entered one per line, e.g.
+
+    i-0256a126b3eefa9c2
+    i-005cde82b1e6f579a
+
+If using the code layer, provide the list as an array of strings instead.
+
+### Parameter: Filters
+A general filter for more complex queries. Whether using text or code layer provide this one as an array. For example to describe all instances matching on of two instance types:
+
+    [{"Name": "instance-type","Values": ["t3.nano","t3.micro"]}]
+
+This filter must be a single-line string. If using the code layer on an object representation, use `JSON.stringify(filterObject)` before passing it as parameter "Filter".
+
+See the [AWS Documentation](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html) for available properties and values to use in filters.
+
+### Parameter: Get All Results
+The AWS API is by default limited to 1000 results. To get more than the first 1000 results, enable this parameter.
+
+## Method: Modify Instance Type
+This method modifies Instance Type. An instance must be stopped to modify instance type.
+
+### Parameter: Region
+The AWS geographical region where instance(s) will have their type modified. This parameter has an autocomplete function so you may select the region using either the CLI-type ID string, for example `ap-southeast-1`, or the user-friendly location, e.g. "Asia Pacific (Singapore)". If using the code layer, use the CLI-type ID string.
+
+### Parameter: Instance IDs
+One or more specific Instance IDs to describe, as text entered one per line, e.g.
+
+    i-0256a126b3eefa9c2
+    i-005cde82b1e6f579a
+
+If using the code layer, provide the list as an array of strings instead.
+
+### Parameter: Instance Type
+Instance Type determines types and quantities of compute resources are available to the instance, including CPU, RAM, GPU, disk and network bandwidth. It also determines the cost of the instance. For example, `t4g.large` instances have 2 vCPU of Arm-based AWS Graviton2 processors and 8 GB RAM. Not all instance types are available in all regions. See the [AWS Website](https://aws.amazon.com/ec2/instance-types/) for more details about instance types.
+
+## Method: Modify Instance Attribute
+
+### Parameter: Region
+The AWS geographical region where instance(s) will be described. This parameter has an autocomplete function so you may select the region using either the CLI-type ID string, for example `ap-southeast-1`, or the user-friendly location, e.g. "Asia Pacific (Singapore)". If using the code layer, use the CLI-type ID string.
+
+### Parameter: Instance IDs
+### Parameter: Attribute
+### Parameter: Attribute Value
+### Parameter: Dry Run
+
 ## Method: Describe Key Pairs
 This method describes all existing Key Pairs. Key Pairs are a paired set of either RSA or ED25519 public/private encryption keys used to control SSH access and decrypt Windows passwords. The private key is held by an individual user and the public key is held by AWS. The pair is given a user-friendly name, `KeyName`, which is used in key-related methods of this plugin.
 
@@ -239,20 +292,6 @@ Deletes the specified subnet. You must terminate all running instances in the su
 3. Region 
 4. Subnet ID - The ID of the subnet.
 5. DryRun (boolean) - hecks whether you have the required permissions for the action, without actually making the request, and provides an error response.
-
-## Method: Modify Instance Type
-
-**Description**
-
-Modify the instance type of the instance(s) specified. You must stop all instance(s) specified before you can modify their instance type. This method calls ec2 [ModifyInstanceAttribute](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#modifyInstanceAttribute-property)
-
-**Parameters**
-1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a paramer taken from the vault to access AWS
-3. Region 
-4. Instance IDs - Instance IDs of all instances you want to modify. Accepts either a string with one or multiple instance IDs, each seperated with a new line,
-    or an Array of instance IDs strings passed from code.
-5. instanceType - The new [Instance Type](https://aws.amazon.com/ec2/instance-types/) to modify all specified instances to. 
 
 ## Method: Create Internet Gateway
 
@@ -429,27 +468,29 @@ Create a new snapshot of the specified EBS volume.
 7. Dry Run (Boolean) **Optional** - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
 8. Wait Until Operation End (Boolean) **Optional** - If true wait until the end of the operation. The operation ends when the snapshot is completed.
 
-## Method: Modify Instance Attribute
-**Description**
 
-Modify the instance attribute. This method calls ec2 [ModifyInstanceAttribute](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#modifyInstanceAttribute-property)
-
-**Parameters**
-1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a parameter taken from the vault to access AWS
-3. Region 
-4. Instance IDs - Instance IDs of all instances you want to modify. Accepts either a string with one or multiple instance IDs, each seperated with a new line,
-    or an Array of instance IDs strings passed from code.
-5. attribute - (option) choose the attribute to modify
-6. attributeValue (string) specify the new value of an attribute
-7. Dry Run (Boolean) - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
-
+  "viewName": "AWS EC2",
+        "viewName": "Access Key ID",
+        "viewName": "Access Key Secret",
+      "viewName": "Region",
+      "viewName": "Create Instance",
+          "viewName": "Name",
+          "viewName": "Region",
+          "viewName": "AMI",
+          "viewName": "Instance Type",
+          "viewName": "Key Pair Name",
+          "viewName": "Subnet",
+          "viewName": "Security Groups",
+          "viewName": "Tags Specification",
+          "viewName": "User Data",
+          "viewName": "Minimum Instances",
+          "viewName": "Maximum Instances",
       "viewName": "Start Instances",
           "viewName": "Region",
-          "viewName": "Instance ids (array)",
+          "viewName": "Instance IDs",
       "viewName": "Stop Instances",
           "viewName": "Region",
-          "viewName": "Instance ids (array)",
+          "viewName": "Instance IDs",
           "viewName": "Wait for Stopped State",
       "viewName": "Reboot Instances",
           "viewName": "Region",
@@ -481,22 +522,21 @@ Modify the instance attribute. This method calls ec2 [ModifyInstanceAttribute](h
           "viewName": "Key pair name",
       "viewName": "Describe Key Pairs",
           "viewName": "Region",
-      "viewName": "Allocate An Address",
+      "viewName": "Allocate Address",
           "viewName": "Region",
-          "viewName": "Address",
-          "viewName": "Public IPv4 Pool",
+          "viewName": "BYOIP Address (optional)",
+          "viewName": "BYOIP Address Pool (optional)",
           "viewName": "Dry Run",
-      "viewName": "Associate An Address",
+      "viewName": "Associate Address",
           "viewName": "Region",
           "viewName": "Allocation Id",
           "viewName": "Instance Id",
           "viewName": "Network Interface Id",
           "viewName": "Private Ip Address",
           "viewName": "Dry Run",
-      "viewName": "Release An Address",
+      "viewName": "Release Address",
           "viewName": "Region",
           "viewName": "Allocation Id",
-          "viewName": "Public Ip",
           "viewName": "Dry Run",
       "viewName": "Create VPC",
           "viewName": "Region",
