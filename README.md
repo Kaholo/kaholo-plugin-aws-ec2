@@ -129,14 +129,27 @@ If using the code layer, provide the list as an array of strings instead.
 Instance Type determines types and quantities of compute resources are available to the instance, including CPU, RAM, GPU, disk and network bandwidth. It also determines the cost of the instance. For example, `t4g.large` instances have 2 vCPU of Arm-based AWS Graviton2 processors and 8 GB RAM. Not all instance types are available in all regions. See the [AWS Website](https://aws.amazon.com/ec2/instance-types/) for more details about instance types.
 
 ## Method: Modify Instance Attribute
+This method modifies an assortment of instance attributes as described regarding AWS CLI documentation for [modify-instance-attribute](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html). Two common uses of this method are to enable/disable Termination Protection (DisableApiTermination) and Source-Destination checking (SourceDestCheck) for instances that are routers/firewalls/VPN endpoints, etc.
 
 ### Parameter: Region
 The AWS geographical region where instance(s) will be described. This parameter has an autocomplete function so you may select the region using either the CLI-type ID string, for example `ap-southeast-1`, or the user-friendly location, e.g. "Asia Pacific (Singapore)". If using the code layer, use the CLI-type ID string.
 
 ### Parameter: Instance IDs
+One or more specific Instance IDs to describe, as text entered one per line, e.g.
+
+    i-0256a126b3eefa9c2
+    i-005cde82b1e6f579a
+
+If using the code layer, provide the list as an array of strings instead.
+
 ### Parameter: Attribute
+Select in the drop-down from the list of attributes available for modification by this method.
+
 ### Parameter: Attribute Value
+The new value of the attribute. Text "true" and "false" are automatically converted to boolean `true` and `false` for attributes requiring boolean values.
+
 ### Parameter: Dry Run
+If enabled, this tests the modification request with AWS to check for potential errors without actually modifying the attribute.
 
 ## Method: Describe Key Pairs
 This method describes all existing Key Pairs. Key Pairs are a paired set of either RSA or ED25519 public/private encryption keys used to control SSH access and decrypt Windows passwords. The private key is held by an individual user and the public key is held by AWS. The pair is given a user-friendly name, `KeyName`, which is used in key-related methods of this plugin.
@@ -206,22 +219,6 @@ The allocation ID of the IP address to be released. Allocation ID is property `A
 
 ### Parameter: Dry Run
 If enabled, this tests the release request with AWS to check for potential errors without actually releasing any address.
-
-## Method: Describe instance
-
-**Description**
-
-Describes the specified instances or all of AWS account's instances. This method calls ec2 [describeInstances](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#describeInstances-property)
-
-**Parameters**
-1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a paramer taken from the vault to access AWS
-3. Region 
-4. Instance IDs - Array of instance IDs.
-5. Filters - Array of filters
-6. DryRun (boolean) - hecks whether you have the required permissions for the action, without actually making the request, and provides an error response.
-7. Max Results - The maximum number of results to return in a single call. To retrieve the remaining results, make another call with the returned ```NextToken``` value.
-8. Next Token - The token to request the next page of results
 
 ## Method: Create VPC
 
@@ -469,75 +466,6 @@ Create a new snapshot of the specified EBS volume.
 8. Wait Until Operation End (Boolean) **Optional** - If true wait until the end of the operation. The operation ends when the snapshot is completed.
 
 
-  "viewName": "AWS EC2",
-        "viewName": "Access Key ID",
-        "viewName": "Access Key Secret",
-      "viewName": "Region",
-      "viewName": "Create Instance",
-          "viewName": "Name",
-          "viewName": "Region",
-          "viewName": "AMI",
-          "viewName": "Instance Type",
-          "viewName": "Key Pair Name",
-          "viewName": "Subnet",
-          "viewName": "Security Groups",
-          "viewName": "Tags Specification",
-          "viewName": "User Data",
-          "viewName": "Minimum Instances",
-          "viewName": "Maximum Instances",
-      "viewName": "Start Instances",
-          "viewName": "Region",
-          "viewName": "Instance IDs",
-      "viewName": "Stop Instances",
-          "viewName": "Region",
-          "viewName": "Instance IDs",
-          "viewName": "Wait for Stopped State",
-      "viewName": "Reboot Instances",
-          "viewName": "Region",
-          "viewName": "Instance ids (array)",
-      "viewName": "Terminate Instances",
-          "viewName": "Region",
-          "viewName": "Instance Ids",
-      "viewName": "Describe Instances",
-          "viewName": "Region",
-          "viewName": "Instance Ids",
-          "viewName": "Filters (Array)",
-          "viewName": "Dry Run",
-          "viewName": "Get All Results",
-      "viewName": "Modify Instance Type",
-          "viewName": "Region",
-          "viewName": "Instance IDs",
-          "viewName": "Instance Type",
-      "viewName": "Modify Instance Attribute",
-          "viewName": "Region",
-          "viewName": "Instance IDs",
-          "viewName": "Attribute",
-          "viewName": "Attribute value",
-          "viewName": "Dry Run",
-      "viewName": "Create Key Pair",
-          "viewName": "Region",
-          "viewName": "Key pair name",
-      "viewName": "Delete Key Pair",
-          "viewName": "Region",
-          "viewName": "Key pair name",
-      "viewName": "Describe Key Pairs",
-          "viewName": "Region",
-      "viewName": "Allocate Address",
-          "viewName": "Region",
-          "viewName": "BYOIP Address (optional)",
-          "viewName": "BYOIP Address Pool (optional)",
-          "viewName": "Dry Run",
-      "viewName": "Associate Address",
-          "viewName": "Region",
-          "viewName": "Allocation Id",
-          "viewName": "Instance Id",
-          "viewName": "Network Interface Id",
-          "viewName": "Private Ip Address",
-          "viewName": "Dry Run",
-      "viewName": "Release Address",
-          "viewName": "Region",
-          "viewName": "Allocation Id",
-          "viewName": "Dry Run",
       "viewName": "Create VPC",
           "viewName": "Region",
           "viewName": "CIDR Block",
