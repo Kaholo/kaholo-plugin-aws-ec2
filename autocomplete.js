@@ -1,24 +1,28 @@
-const _ = require("lodash");
 const { autocomplete } = require("@kaholo/aws-plugin-library");
 const { createSubnetText } = require("./helpers");
 
 async function getInstanceTypes(query, params, client, region) {
   const payload = {
-    MaxResults: "100",
     Filters: [{
       Name: "location",
       Values: [region],
-    }, {
-      Name: "instance-type",
-      Values: [`*${query}*`],
     }],
   };
 
-  return _.sortBy((await client.describeInstanceTypeOfferings(payload).promise())
-    .InstanceTypeOfferings.map((type) => ({
-      id: type.InstanceType,
-      value: type.InstanceType,
-    })), ["id"]);
+  const {
+    InstanceTypeOfferings: instanceTypes,
+  } = await client.describeInstanceTypeOfferings(payload).promise();
+  const autocompleteItems = instanceTypes.map((type) => (
+    autocomplete.toAutocompleteItemFromPrimitive(type.InstanceType)
+  ));
+
+  const lowerCaseQuery = query.toLowerCase();
+  const filteredItems = autocompleteItems.filter(({ id, value }) => (
+    id.toLowerCase().includes(lowerCaseQuery)
+    || value.toLowerCase().includes(lowerCaseQuery)
+  ));
+
+  return filteredItems;
 }
 
 async function listSubnets(query, params, client) {
