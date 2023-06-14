@@ -7,7 +7,7 @@ const {
   listRegions,
   listSubnets,
 } = require("./autocomplete");
-const { resolveSecurityGroupFunction } = require("./helpers");
+const { resolveSecurityGroupFunction, parseInstanceAttributeValue } = require("./helpers");
 const payloadFuncs = require("./payload-functions");
 
 const simpleAwsFunctions = {
@@ -113,7 +113,7 @@ async function modifyInstanceAttribute(client, params) {
       InstanceId: instanceId,
       DryRun: params.dryRun,
       [params.attribute]: {
-        Value: params.attributeValue,
+        Value: parseInstanceAttributeValue(params.attribute, params.attributeValue),
       },
     };
 
