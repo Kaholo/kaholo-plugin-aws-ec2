@@ -156,7 +156,7 @@ async function createInternetGatewayWorkflow(client, params, region) {
 
   const attachInternetGatewayParams = {
     ...params,
-    InternetGatewayId: result.createInternetGateway.InternetGateway.InternetGatewayId,
+    gatewayId: result.createInternetGateway.InternetGateway.InternetGatewayId,
   };
 
   const attachInternetGateway = await simpleAwsFunctions.attachInternetGateway(

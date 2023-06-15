@@ -62,7 +62,7 @@ function prepareCreateVpcPayload(params) {
     AmazonProvidedIpv6CidrBlock: params.amazonProvidedIpv6CidrBlock,
     InstanceTenancy: params.instanceTenancy,
     DryRun: params.dryRun,
-    Tags: helpers.buildTagSpecification("vpc", params.tags),
+    TagSpecifications: helpers.buildTagSpecification("vpc", params.tags),
   };
 }
 
