@@ -58,10 +58,25 @@ function parseSinglePortRange(rawPortRange) {
   throw new Error(`Invalid Port Range string specified: "${rawPortRange}". Valid examples include "*" (all ports), "80" (one port), and "8080-8099" (a range of 20 ports). To configure multiple ports not in a range, create a separate rule for each port.`);
 }
 
+function wrapDryRunErrorCatcher(methodsObject) {
+  return _.mapValues(methodsObject, (method) => async (client, params, ...args) => {
+    try {
+      return await method(client, params, ...args);
+    } catch (error) {
+      const isDryRunError = /request would have succeeded, but dryrun flag is set/gmi.test(error?.message || error);
+      if (isDryRunError) {
+        return null;
+      }
+      throw error;
+    }
+  });
+}
+
 module.exports = {
   strToBase64,
   resolveSecurityGroupFunction,
   tryParseJson,
   createSubnetText,
   parseSinglePortRange,
+  wrapDryRunErrorCatcher,
 };

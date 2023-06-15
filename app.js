@@ -7,7 +7,7 @@ const {
   listRegions,
   listSubnets,
 } = require("./autocomplete");
-const { resolveSecurityGroupFunction } = require("./helpers");
+const { resolveSecurityGroupFunction, wrapDryRunErrorCatcher } = require("./helpers");
 const payloadFuncs = require("./payload-functions");
 
 const simpleAwsFunctions = {
@@ -380,7 +380,7 @@ async function addSecurityGroupRules(client, params) {
 
 module.exports = awsPlugin.bootstrap(
   aws.EC2,
-  {
+  wrapDryRunErrorCatcher({
     ...simpleAwsFunctions,
     modifyInstanceType,
     modifyInstanceAttribute,
@@ -395,7 +395,7 @@ module.exports = awsPlugin.bootstrap(
     describeInstances,
     createSecurityGroup,
     stopInstances,
-  },
+  }),
   {
     getInstanceTypes,
     listRegions,
