@@ -169,7 +169,7 @@ function prepareCreateSubnetPayload(params) {
     Ipv6CidrBlock: params.ipv6CidrBlock,
     OutpostArn: params.outpostArn,
     DryRun: params.dryRun,
-    TagsSpecifications: helpers.buildTagSpecification("subnet", params.tags),
+    TagSpecifications: helpers.buildTagSpecification("subnet", params.tags),
   };
 }
 
