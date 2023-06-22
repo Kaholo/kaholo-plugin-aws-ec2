@@ -6,7 +6,7 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "2.13.0",
+  "version": "3.0.0",
   "description": "Integration with AWS EC2 API",
   "category": [
     "CLOUD",
