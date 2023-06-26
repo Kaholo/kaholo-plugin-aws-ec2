@@ -7,8 +7,21 @@ To use this plugin you must have an account (either root or IAM) with Amazon Web
 ## Plugin Settings
 To Access Plugin Settings, click on Settings | Plugins, find the "AWS EC2" plugin, and then click on the plugin's name, which is blue hypertext. There is only one plugin-level setting for AWS EC2, the default AWS region. If you specify a region here, e.g. `ap-southeast-1`, then newly created AWS EC2 actions will inherit that region by default. This is provided only as a convenience, and each action's region can be modified after creation if the configured default is not appropriate.
 
+## Common Parameter: Region
+Region is required parameter in most methods of this plugin. It is the AWS geographical region (and datacenter) where a resource exists or will be created. This parameter has an autocomplete function so you may select the region using either the CLI-type ID string, for example `ap-southeast-1`, or the user-friendly location, e.g. "Asia Pacific (Singapore)". If using the code layer, use the CLI-type ID string.
+
+## Common Parameter: Dry Run
+Dry Run is a commonly used parameter. If enabled, this tests whether the provided credentials have permissions to carry out the requested changes, but does NOT actually make any changes.
+
+## Common Parameter: Tags
+AWS Tags are a common way to organize cloud infrastructure with metadata. The most commonly used tag is "Name", which appears in the AWS Web Console under column heading "Name". To name or otherwise tag an asset, tags are provided as one-per-line Key=Value pairs in parameter "Tags". For example, 
+
+    Name=AsiaPac Prod Gateway
+    Env=production
+    Owner=c_clay
+
 ## Plugin Account
-This plugin makes use of a Kaholo Account to manage authentication. This allows the authentication to be configured once and then conveniently selected from a drop-down on an action-by-action basis. The security-sensitive AWS Access Keys are stored encypted in the Kaholo vault to protect them from exposure in the UI, Activity Log, Final Result, and server logs. They may be stored in the vault before or during Kaholo Account creation.
+This plugin makes use of a Kaholo Account to manage authentication. This allows the authentication to be configured once and then conveniently selected from a drop-down on an action-by-action basis. The security-sensitive AWS Access Keys are stored encrypted in the Kaholo vault to protect them from exposure in the UI, Activity Log, Final Result, and server logs. They may be stored in the vault before or during Kaholo Account creation.
 
 The same Kaholo Account can be used for several AWS-related Kaholo plugins. If you've already configured one, for example to use with AWS CLI Plugin, then no further account configuration is necessary.
 
@@ -25,14 +38,11 @@ This is the Access Key Secret as provided by AWS or the AWS administrator. This 
 
     DByOuQgqqwUWa8Y4Wu3hE3HTWZB6+mQVt8Qs0Phv
 
-## Method: Create Instance
+## Method: Create Instances
 This method creates one or more new AWS instances.
 
 ### Parameter: Name
 This sets the "Name" tag of the new instance to make it more easily identifiable in the AWS web console.
-
-### Parameter: Region
-The AWS geographical region where instance will be created. This parameter has an autocomplete function so you may select the region using either the CLI-type ID string, for example `ap-southeast-1`, or the user-friendly location, e.g. "Asia Pacific (Singapore)". If using the code layer, use the CLI-type ID string. The availability zone, for example `ap-southeast-1a` vs `ap-southeast-1b`, is determined not by Region but by which Subnet is selected.
 
 ### Parameter: AMI
 Every instance is based on an AMI image, which determines the initial operating system and software configuration of the instance. AMI images are unique to each Region and instance architecture so the AMI provided must be one available in the Region selected and must also match the instance type selected. AMI's are identified by their CLI-type ID string, for example `ami-0df7a207adb9748c7` is Ubuntu 22.04 LTS for amd64 in region `ap-southeast-1`. This AMI will not work for an ARM instance such as `a1-medium` or in a region other than `ap-southeast-1`.
@@ -49,9 +59,6 @@ Subnet determines both the VPC and availability zone where the instance will be 
 ### Parameter: Security Groups
 Security Groups are sets of firewall rules configured in AWS. The specified Security Group(s) must match the VPC of the specified Subnet. A security group is identified by its CLI-type ID string, e.g. `sg-0332f2a6e5c4be523`.
 
-### Parameter: Tags Specification
-Tags other than or including "Name" may be optionally specified here as one-per-line key=value pairs. Tags are used to logically organize instances for various reasons. For more information see the [AWS Documentation on Tags](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html).
-
 ### Parameter: User Data
 User Data is up to 16Kb of base64-encoded data that is typically some kind of initial configuration or startup instructions for the new instance. For more information about user data see the [AWS Documentation on User Data](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-add-user-data.html).
 
@@ -60,6 +67,26 @@ If launching more than one or a variable number of instances this is the minimum
 
 ### Parameter: Maximum Instances
 If launching more than one or a variable number of instances this is the maximum quantity of instances to launch.
+
+## Method: Describe Instances
+This method describes existing AWS EC2 Instances.
+
+### Parameter: Instance IDs
+One or more specific Instance IDs to describe, as text entered one per line, e.g.
+
+    i-0256a126b3eefa9c2
+    i-005cde82b1e6f579a
+
+If using the code layer, provide the list as an array of strings instead.
+
+### Parameter: Filters
+A general filter for more complex queries. Whether using text or code layer provide this one as an array. For example to describe all instances matching on of two instance types:
+
+    [{"Name": "instance-type","Values": ["t3.nano","t3.micro"]}]
+
+This filter must be a single-line string. If using the code layer on an object representation, use `JSON.stringify(filterObject)` before passing it as parameter "Filter".
+
+See the [AWS Documentation](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html) for available properties and values to use in filters.
 
 ## Method: Start Instances
 This method starts one or more AWS EC2 instances.
@@ -85,54 +112,14 @@ This method terminates one or more AWS EC2 instances. Termination is the shutdow
 ### Parameter: Instance IDs
 The instance ID of the instance(s) to be terminated. To terminate more than one instance, list their instance IDs one per line. If using the code layer pass the list of instances as an array of strings.
 
-## Method: Describe Instances
-This method describes existing AWS EC2 Instances.
-
-### Parameter: Region
-The AWS geographical region where instance(s) will be described. This parameter has an autocomplete function so you may select the region using either the CLI-type ID string, for example `ap-southeast-1`, or the user-friendly location, e.g. "Asia Pacific (Singapore)". If using the code layer, use the CLI-type ID string.
-
-### Parameter: Instance IDs
-One or more specific Instance IDs to describe, as text entered one per line, e.g.
-
-    i-0256a126b3eefa9c2
-    i-005cde82b1e6f579a
-
-If using the code layer, provide the list as an array of strings instead.
-
-### Parameter: Filters
-A general filter for more complex queries. Whether using text or code layer provide this one as an array. For example to describe all instances matching on of two instance types:
-
-    [{"Name": "instance-type","Values": ["t3.nano","t3.micro"]}]
-
-This filter must be a single-line string. If using the code layer on an object representation, use `JSON.stringify(filterObject)` before passing it as parameter "Filter".
-
-See the [AWS Documentation](https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html) for available properties and values to use in filters.
-
 ### Parameter: Get All Results
 The AWS API is by default limited to 1000 results. To get more than the first 1000 results, enable this parameter.
 
 ## Method: Modify Instance Type
 This method modifies Instance Type. An instance must be stopped to modify instance type.
 
-### Parameter: Region
-The AWS geographical region where instance(s) will have their type modified. This parameter has an autocomplete function so you may select the region using either the CLI-type ID string, for example `ap-southeast-1`, or the user-friendly location, e.g. "Asia Pacific (Singapore)". If using the code layer, use the CLI-type ID string.
-
-### Parameter: Instance IDs
-One or more specific Instance IDs to describe, as text entered one per line, e.g.
-
-    i-0256a126b3eefa9c2
-    i-005cde82b1e6f579a
-
-If using the code layer, provide the list as an array of strings instead.
-
-### Parameter: Instance Type
-Instance Type determines types and quantities of compute resources are available to the instance, including CPU, RAM, GPU, disk and network bandwidth. It also determines the cost of the instance. For example, `t4g.large` instances have 2 vCPU of Arm-based AWS Graviton2 processors and 8 GB RAM. Not all instance types are available in all regions. See the [AWS Website](https://aws.amazon.com/ec2/instance-types/) for more details about instance types.
-
 ## Method: Modify Instance Attribute
 This method modifies an assortment of instance attributes as described regarding AWS CLI documentation for [modify-instance-attribute](https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html). Two common uses of this method are to enable/disable Termination Protection (DisableApiTermination) and Source-Destination checking (SourceDestCheck) for instances that are routers/firewalls/VPN endpoints, etc.
-
-### Parameter: Region
-The AWS geographical region where instance(s) will be described. This parameter has an autocomplete function so you may select the region using either the CLI-type ID string, for example `ap-southeast-1`, or the user-friendly location, e.g. "Asia Pacific (Singapore)". If using the code layer, use the CLI-type ID string.
 
 ### Parameter: Instance IDs
 One or more specific Instance IDs to describe, as text entered one per line, e.g.
@@ -146,10 +133,231 @@ If using the code layer, provide the list as an array of strings instead.
 Select in the drop-down from the list of attributes available for modification by this method.
 
 ### Parameter: Attribute Value
-The new value of the attribute. Text "true" and "false" are automatically converted to boolean `true` and `false` for attributes requiring boolean values.
+The new value of the attribute. Text "true" and "false" are automatically converted to Boolean `true` and `false` for attributes requiring Boolean values.
 
-### Parameter: Dry Run
-If enabled, this tests the modification request with AWS to check for potential errors without actually modifying the attribute.
+### Parameter: Instance IDs
+One or more specific Instance IDs to describe, as text entered one per line, e.g.
+
+    i-0256a126b3eefa9c2
+    i-005cde82b1e6f579a
+
+If using the code layer, provide the list as an array of strings instead.
+
+### Parameter: Instance Type
+Instance Type determines types and quantities of compute resources are available to the instance, including CPU, RAM, GPU, disk and network bandwidth. It also determines the cost of the instance. For example, `t4g.large` instances have 2 vCPU of Arm-based AWS Graviton2 processors and 8 GB RAM. Not all instance types are available in all regions. See the [AWS Website](https://aws.amazon.com/ec2/instance-types/) for more details about instance types.
+
+## Method: Create EBS Snapshot
+Create a new snapshot of the specified EBS volume.
+
+### Parameter: Volume ID
+The ID of volume of which to create a snapshot.
+
+### Parameter: Description
+A description for the snapshot.
+
+### Parameter: Outpost ARN
+By default a snapshot is created in the same region as the volume. If using Amazon Outpost, and the snapshot should be stored on an Outpost, specify here the ARN of the Outpost. The snapshot must be created on the same outpost as the volume. If omitted, the snapshot is created in the same AWS region as the volume or outpost.
+
+### Parameter: Wait Until Operation End
+If enabled, the action will wait until the snapshot is 100% available before continuing. This is useful if downstream actions make use of the snapshot.
+
+## Method: Create VPC
+This method creates a new AWS EC2 Virtual Private Cloud (VPC). A VPC is a private network including subnets, route tables, and gateways that enable instances to network with each other, other networks, and the internet in controlled ways.
+
+### Parameter: CIDR Block
+Every VPC has a private IP Address space, specified in [CIDR format](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing). A commonly used address space for this is `10.N.0.0/16` where `N` is an arbitrary integer in the range 1-254. IPv4 addresses beginning with `10` are specifically reserved for private address space. The most important factor in the choice of address space is that any two VPCs with overlapping address space will be more difficult to network, so each VPC ideally has a unique integer for `N`.
+
+### Parameter: Amazon-provided IPv6 CIDR block
+Enable this parameter to make use of an Amazon-provided IPv6 CIDR block. The range and size of these blocks are automatically determined by Amazon.
+
+### Parameter: Instance Tenancy
+For most use cases default is the only choice here. If you make use of single-tenant, dedicated hardware and want to force instances in the VPC to use the dedicated hardware, choose dedicated instead.
+
+### Parameter: Create Internet Gateway
+A common VPC configuration makes use of an AWS Internet Gateway to access the internet, for example by automatically assigning instances public IP addresses, or routing through a VPN instance that makes use of an Internet Gateway. Enable this parameter to automatically create and attach an AWS Internet Gateway to your VPC.
+
+## Method: Delete VPC
+This method deletes a VPC. To be deleted a VPC must first be emptied of dependent infrastructure such as instances and Internet Gateways.
+
+### Parameter: VPC ID
+The ID of the VPC to be deleted, for example `vpc-0c9fd47345334f78c`.
+
+## Method: Create Subnet
+This method creates a new subnet within a VPC. The subnet's CIDR address space must fall within that of the containing VPC. Otherwise a `The CIDR is invalid` error will occur.
+
+### Parameter: Availability Zone
+AWS Availability Zones are a subdivision of Region for the purpose of high availability. Each availability zone is serviced by a physically separate datacenter, reducing the probability of two different availability zones could experience failure simultaneously. Availability zone IDs are the same as the region ID followed by a letter, e.g. `a`, `b`, or `c`. Subnets are associated with availability zone so the subnet ultimately determines the availability zone in which an asset is located. Spot pricing, availability of spot instances, and availability of certain instance types and features may also vary by availability zone. If none of this is a concern, this parameter may be left empty and AWS will arbitrarily select an availability zone for the subnet.
+
+### Parameter: VPC ID
+The ID of the VPC in which the subnet will be created, for example `vpc-0c9fd47345334f78c`.
+
+### Parameter: Route Table ID
+The ID of an existing route table, if the subnet is to be associated with that table. If not specified the subnet will inherit the "main" (default) route table that is automatically created for every subnet.
+
+### Parameter: CIDR Block
+A part or all of the VPCs IP address space to be assigned to the subnet, in CIDR notation. The subnet's CIDR address space must fall within that of the containing VPC. Otherwise a `The CIDR is invalid` error will occur.
+
+### Parameter: IPv6 CIDR Block
+The same as CIDR Block, but assigning all or a part of the VPC's IPv6 address space to the subnet. If not using IPv6 this parameter may be left empty.
+
+### Parameter: Outpost ARN
+AWS Outpost is AWS infrastructure and services in an on-premise or edge location, not in an AWS data center. If using AWS Outpost, specify the Outpost ARN here. Otherwise leave it empty.
+
+### Parameter: NAT Gateway Allocation ID
+If specified, create a NAT Gateway within the subnet created, and assign it the specified Elastic IP allocation. For example, `eipalloc-0362742f973f712e9`.
+
+### Parameter: Create Private Route Table
+If enabled (true), a private route table will be created for this subnet, and if a NAT Gateway Allocation ID is also provided, route external traffic to the NAT Gateway.
+
+### Parameter: Map Public IP On Launch
+If enabled (true), each instance on the subnet will be given a public IP address.
+
+## Method: Delete Subnet
+Deletes the specified subnet. All instances running in a subnet must be terminated before the subnet can be deleted.
+
+### Subnet ID
+The ID of the Subnet to be deleted, e.g. `subnet-064787eb12c6a40aa`.
+
+## Method: Create Internet Gateway
+Creates an Internet Gateway. An internet gateway enables resources in your public subnets (such as EC2 instances) to connect to the internet if the resource has a public IP address. The gateway provides a target in the VPC route tables for internet-routable traffic, and exposes public IP addresses to access from outside AWS, i.e. the internet. There can be only one Internet Gateway per VPC.
+
+### Parameter: VPC ID
+The ID of the VPC to which an Internet Gateway should be added, e.g., `vpc-049a466e4efa9a56f`.
+
+## Method: Attach Internet Gateway
+Attaches an Internet Gateway to a VPC. A newly created gateway must be attached to a specific VPC before it becomes a valid target for a route table within that VPC. The gateway and VPC must exist in the same region to be attached.
+
+### Parameter: Gateway ID
+The ID of the gateway to attach, e.g. `igw-0215500f9020a14d7`.
+
+### Parameter: VPC ID
+The ID of the VPC to which the gateway is to be attached, e.g. `vpc-049a466e4efa9a56f`.
+
+## Method: Create NAT Gateway
+Creates a NAT gateway. A NAT gateway is a Network Address Translation (NAT) service. You can use a NAT gateway so that instances in a private subnet can connect to services outside your VPC but external services cannot initiate a connection with those instances.
+
+### Parameter: Subnet ID
+The subnet where the NAT Gateway will be created. 
+
+### Parameter: Allocation ID
+The allocation ID of an Elastic IP address to associate with the NAT gateway, e.g. `eipalloc-0362742f973f712e9`
+
+## Method: Create Route Table
+
+### Parameter: VPC ID
+The ID of the VPC to which the gateway is to be attached, e.g. `vpc-049a466e4efa9a56f`.
+
+### Parameter: Subnet ID
+The subnet in which the Route Table will be created.
+
+### Parameter: Gateway ID
+If an internet gateway is specified here, it will be included in the created route table as the route for `0.0.0.0/0` - everything not otherwise routed elsewhere.
+
+## Method: Create Route
+Create a new route in an existing route table. The new route must target one of an internet gateway, a NAT gateway, or a specific instance (for example VM running VPN software).
+
+### Parameter: Route Table ID
+The ID of the route table to which the route will be added, e.g. `rtb-0443f0bc5fc8938ca`.
+
+### Parameter: Gateway ID
+Optional - specify to make the new route target an internet gateway.
+
+### Parameter: NAT Gateway ID
+Optional - specify to make the new route target a NAT gateway.
+
+### Parameter: Instance ID
+Optional - specify to make the new route target a VM instance.
+
+### Parameter: Destination CIDR Block
+The CIDR block notation for the address space of the new route, e.g. `0.0.0.0/0` or `10.22.33.0/24`.
+
+## Method: Associate Route Table
+Associates the specified route table with either a subnet or an internet gateway or both. If associated with a subnet, assets in the subnet will use the associated route table instead of the "main" (default) one.
+
+### Parameter: Route Table ID
+The ID of the route table to be associated, e.g. `rtb-0443f0bc5fc8938ca`.
+
+### Parameter: Subnet ID
+If specified, the ID of the subnet to be associated to the route table.
+
+### Parameter: Gateway ID
+If specified, the Gateway ID to be associated to the route table.
+
+## Method: Allocate Address
+This method allocates an IP address. If no parameters are provided, the allocted address comes from Amazon's pool of IPv4 addresses. If public or private address pools are associated with the AWS account, parameters are used to select specific IP addresses from those pools.
+
+### Parameter: BYOIP Address (optional)
+If you have a Bring your own IP (BYOIP) address pool, this parameter is a specific available address from that pool. To select an arbitrary available address from that pool instead, use "BYOIP Address Pool" instead. Leave both parameters empty to allocate an arbitrary address from Amazon's pool of addresses.
+
+### Parameter: BYOIP Address Pool (optional)
+If you have a Bring your own IP (BYOIP) address pool, to select an arbitrary available address from that pool, specify the pool's ID here. Leave the parameter empty to allocate a specific BYOIP address or an arbitrary address from Amazon's pool of addresses.
+
+## Method: Associate Address
+This method associates an Elastic IP address with an instance or a network interface. To create an Elastic IP address, use method "Allocate Address".
+
+### Parameter: Allocation ID
+The allocation ID of the IP address to be associated with an instance or network interface. Allocation ID is property `AllocationId` found in the Final Result of method "Allocate Address". For example, `eipalloc-06b93fa7325c0c27d`.
+
+### Parameter: Instance ID
+The instance ID of an AWS EC2 instance to which the Elastic IP address will be associated. This is the most commonly used option. If the instance has more than one network interface or private IP address and the Elastic IP address is to be associated with a specific interface or private IP, use parameters "Network Interface ID" or "Private IP Address" instead. Instance ID is given as `Instances[0].InstanceId` in the Final Result of method "Create Instance", where `0` is the first element of an array of instances created. For example, `i-002107513641fde32`.
+
+### Parameter: Network Interface ID
+The Network Interface ID of an AWS EC2 instance to which the address will be associated. This parameter is used if the instance has more than one network interface and the Elastic IP address must be associated with one specific network interface. Network Interface ID is given as `Instances[0].NetworkInterfaces[0].NetworkInterfaceId` in the Final Result of method "Create Instance", where `0` is the first element of an array of instances/network interfaces created. For example, `eni-08a62d0b9e98fc07c`. If there is only one network interface, it may be easier to use parameter "Instance ID" instead.
+
+### Parameter: Private IP Address
+The Private IP Address of an AWS EC2 instance to which the address will be associated. This parameter is used if the instance has more than one private IP address and the Elastic IP address must be associated with a specific one. Private IP address is given as `Reservations[0].Instances[0].NetworkInterfaces[0].PrivateIpAddresses[0].PrivateIpAddress` in the Final Result of method "Describe Instances", where `0` is the first member of an array of potentially multiple instances, interfaces, private ip addresses, etc. For example, `10.48.0.105`. If there is only one private IP address, it may be easier to use parameter "Instance ID" instead.
+
+## Method: Release Address
+This method releases the specified Elastic IP address. An address cannot be released while in use, e.g. while associated with an instance. In this example the instance might be terminated first, and then the address may be released. Releasing Elastic IP addresses is done as a housekeeping measure and to reduce costs, because AWS charges a premium for allocated Elastic IP addresses that are NOT in use.
+
+### Parameter: Allocation ID
+The allocation ID of the IP address to be released. Allocation ID is property `AllocationId` found in the Final Result of method "Allocate Address". For example, `eipalloc-06b93fa7325c0c27d`.
+
+## Method: Create Security Group
+Creates a new security group. A security group acts as a firewall that controls the traffic allowed to and from the resources in your virtual private cloud (VPC). You can choose the ports and protocols to allow for inbound traffic and for outbound traffic.
+
+### Parameter: Name
+The name of the security group to create. Name cannot be changed after the group is created.
+
+### Parameter: Group description
+A description for the security group
+
+### Parameter: VPC ID
+The VPC in which the security group is created, e.g. `vpc-049a466e4efa9a56f`.
+
+### Parameter: Disallow Any Outbound Traffic
+By default a new security group includes a rule that allows all outbound traffic, for example from inside the VPC to the internet. Enable this parameter to create a security group without that rule, i.e. an empty one.
+
+## Method: Add Security Group Rules
+Add rules to an existing security group. The rules of a security group control the inbound traffic that's allowed to reach the resources that are associated with the security group. The rules also control the outbound traffic that's allowed to leave them. Security group rules allow specific types of traffic. If there are no rules, then nothing no traffic is allowed.
+
+### Parameter: Group ID
+The ID of the security group to which a rule is to be added, e.g. `sg-0712e734dfab018e5`.
+
+### Parameter: Rule Type
+The type of rule to add, either ingress (from outside VPC) or egress (from within VPC).
+
+### Parameter: CIDR IPv4 Blocks
+The CIDR block notation for the source (if ingress) or destination (if egress) IPv4 addresses to allow.
+
+### Parameter: CIDR IPv6 Blocks
+The CIDR block notation for the source (if ingress) or destination (if egress) IPv6 addresses to allow.
+
+### Parameter: Port Ranges
+In the case of rules allowing TCP or UDP traffic, the port or range of ports to allow. Specify one port or range of ports per line. For example to allow SSH, HTTP, and ports 8080-8090...
+
+    22
+    80
+    8080-8090
+
+### Parameter: Ip Protocol
+Which protocol to allow - specifically TCP, UDP, or ICMP, or select "All" to not restrict based on protocol.
+
+### Parameter: ICMP Type
+If ICMP was selected as IP Protocol to allow, optionally choose which type to allow. Echo Request for example would allow assets in the VPC to be reached by "ping".
+
+### Parameter: Description
+A description for the rule to add, e.g. "allow pings from outside".
 
 ## Method: Describe Key Pairs
 This method describes all existing Key Pairs. Key Pairs are a paired set of either RSA or ED25519 public/private encryption keys used to control SSH access and decrypt Windows passwords. The private key is held by an individual user and the public key is held by AWS. The pair is given a user-friendly name, `KeyName`, which is used in key-related methods of this plugin.
@@ -175,397 +383,56 @@ This method deletes a Key Pair. The corresponding private key will continue to w
 ### Parameter: Key Pair Name
 This is the user-friendly name for the Key Pair to be deleted, property `KeyName`.
 
-## Method: Allocate Address
-This method allocates an IP address. If no parameters are provided, the allocted address comes from Amazon's pool of IPv4 addresses. If public or private address pools are associated with the AWS account, parameters are used to select specific IP addresses from those pools.
+## Method: Create Tags
+This method tags most resources in AWS. AWS Tags are a common way to organize cloud infrastructure with metadata. The most commonly used tag is "Name", which appears in the AWS Web Console under column heading "Name".
 
-### Parameter: BYOIP Address (optional)
-If you have a Bring your own IP (BYOIP) address pool, this parameter is a specific available address from that pool. To select an arbitrary available address from that pool instead, use "BYOIP Address Pool" instead. Leave both parameters empty to allocate an arbitrary address from Amazon's pool of addresses.
-
-### Parameter: BYOIP Address Pool (optional)
-If you have a Bring your own IP (BYOIP) address pool, to select an arbitrary available address from that pool, specify the pool's ID here. Leave the parameter empty to allocate a specific BYOIP address or an arbitrary address from Amazon's pool of addresses.
-
-### Parameter: Dry Run
-If enabled, this tests the allocation request with AWS to check for potential errors without actually allocating any address.
-
-## Method: Associate Address
-This method associates an Elastic IP address with an instance or a network interface. To create an Elastic IP address, use method "Allocate Address".
-
-### Parameter: Region
-The AWS geographical region where an address will be associated with an instance or network interface. This parameter has an autocomplete function so you may select the region using either the CLI-type ID string, for example `ap-southeast-1`, or the user-friendly location, e.g. "Asia Pacific (Singapore)". If using the code layer, use the CLI-type ID string.
-
-### Parameter: Allocation ID
-The allocation ID of the IP address to be associated with an instance or network interface. Allocation ID is property `AllocationId` found in the Final Result of method "Allocate Address". For example, `eipalloc-06b93fa7325c0c27d`.
-
-### Parameter: Instance ID
-The instance ID of an AWS EC2 instance to which the Elastic IP address will be associated. This is the most commonly used option. If the instance has more than one network interface or private IP address and the Elastic IP address is to be associated with a specific interface or private IP, use parameters "Network Interface ID" or "Private IP Address" instead. Instance ID is given as `Instances[0].InstanceId` in the Final Result of method "Create Instance", where `0` is the first element of an array of instances created. For example, `i-002107513641fde32`.
-
-### Parameter: Network Interface ID
-The Network Interface ID of an AWS EC2 instance to which the address will be associated. This parameter is used if the instance has more than one network interface and the Elastic IP address must be associated with one specific network interface. Network Interface ID is given as `Instances[0].NetworkInterfaces[0].NetworkInterfaceId` in the Final Result of method "Create Instance", where `0` is the first element of an array of instances/network interfaces created. For example, `eni-08a62d0b9e98fc07c`. If there is only one network interface, it may be easier to use parameter "Instance ID" instead.
-
-### Parameter: Private IP Address
-The Private IP Address of an AWS EC2 instance to which the address will be associated. This parameter is used if the instance has more than one private IP address and the Elastic IP address must be associated with a specific one. Private IP address is given as `Reservations[0].Instances[0].NetworkInterfaces[0].PrivateIpAddresses[0].PrivateIpAddress` in the Final Result of method "Describe Instances", where `0` is the first member of an array of potentially multiple instances, interfaces, private ip addresses, etc. For example, `10.48.0.105`. If there is only one private IP address, it may be easier to use parameter "Instance ID" instead.
-
-### Parameter: Dry Run
-If enabled, this tests the association request with AWS to check for potential errors without actually associating any address.
-
-## Method: Release Address
-This method releases the specified Elastic IP address. An address cannot be released while in use, e.g. while associated with an instance. In this example the instance might be terminated first, and then the address may be released. Releasing Elastic IP addresses is done as a housekeeping measure and to reduce costs, because AWS charges a premium for allocated Elastic IP addresses that are NOT in use.
-
-### Parameter: Region
-The AWS geographical region of the address to be released. This parameter has an autocomplete function so you may select the region using either the CLI-type ID string, for example `ap-southeast-1`, or the user-friendly location, e.g. "Asia Pacific (Singapore)". If using the code layer, use the CLI-type ID string.
-
-### Parameter: Allocation ID
-The allocation ID of the IP address to be released. Allocation ID is property `AllocationId` found in the Final Result of method "Allocate Address". For example, `eipalloc-06b93fa7325c0c27d`.
-
-### Parameter: Dry Run
-If enabled, this tests the release request with AWS to check for potential errors without actually releasing any address.
-
-## Method: Create VPC
-This method creates a new AWS EC2 Virtual Private Cloud (VPC). A VPC is a private network including subnets, route tables, and gateways that enable instances to network with each other, other networks, and the internet in controlled ways.
-
-### Parameter: Region
-The AWS geographical region where the VPC is to be created. This parameter has an autocomplete function so you may select the region using either the CLI-type ID string, for example `ap-southeast-1`, or the user-friendly location, e.g. "Asia Pacific (Singapore)". If using the code layer, use the CLI-type ID string.
-
-### Parameter: CIDR Block
-Every VPC has a private IP Address space, specified in [CIDR format](https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing). A commonly used address space for this is `10.N.0.0/16` where `N` is an arbitrary integer in the range 1-254. IPv4 addresses beginning with `10` are specifically reserved for private address space. The most important factor in the choice of address space is that any two VPCs with overlapping address space will be more difficult to network, so each VPC ideally has a unique integer for `N`.
-
-### Parameter: Amazon-provided IPv6 CIDR block
-Enable this parameter to make use of an Amazon-provided IPv6 CIDR block. The range and size of these blocks are automatically determined by Amazon.
-
-### Parameter: Instance Tenancy
-For most use cases default is the only choice here. If you make use of single-tenant, dedicated hardware and want to force instances in the VPC to use the dedicated hardware, choose dedicated instead.
-
-### Parameter: Create Internet Gateway
-A command and simple VPC configuration makes use of an AWS Internet Gateway to access the internet, for example by automatically assigning instances public IP addresses, or routing through a VPN instance that makes use of an Internet Gateway. Enable this parameter to automatically create and attach an AWS Internet Gateway to your VPC.
+### Parameter: Resource ID
+The ID of the resource to be tagged.
 
 ### Parameter: Tags
-AWS Tags are a common way to organize cloud infrastructure with metadata. The most commonly used tag is "Name", which appears in the AWS Web Console under column heading "Name". To name or otherwise tag the new VPC, list tags here as one-per-line Key=Value pairs. For example, `Name=MyNewVPC`.
-
-### Parameter: Dry Run
-If enabled, this tests the VPC create request with AWS to check for potential errors without actually creating any VPC.
-
-## Method: Delete VPC
-This method deletes a VPC. To be deleted a VPC must first be emptied of dependent infrastructure such as instances and Internet Gateways.
-
-### Parameter: Region
-The AWS geographical region where the VPC is to be deleted. This parameter has an autocomplete function so you may select the region using either the CLI-type ID string, for example `ap-southeast-1`, or the user-friendly location, e.g. "Asia Pacific (Singapore)". If using the code layer, use the CLI-type ID string.
-
-### Parameter: VPC ID
-The ID of the VPC to be deleted, for example `vpc-0c9fd47345334f78c`.
-
-### Parameter: Dry Run
-If enabled, this tests the VPC delete request with AWS to check for potential errors without actually deleting any VPC.
-
-## Method: Create Subnet
-This method creates a new subnet within a VPC. The subnet's CIDR address space must fall within that of the containing VPC. Otherwise a `The CIDR is invalid` error will occur.
-
-### Parameter: Region
-The AWS geographical region where the subnet is to be created. This parameter has an autocomplete function so you may select the region using either the CLI-type ID string, for example `ap-southeast-1`, or the user-friendly location, e.g. "Asia Pacific (Singapore)". If using the code layer, use the CLI-type ID string.
-
-### Parameter: Availability Zone
-AWS Availability Zones are a subdivision of Region for the purpose of high availability. Each availability zone is serviced by a physically separate datacenter, reducing the probability of two different availability zones could experience failure simultaneously. Availabilty zone IDs are the same as the region ID followed by a letter, e.g. `a`, `b`, or `c`. Subnets are associated with availability zone so the subnet ultimately determines the availability zone in which an asset is located. Spot pricing, availability of spot instances, and availability of certain instance types and features may also vary by availability zone. If none of this is a concern, this parameter may be left empty and AWS will arbitrarily select an availability zone for the subnet.
-
-### Parameter: VPC ID
-The ID of the VPC in which the subnet will be created, for example `vpc-0c9fd47345334f78c`.
-
-### Parameter: Route Table ID
-The ID of an existing route table, if the subnet is to be associated with that table. If not specified the subnet will inherit the "main" (default) route table that is automatically created for every subnet.
-
-### Parameter: CIDR Block
-A part or all of the VPCs IP address space to be assigned to the subnet, in CIDR notation. The subnet's CIDR address space must fall within that of the containing VPC. Otherwise a `The CIDR is invalid` error will occur.
-
-### Parameter: IPv6 CIDR Block
-The same as CIDR Block, but assinging all or a part of the VPC's IPv6 address space to the subnet. If not using IPv6 this parameter may be left empty.
-
-### Parameter: Outpost ARN
-AWS Outpost is AWS infrastructure and services in an on-premise or edge location, not in an AWS data center. If using AWS Outpost, specify the Outpost ARN here. Otherwise leave it empty.
-
-### Parameter: NAT Gateway Allocation ID
-If specified, create a NAT Gateway within the subnet created, and assign it the specified Elastic IP allocation. For example, `eipalloc-0362742f973f712e9`.
-
-### Parameter: Create Private Route Table
-If enabled (true), a private route table will be created for this subnet, and if a NAT Gateway Allocation ID is also provided, route external traffic to the NAT Gateway.
-
-### Parameter: Map Public IP On Launch
-If enabled (true), each instance on the subnet will be given a public IP address.
-
-### Parameter: Tags
-AWS Tags are a common way to organize cloud infrastructure with metadata. The most commonly used tag is "Name", which appears in the AWS Web Console under column heading "Name". To name or otherwise tag the new VPC, list tags here as one-per-line Key=Value pairs. For example, `Name=MyNewSubnet`.
-
-### Parameter: Dry Run
-If enabled, this tests the subnet create request with AWS to check for potential errors without actually creating any subnet.
-
-## Method: Delete Subnet
-
-**Description**
-
-Deletes the specified subnet. You must terminate all running instances in the subnet before you can delete the subnet. This method calls ec2 [deleteSubnet](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#deleteSubnet-property)
-
-**Parameters**
-1. Access Key - This is a parameter taken from the vault to access AWS
-2. Secret Key - This is a paramer taken from the vault to access AWS
-3. Region 
-4. Subnet ID - The ID of the subnet.
-5. DryRun (boolean) - hecks whether you have the required permissions for the action, without actually making the request, and provides an error response.
-
-## Method: Create Internet Gateway
-
-**Description**
-
-Create a new Internet Gateway. This method calls ec2 [createInternetGateway](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createInternetGateway-property)
-
-**Parameters**
-1. Access Key (Vault) **Optional** - Used to authenticate to AWS.
-2. Secret Key (Vault) **Optional** - Used to authenticate to AWS.
-3. Region (AutoComplete) **Required** - The region to create this Internet Gateway in.
-4. VPC ID (String) **Optional** - If specified, attach the newly created Internet Gateway to the specified VPC.
-5. Tags (Array of objects/Text) **Optional** - If specified, tag the Internet Gateway with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. 
-6. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
-
-## Method: Create Route Table
-
-**Description**
-
-Create a route table in the VPC specified. This method calls ec2 [createRouteTable](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createRouteTable-property)
-
-**Parameters**
-1. Access Key (Vault) **Optional** - Used to authenticate to AWS.
-2. Secret Key (Vault) **Optional** - Used to authenticate to AWS.
-3. Region (AutoComplete) **Required** - The region to create this Route Table in.
-4. VPC ID (String) **Required** - The VPC to create this Route Table in.
-5. Subnet ID (String) **Optional** - If specified, associate the created Route Table with the specified Subnet.
-6. Gateway ID (String) **Optional** - If specified, associate the created Route Table with the specified Internet Gateway.
-7. Tags (Array of objects/Text) **Optional** - If specified, tag the Route Table with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. 
-8. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
-
-## Method: Create NAT Gateway
-
-**Description**
-
-Create a NAT Gateway in the VPC specified. This method calls ec2 [createNatGateway](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createNatGateway-property)
-
-**Parameters**
-1. Access Key (Vault) **Optional** - Used to authenticate to AWS.
-2. Secret Key (Vault) **Optional** - Used to authenticate to AWS.
-3. Region (AutoComplete) **Required** - The region to create this NAT Gateway in.
-4. Subnet ID (String) **Required** - The subnet to create this NAT Gateway in.
-5. Allocation ID (String) **Required** - The allocation ID of an Elastic IP address to associate with the NAT gateway. If the Elastic IP address is associated with another resource, you must first disassociate it.
-6. Tags (Array of objects/Text) **Optional** - If specified, tag the NAT Gateway with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. 
-7. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
-
-## Method: Create Security Group
-
-**Description**
-
-Create a new Security Group. This method calls ec2 [createSecurityGroup](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createSecurityGroup-property)
-
-**Parameters**
-1. Access Key (Vault) **Optional** - Used to authenticate to AWS.
-2. Secret Key (Vault) **Optional** - Used to authenticate to AWS.
-3. Region (AutoComplete) **Required** - The region to create this Security Group in.
-4. Name (String) **Required** - The name of the new security group to create.
-5. Description (Text) **Required** - The description of the security group.
-6. VPC ID (String) **Optional** - The ID of the VPC. Required for EC2-VPC Security Group.
-7. Tags (Array of objects/Text) **Optional** - If specified, tag the Security Group with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. 
-8. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
-
-## Method: Associate Route Table
-
-**Description**
-
-Associate the specified route table with either a subnet or an internet gateway or both. This method calls ec2 [associateRouteTable](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#associateRouteTable-property). The original method only supports associating a subnet or a gateway, so this method can call the original method up to two times.
-
-**Parameters**
-1. Access Key (Vault) **Optional** - Used to authenticate to AWS.
-2. Secret Key (Vault) **Optional** - Used to authenticate to AWS.
-3. Region (AutoComplete) **Required** - The region to create this Security Group in.
-4. Route Table ID (String) **Required** - The ID of the route table to associate.
-5. Subnet ID (String) **Optional** - If specified, associate the route table with the specified subnet.
-6. Gateway ID (String) **Optional** - If specified, associate the route table with the specified internet gateway.
-7. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
-
-## Method: Attach Internet Gateway
-
-**Description**
-
-Attach the specified Internet Gateway with a VPC. This method calls ec2 [attachInternetGateway](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#attachInternetGateway-property).
-
-**Parameters**
-1. Access Key (Vault) **Optional** - Used to authenticate to AWS.
-2. Secret Key (Vault) **Optional** - Used to authenticate to AWS.
-3. Region (AutoComplete) **Required** - The region to create this Security Group in.
-4. Gateway ID (String) **Required** - The ID of the internet gateway to attach to the VPC.
-5. VPC ID (String) **Required** - The ID of the VPC to attach the internet gateway to.
-6. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
-
-## Method: Add Security Group Rules
-
-**Description**
-
-Creates new rules for the specified security group. Can be either Ingress/Egrass type rule and also either Authorize\Revoke type. This method calls one of the following ec2 methods:
-* [authorizeSecurityGroupIngress](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#authorizeSecurityGroupIngress-property)
-* [authorizeSecurityGroupEgress](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#authorizeSecurityGroupEgress-property)
-* [revokeSecurityGroupIngress](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#revokeSecurityGroupIngress-property)
-* [revokeSecurityGroupEgress](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#revokeSecurityGroupEgress-property)
-
-**Parameters**
-1. Access Key (Vault) **Optional** - Used to authenticate to AWS.
-2. Secret Key (Vault) **Optional** - Used to authenticate to AWS.
-3. Region (AutoComplete) **Required** - The region to create this Security Group in.
-4. Group ID (String) **Required** - The ID of security group to add the rules to.
-5. Rule Type (Options) **Optional** - The type of rules to create.
-Possible Values are: Ingress-Authorize/Egress-Authorize/Ingress-Revoke/Egress-Revoke. Default Value is Ingress-Authorize.
-6. CIDR IPv4 Blocks (Text) **Optional** - The IP v4 ranges in CIDR notation to apply to the rule(To autorize\revoke). To enter multiple values seperate each with a new line.
-7. CIDR IPv4 Blocks (Text) **Optional** - The IP v6 ranges in CIDR notation to apply to the rule(To autorize\revoke). To enter multiple values seperate each with a new line.
-6. From Ports (Text) **Required** - The source ports to apply the rule to. To enter multiple values seperate each with a new line.
-7. To Ports (Text) **Required** - The target ports to apply the rule to. To enter multiple values seperate each with a new line.
-If specified the same number of ports as 'From Ports' map each port in 'From Ports' to a port specified here. If not, map each port on 'From Ports' to all ports specified here. **For example**: 
-* From Ports: 22, 80. To Ports: 22, 80. => 2 rules, 22->22, 80->80.
-* From Ports: 80, 8080. To Ports: 80. => 2 rules, 80->80, 8080->80.
-8. Ip Protocol (String) **Required** - The IP Protocol to apply to this rule(either authrize\revoke access for this protocol).
-9. Description (Text) **Optional** - The description of the rules created.
-10. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
-
-## Method: Create Route
-
-**Description**
-
-Create a new route inside the specified Route Table. This method calls ec2 [createRoute](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createRoute-property).
-
-**Parameters**
-1. Access Key (Vault) **Optional** - Used to authenticate to AWS.
-2. Secret Key (Vault) **Optional** - Used to authenticate to AWS.
-3. Region (AutoComplete) **Required** - The region to create this Security Group in.
-4. Route Table ID (String) **Required** - The ID of the route table to create the route in.
-5. Gateway ID (String) **Optional** - ID of an internet gateway. If specified make the Internet Gateway specified the target of the route.
-6. NAT Gateway ID (String) **Optional** - ID of a NAT gateway. If specified make the NAT Gateway specified the target of the route.
-7. Instance ID (String) **Optional** - ID of an Instance. If specified make the Instance specified the target of the route.
-8. Destination CIDR Block **Required** - This route will target all IPv4 addresses in the specified IP block.
-8. Dry Run (Boolean) **Optional** - If specified, don't make any changes, just check if you have sufficant permissions to do this action. Default value is false.
-**Can only accepot one of paramaters 5-7**
+Provide any number of tags as one-per-line Key=Value pairs.
 
 ## Method: Create Volume
-Create a new volume in the specified availability zone or outpost.
+Create a new EBS volume. This is not for the root volume created when a new VM instance is created, but add-on volumes that can be attached to existing VMs.
 
-## Parameters
-1. Access key (Vault) **Required if not in settings** - The Access Key ID to use to authenticate to AWS for this request.
-2. Secret key (Vault) **Required if not in settings** - The Access Key Secret to use to authenticate to AWS for this request.
-3. Region (Autocomplete) **Required** - The region to execute the request in.
-4. Availability Zone (String) **Required if no outpost specified** - The Availability Zone to execute the requestin which to create the volume.
-5. Volume Type (Options) **Required** - The volume type. Possible values: **Standard | io1 | io2 | gp2 | sc1 | st1 | gp3**.
-Volume types are:
-* General Purpose SSD: gp2 | gp3
-* Provisioned IOPS SSD: io1 | io2
-* Throughput Optimized HDD: st1
-* Cold HDD: sc1
-* Magnetic: standard
-6. Size(In GBs) (String) **Required if no snapshot specified** - The size of the volume, in GBs. You must specify either a snapshot ID or a volume size. If you specify a snapshot, the default is the snapshot size. You can specify a volume size that is equal to or larger than the snapshot size.
-7. IOPS (String) **Required for volume types: io1, io2 and gp3** - The number of I/O operations per second (IOPS).
-8. Create From Snapshot(ID) (String) **Required if no size provided** - If specified create the volume from the snapshot specified.
-9. Outpost ARN (String) **Optional** - If specified create the volume on the outpost specified.
-10. Throughput (String) **Optional** - This parameter is valid only for gp3 volumes. The throughput to provision for the volume, with a maximum of 1,000 MiB/s.
-11. Is Encrypted (Boolean) **Optional** - Indicates Whether to encrypt the volume or not. Encryption type depends on the volume origin (new or from a snapshot), starting encryption state, ownership, and whether encryption by default is enabled.
-12. KMS Key ID (String) **Optional** - The identifier of the Key Management Service (KMS) KMS key to use for Amazon EBS encryption. If this parameter is not specified, your KMS key for Amazon EBS is used. If KmsKeyId is specified, the encrypted state must be true. You can specify the KMS key using any of the following: Key ID | Key alias | Key ARN | Alias ARN
-13. Multi Attach Enabled (Boolean) **Optional** - Indicates whether to enable Amazon EBS Multi-Attach. If you enable Multi-Attach, you can attach the volume to up to 16 Instances built on the Nitro System in the same Availability Zone. This parameter is supported with io1 and io2 volumes only.
-14. Dry Run (Boolean) **Optional** - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
-15. Wait Until Operation End (Boolean) **Optional** - If true wait until the end of the operation. The operation ends when the volume is ready.
+### Parameter: Availability Zone
+Availability zone determines in which datacenter of the AWS region the volume is created and therefore also to which subnet's VMs the volume may be attached. Availability zone is the same as region, followed by a single-letter (a, b, c), for example `ap-southeast-1b` in region `ap-southeast-1`.
 
-## Method: Create EBS Snapshot
-Create a new snapshot of the specified EBS volume.
+### Parameter: Volume Type
+The type of volume to create. Several types are available:
+* General Purpose SSD (gp2)
+* General Purpose SSD (gp3)
+* Provisioned IPOS SSD (io1)
+* Provisioned IPOS SSD (io2)
+* Cold HDD (sc1)
+* Throughput Optimized HDD (st1)
+* Magnetic (standard)
 
-## Parameters
-1. Access key (Vault) **Required if not in settings** - The Access Key ID to use to authenticate to AWS for this request.
-2. Secret key (Vault) **Required if not in settings** - The Access Key Secret to use to authenticate to AWS for this request.
-3. Region (Autocomplete) **Required** - The region to execute the request in.
-4. Volume ID (String) **Required** - The ID of the volume to create the snapshot of.
-5. Description (Text) **Optional** - A description for the snapshot.
-6. Outpost ARN (String) **Optional** - If specified, create the snapshot on the outpost specified. Not related to the outpost the volume is stored on.
-7. Dry Run (Boolean) **Optional** - Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.
-8. Wait Until Operation End (Boolean) **Optional** - If true wait until the end of the operation. The operation ends when the snapshot is completed.
+Magnetic is no longer the standard, but remains a slower and less expensive alternative to gp2. Read more about the differences between instance types in the [AWS User Guide](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html).
 
+### Parameter: Size(In GiB)
+An integer number for the size of the volume in GiB. Depending on type this may range from 1-16384 GiB (16 TiB).
 
-      "viewName": "Delete Subnet",
-          "viewName": "Region",
-          "viewName": "Subnet ID",
-          "viewName": "Dry Run",
-      "viewName": "Create NAT Gateway",
-          "viewName": "Region",
-          "viewName": "Subnet ID",
-          "viewName": "Allocation ID",
-          "viewName": "Tags",
-          "viewName": "Dry Run",
-      "viewName": "Create Internet Gateway",
-          "viewName": "Region",
-          "viewName": "VPC ID",
-          "viewName": "Tags",
-          "viewName": "Dry Run",
-      "viewName": "Attach Internet Gateway",
-          "viewName": "Region",
-          "viewName": "Gateway ID",
-          "viewName": "VPC ID",
-          "viewName": "Dry Run",
-      "viewName": "Create Route",
-          "viewName": "Region",
-          "viewName": "Route Table ID",
-          "viewName": "Gateway ID",
-          "viewName": "NAT Gateway ID",
-          "viewName": "Instance ID",
-          "viewName": "Destination CIDR Block",
-          "viewName": "Dry Run",
-      "viewName": "Create Route Table",
-          "viewName": "Region",
-          "viewName": "VPC ID",
-          "viewName": "Subnet ID",
-          "viewName": "Gateway ID",
-          "viewName": "tags",
-          "viewName": "Dry Run",
-      "viewName": "Associate Route Table",
-          "viewName": "Region",
-          "viewName": "Route Table ID",
-          "viewName": "Subnet ID",
-          "viewName": "Gateway ID",
-          "viewName": "Dry Run",
-      "viewName": "Create Volume",
-          "viewName": "Region",
-          "viewName": "Availability Zone",
-          "viewName": "Volume Type",
-          "viewName": "Size(In GBs)",
-          "viewName": "IOPS",
-          "viewName": "Create From Snapshot(ID)",
-          "viewName": "Outpost ARN",
-          "viewName": "Throughput",
-          "viewName": "Is Encrypted",
-          "viewName": "KMS Key ID",
-          "viewName": "Multi Attach Enabled",
-          "viewName": "Dry Run",
-          "viewName": "Wait Until Operation End",
-      "viewName": "Create EBS Snapshot",
-          "viewName": "Region",
-          "viewName": "Volume ID",
-          "viewName": "Description",
-          "viewName": "Outpost ARN",
-          "viewName": "Dry Run",
-          "viewName": "Wait Until Operation End",
-      "viewName": "Create Security Group",
-          "viewName": "Region",
-          "viewName": "Name",
-          "viewName": "Group description",
-          "viewName": "VPC ID",
-          "viewName": "Tags",
-          "viewName": "Disallow Any Outbound Traffic",
-          "viewName": "Dry Run",
-      "viewName": "Add Security Group Rules",
-          "viewName": "Region",
-          "viewName": "Group ID",
-          "viewName": "Rule Type",
-          "viewName": "CIDR IPv4 Blocks",
-          "viewName": "CIDR IPv6 Blocks",
-          "viewName": "Port Ranges",
-          "viewName": "Ip Protocol",
-          "viewName": "ICMP Type",
-          "viewName": "Description",
-          "viewName": "Dry Run",
-      "viewName": "Create Tags",
-          "viewName": "Region",
-          "viewName": "Resource ID",
-          "viewName": "Tags",
+### Parameter: IOPS
+If volume type is io1 or io2, provide the integer quantity of IOPS to provision here. Read more about appropriately provisioning IOPS in the [AWS User Guide](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/provisioned-iops.html).
+
+### Parameter: Create From Snapshot(ID)
+Rather than creating a new empty volume, a snapshot ID can be provided to create the volume from an image, e.g. `snap-09414981882fe1209`.
+
+### Parameter: Outpost ARN
+If using Amazon Outpost and want the volume created in an outpost, provide the Outpost ARN here. Otherwise it will be created in the selected AWS region's datacenter.
+
+### Parameter: Throughput
+For volume type gp3 only - Gp3 volumes deliver a baseline performance of 3,000 IOPS and 125 MB/s at any volume size. A higher throughput may be specified in MiB/s, up to a maximum of 1,000. 
+
+### Parameter: Is Encrypted
+If enabled the volume is encrypted such that the volume and snapshots of it are unreadable without the appropriate encryption key.
+
+### Parameter: KMS Key ID
+The ID of the KMS Key to use if volume encryption is selected.
+
+### Parameter: Multi Attach Enabled
+For io1 and io2 volume types only, if enabled the same volume can be attached to and share by up to 16 VM instances in the same availability zone.
+
+### Parameter: Wait Until Operation End
+If enabled, the action waits until the volume is completely provisioned and ready for use before allowing the pipeline to continue. This is useful when downstream actions depend on the volume being ready.
