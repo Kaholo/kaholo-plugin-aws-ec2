@@ -62,7 +62,7 @@ function prepareCreateVpcPayload(params) {
     AmazonProvidedIpv6CidrBlock: params.amazonProvidedIpv6CidrBlock,
     InstanceTenancy: params.instanceTenancy,
     DryRun: params.dryRun,
-    Tags: helpers.buildTagSpecification("vpc", params.tags),
+    TagSpecifications: helpers.buildTagSpecification("vpc", params.tags),
   };
 }
 
@@ -169,7 +169,7 @@ function prepareCreateSubnetPayload(params) {
     Ipv6CidrBlock: params.ipv6CidrBlock,
     OutpostArn: params.outpostArn,
     DryRun: params.dryRun,
-    TagsSpecifications: helpers.buildTagSpecification("subnet", params.tags),
+    TagSpecifications: helpers.buildTagSpecification("subnet", params.tags),
   };
 }
 

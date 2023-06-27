@@ -1,7 +1,9 @@
 const _ = require("lodash");
 
 function strToBase64(value) {
-  if (!value) { return value; }
+  if (!value) {
+    return value;
+  }
   return Buffer.from(value).toString("base64");
 }
 
@@ -19,7 +21,9 @@ function resolveSecurityGroupFunction(ruleType) {
 }
 
 function tryParseJson(v) {
-  if (_.isPlainObject(v)) { return v; }
+  if (_.isPlainObject(v)) {
+    return v;
+  }
   try {
     return JSON.parse(v);
   } catch {
@@ -54,10 +58,26 @@ function parseSinglePortRange(rawPortRange) {
   throw new Error(`Invalid Port Range string specified: "${rawPortRange}". Valid examples include "*" (all ports), "80" (one port), and "8080-8099" (a range of 20 ports). To configure multiple ports not in a range, create a separate rule for each port.`);
 }
 
+function parseInstanceAttributeValue(attributeName, attributeValue) {
+  const attributesExpectingBoolean = [
+    "DisableApiStop",
+    "DisableApiTermination",
+    "EbsOptimized",
+    "EnaSupport",
+    "SourceDestCheck",
+  ];
+
+  if (!attributesExpectingBoolean.includes(attributeName)) {
+    return attributeValue;
+  }
+  return attributeValue === "true";
+}
+
 module.exports = {
   strToBase64,
   resolveSecurityGroupFunction,
   tryParseJson,
   createSubnetText,
   parseSinglePortRange,
+  parseInstanceAttributeValue,
 };

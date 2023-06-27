@@ -1,40 +1,45 @@
 {
   "name": "AmazonEC2",
+  "viewName": "AWS EC2",
   "type": "executer",
   "main": "app.js",
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "2.13.0",
+  "version": "3.0.0",
   "description": "Integration with AWS EC2 API",
   "category": [
     "CLOUD",
     "COMPUTE"
   ],
+  "auth": {
+    "authId": "awsAccount",
+    "params": [
+      {
+        "name": "accessKeyId",
+        "viewName": "Access Key ID",
+        "type": "vault",
+        "description": "The default AWS Access Key ID to use for authentication.",
+        "placeholder": "AKIAIOSFODNN7EXAMPLE",
+        "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+      },
+      {
+        "name": "secretAccessKey",
+        "viewName": "Access Key Secret",
+        "type": "vault",
+        "description": "The default AWS Access Key secret to use for authentication.",
+        "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+        "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
+      }
+    ]
+  },
   "settings": [
     {
-      "name": "AWS_ACCESS_KEY_ID",
-      "viewName": "Access Key",
-      "type": "vault",
-      "description": "The default Access Key ID to use to authenticate to AWS.",
-      "placeholder": "AKIAIOSFODNN7EXAMPLE",
-      "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-    },
-    {
-      "name": "AWS_SECRET_ACCESS_KEY",
-      "viewName": "Secret Key",
-      "type": "vault",
-      "description": "The default Access Key Secret to use to authenticate to AWS.",
-      "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-      "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-    },
-    {
-      "name": "REGION",
+      "name": "region",
       "viewName": "Region",
       "type": "string",
-      "description": "The region to execute the request in.",
-      "placeholder": "us-east-2",
-      "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
+      "description": "The ID of the default region to make requests on.",
+      "learnUrl": "https://docs.aws.amazon.com/general/latest/gr/s3.html"
     }
   ],
   "methods": [
@@ -43,23 +48,7 @@
       "viewName": "Create Instance",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -162,23 +151,7 @@
       "viewName": "Start Instances",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -204,23 +177,7 @@
       "viewName": "Stop Instances",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -252,23 +209,7 @@
       "viewName": "Reboot Instances",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -294,23 +235,7 @@
       "viewName": "Terminate Instances",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -336,23 +261,7 @@
       "viewName": "Describe Instances",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -400,23 +309,7 @@
       "viewName": "Modify Instance Type",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -452,23 +345,7 @@
       "viewName": "Modify Instance Attribute",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -578,23 +455,7 @@
       "viewName": "Create Key Pair",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -619,23 +480,7 @@
       "viewName": "Delete Key Pair",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -660,23 +505,7 @@
       "viewName": "Describe Key Pairs",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -692,23 +521,7 @@
       "viewName": "Allocate An Address",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -747,23 +560,7 @@
       "viewName": "Associate An Address",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -818,23 +615,7 @@
       "viewName": "Release An Address",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -873,23 +654,7 @@
       "viewName": "Create VPC",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -962,23 +727,7 @@
       "viewName": "Delete VPC",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -1010,23 +759,7 @@
       "viewName": "Create Subnet",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -1128,23 +861,7 @@
       "viewName": "Delete Subnet",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -1178,23 +895,7 @@
       "viewName": "Create NAT Gateway",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -1245,23 +946,7 @@
       "viewName": "Create Internet Gateway",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -1300,23 +985,7 @@
       "viewName": "Attach Internet Gateway",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -1357,23 +1026,7 @@
       "viewName": "Create Route",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -1438,23 +1091,7 @@
       "viewName": "Create Route Table",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -1512,23 +1149,7 @@
       "viewName": "Associate Route Table",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -1578,23 +1199,7 @@
       "viewName": "Create Volume",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -1730,23 +1335,7 @@
       "viewName": "Create EBS Snapshot",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -1800,23 +1389,7 @@
       "viewName": "Create Security Group",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -1880,23 +1453,7 @@
       "viewName": "Add Security Group Rules",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
@@ -2138,23 +1695,7 @@
       "viewName": "Create Tags",
       "params": [
         {
-          "name": "AWS_ACCESS_KEY_ID",
-          "viewName": "Access Key",
-          "type": "vault",
-          "description": "The Access Key ID to use to authenticate to AWS for this request.",
-          "placeholder": "AKIAIOSFODNN7EXAMPLE",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "AWS_SECRET_ACCESS_KEY",
-          "viewName": "Secret Key",
-          "type": "vault",
-          "description": "The Access Key Secret to use to authenticate to AWS for this request.",
-          "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-          "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
-        },
-        {
-          "name": "REGION",
+          "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
           "autocompleteType": "function",
