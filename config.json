@@ -12,6 +12,14 @@
     "CLOUD",
     "COMPUTE"
   ],
+  "keywords": [
+    "aws",
+    "ec2",
+    "elastic",
+    "compute",
+    "amazon",
+    "cloud"
+  ],
   "auth": {
     "authId": "awsAccount",
     "params": [
