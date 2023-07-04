@@ -7,10 +7,9 @@
   "exposeRoute": false,
   "imgUrl": "logo.png",
   "version": "3.0.1",
-  "description": "Integration with AWS EC2 API",
+  "description": "Amazon Elastic Cloud Compute - compute capacity in the cloud",
   "category": [
-    "CLOUD",
-    "COMPUTE"
+    "Compute"
   ],
   "keywords": [
     "aws",
@@ -18,7 +17,18 @@
     "elastic",
     "compute",
     "amazon",
-    "cloud"
+    "cloud",
+    "instance",
+    "terminate",
+    "key pair",
+    "address",
+    "subnet",
+    "vpc",
+    "gateway",
+    "snapshot",
+    "route table",
+    "volume",
+    "security group"
   ],
   "auth": {
     "authId": "awsAccount",
