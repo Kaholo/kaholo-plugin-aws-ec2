@@ -178,7 +178,7 @@ async function createRouteTableWorkflow(client, params, region) {
 
   const associateRouteTableParams = {
     ...params,
-    RouteTableId: result.createRouteTable.RouteTable.RouteTableId,
+    routeTableId: result.createRouteTable.RouteTable.RouteTableId,
   };
   const routeTableResult = await associateRouteTable(client, associateRouteTableParams, region);
 
