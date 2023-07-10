@@ -16,7 +16,7 @@ function prepareCreateInstancePayload(params) {
     });
   }
 
-  return {
+  const payload = {
     ImageId: params.IMAGE_ID,
     InstanceType: params.INSTANCE_TYPE,
     KeyName: params.KEY_NAME,
@@ -27,6 +27,18 @@ function prepareCreateInstancePayload(params) {
     SubnetId: params.subnetId,
     TagSpecifications: helpers.buildTagSpecification("instance", [params.TagSpecifications, ...nameTag]),
   };
+
+  if (params.rootVolumeSize && params.rootDeviceName) {
+    payload.BlockDeviceMappings = [{
+      DeviceName: params.rootDeviceName,
+      Ebs: {
+        VolumeSize: params.rootVolumeSize,
+      },
+    },
+    ];
+  }
+
+  return payload;
 }
 
 function prepareManageInstancesPayload(params) {
