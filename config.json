@@ -155,6 +155,14 @@
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
+          "name": "rootVolumeSize",
+          "viewName": "Root Volume Size",
+          "description": "The size of the root volume in GiB.",
+          "type": "int",
+          "default": 8,
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/block-device-mapping-concepts.html"
+        },
+        {
           "name": "TAGS_SPECIFICATION",
           "viewName": "Tags Specification",
           "type": "text",
