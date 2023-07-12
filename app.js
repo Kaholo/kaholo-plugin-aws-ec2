@@ -11,7 +11,6 @@ const { resolveSecurityGroupFunction, parseInstanceAttributeValue } = require(".
 const payloadFuncs = require("./payload-functions");
 
 const simpleAwsFunctions = {
-  createInstance: awsPlugin.generateAwsMethod("runInstances", payloadFuncs.prepareCreateInstancePayload),
   startInstances: awsPlugin.generateAwsMethod("startInstances", payloadFuncs.prepareManageInstancesPayload),
   rebootInstances: awsPlugin.generateAwsMethod("rebootInstances", payloadFuncs.prepareManageInstancesPayload),
   terminateInstances: awsPlugin.generateAwsMethod("terminateInstances", payloadFuncs.prepareManageInstancesPayload),
@@ -29,6 +28,32 @@ const simpleAwsFunctions = {
   deleteSubnet: awsPlugin.generateAwsMethod("deleteSubnet", payloadFuncs.prepareDeleteSubnetPayload),
   createTags: awsPlugin.generateAwsMethod("createTags", payloadFuncs.prepareCreateTagsPayload),
 };
+
+async function createInstance(client, params, region) {
+  const awsCreateInstance = awsPlugin.generateAwsMethod("runInstances", payloadFuncs.prepareCreateInstancePayload);
+
+  if (!params.rootVolumeSize) {
+    return awsCreateInstance(client, params, region);
+  }
+
+  const awsDescribeImages = awsPlugin.generateAwsMethod("describeImages", (passedParams) => ({
+    ImageIds: [passedParams.IMAGE_ID],
+  }));
+
+  const describeImagesResult = await awsDescribeImages(client, params, region);
+  const {
+    RootDeviceName: rootDeviceName,
+  } = describeImagesResult.Images[0];
+
+  return awsCreateInstance(
+    client,
+    {
+      ...params,
+      rootDeviceName,
+    },
+    region,
+  );
+}
 
 async function createSecurityGroup(client, params, region) {
   const awsCreateSecurityGroup = awsPlugin.generateAwsMethod("createSecurityGroup", payloadFuncs.prepareCreateSecurityGroupPayload);
@@ -178,7 +203,7 @@ async function createRouteTableWorkflow(client, params, region) {
 
   const associateRouteTableParams = {
     ...params,
-    RouteTableId: result.createRouteTable.RouteTable.RouteTableId,
+    routeTableId: result.createRouteTable.RouteTable.RouteTableId,
   };
   const routeTableResult = await associateRouteTable(client, associateRouteTableParams, region);
 
@@ -382,6 +407,7 @@ module.exports = awsPlugin.bootstrap(
   aws.EC2,
   {
     ...simpleAwsFunctions,
+    createInstance,
     modifyInstanceType,
     modifyInstanceAttribute,
     createVpc: createVpcWorkflow,

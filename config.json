@@ -6,7 +6,7 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "Amazon Elastic Cloud Compute - compute capacity in the cloud",
   "category": [
     "Compute"
@@ -153,6 +153,14 @@
           "description": "Set the \"Name\" tag of the created instance for easier future reference.",
           "placeholder": "my-new-instance",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
+        },
+        {
+          "name": "rootVolumeSize",
+          "viewName": "Root Volume Size",
+          "description": "The size of the root volume in GiB.",
+          "type": "int",
+          "default": 8,
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/block-device-mapping-concepts.html"
         },
         {
           "name": "TAGS_SPECIFICATION",
