@@ -26,7 +26,17 @@ async function getInstanceTypes(query, params, client, region) {
 }
 
 async function listSubnets(query, params, client) {
-  const subnets = await client.describeSubnets().promise();
+  const payload = {};
+  if (params.vpcId) {
+    payload.Filters = [
+      {
+        Name: "vpc-id",
+        Values: [params.vpcId],
+      },
+    ];
+  }
+
+  const subnets = await client.describeSubnets(payload).promise();
 
   return subnets.Subnets.filter(
     (subnet) => subnet.VpcId.includes(query)
