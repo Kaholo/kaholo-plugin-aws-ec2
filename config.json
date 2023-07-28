@@ -166,6 +166,7 @@
           "name": "TAGS_SPECIFICATION",
           "viewName": "Tags Specification",
           "type": "text",
+          "parserType": "tags",
           "placeholder": "ResourceType=volume\nResourceEnv=dev",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_TagSpecification.html",
           "description": "The tags to apply to the resources during launch. "
@@ -735,6 +736,7 @@
           "name": "tags",
           "viewName": "Tags",
           "type": "text",
+          "parserType": "tags",
           "description": "If specified, tag all resources created(At least the VPC, more if checked the create box for any other resource) with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. ",
           "placeholder": "stack=production",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
@@ -869,6 +871,7 @@
           "name": "tags",
           "viewName": "Tags",
           "type": "text",
+          "parserType": "tags",
           "description": "If specified, tag all resources created(Subnet and maybe Nat Gateway) with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. ",
           "placeholder": "stack=production",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
@@ -954,6 +957,7 @@
           "name": "tags",
           "viewName": "Tags",
           "type": "text",
+          "parserType": "tags",
           "description": "If specified, tag the NAT Gateway with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values separate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }.",
           "placeholder": "TeamA",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
@@ -993,6 +997,7 @@
           "name": "tags",
           "viewName": "Tags",
           "type": "text",
+          "parserType": "tags",
           "description": "If specified, tag the Internet Gateway with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }.",
           "placeholder": "TeamA",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
@@ -1157,6 +1162,7 @@
           "name": "tags",
           "viewName": "tags",
           "type": "text",
+          "parserType": "tags",
           "description": "If specified, tag the Route Table with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values separate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. ",
           "placeholder": "TeamA",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
@@ -1454,6 +1460,7 @@
           "name": "tags",
           "viewName": "Tags",
           "type": "text",
+          "parserType": "tags",
           "description": "If specified, tag the Security Group with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values separate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }.",
           "placeholder": "TeamA",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
@@ -1743,7 +1750,7 @@
           "name": "tags",
           "viewName": "Tags",
           "type": "text",
-          "parserType": "array",
+          "parserType": "tags",
           "required": true,
           "placeholder": "Name=mainInstance\nenv_type=staging",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html",
