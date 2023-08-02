@@ -26,8 +26,22 @@ const simpleAwsFunctions = {
   releaseAddress: awsPlugin.generateAwsMethod("releaseAddress", payloadFuncs.prepareReleaseAddressPayload),
   deleteVpc: awsPlugin.generateAwsMethod("deleteVpc", payloadFuncs.prepareDeleteVpcPayload),
   deleteSubnet: awsPlugin.generateAwsMethod("deleteSubnet", payloadFuncs.prepareDeleteSubnetPayload),
-  createTags: awsPlugin.generateAwsMethod("createTags", payloadFuncs.prepareCreateTagsPayload),
 };
+
+async function createTags(client, params, region) {
+  const awsCreateTags = awsPlugin.generateAwsMethod("createTags", payloadFuncs.prepareCreateTagsPayload);
+  await awsCreateTags(client, params, region);
+
+  const awsDescribeTags = awsPlugin.generateAwsMethod("describeTags", (describeTagsParams) => ({
+    Filters: [
+      {
+        Name: "resource-id",
+        Values: [describeTagsParams.resourceId],
+      },
+    ],
+  }));
+  return awsDescribeTags(client, params, region);
+}
 
 async function createInstance(client, params, region) {
   const awsCreateInstance = awsPlugin.generateAwsMethod("runInstances", payloadFuncs.prepareCreateInstancePayload);
@@ -36,8 +50,8 @@ async function createInstance(client, params, region) {
     return awsCreateInstance(client, params, region);
   }
 
-  const awsDescribeImages = awsPlugin.generateAwsMethod("describeImages", (passedParams) => ({
-    ImageIds: [passedParams.IMAGE_ID],
+  const awsDescribeImages = awsPlugin.generateAwsMethod("describeImages", (describeImagesParams) => ({
+    ImageIds: [describeImagesParams.IMAGE_ID],
   }));
 
   const describeImagesResult = await awsDescribeImages(client, params, region);
@@ -407,13 +421,14 @@ module.exports = awsPlugin.bootstrap(
   aws.EC2,
   {
     ...simpleAwsFunctions,
-    createInstance,
     modifyInstanceType,
     modifyInstanceAttribute,
+    createInstance,
     createVpc: createVpcWorkflow,
     createSubnet: createSubnetWorkflow,
     createInternetGateway: createInternetGatewayWorkflow,
     createRouteTable: createRouteTableWorkflow,
+    createTags,
     associateRouteTable,
     createVolume,
     createSnapshot,
