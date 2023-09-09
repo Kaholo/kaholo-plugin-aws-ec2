@@ -230,7 +230,8 @@
           "name": "WAIT_FOR_STOP",
           "viewName": "Wait for Stopped State",
           "description": "Wait for the specified instances to stop.",
-          "type": "boolean"
+          "type": "boolean",
+          "default": false
         }
       ]
     },
@@ -322,6 +323,7 @@
           "name": "DRYRUN",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         },
@@ -329,6 +331,7 @@
           "name": "GET_ALL_RECURSIVELY",
           "viewName": "Get All Results",
           "type": "boolean",
+          "default": false,
           "description": "Check this if you want to more than 1000 instances at once.",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html"
         }
@@ -477,6 +480,7 @@
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html"
         }
@@ -582,6 +586,7 @@
           "name": "DRYRUN",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
@@ -637,6 +642,7 @@
           "name": "DRYRUN",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
@@ -676,6 +682,7 @@
           "name": "DRYRUN",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
@@ -735,6 +742,7 @@
           "name": "createInternetGateway",
           "viewName": "Create Internet Gateway",
           "type": "boolean",
+          "default": false,
           "description": "If true, create an Internet gateway and attach it this VPC. Default value is false.",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html"
         },
@@ -751,6 +759,7 @@
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
@@ -783,6 +792,7 @@
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html "
         }
@@ -863,6 +873,7 @@
           "name": "createPrivateRouteTable",
           "viewName": "Create Private Route Table",
           "type": "boolean",
+          "default": false,
           "description": "If specified, it creates a new route table and connects it to the subnet.\nIn case a NAT Gateway was also created from this function, also create a default route from the route table to the NAT Gateway. This proccess needs to wait for the NAT Gateway to be available whichmight take a couple of minutes!",
           "learnUrl": "https://docs.aws.amazon.com/batch/latest/userguide/create-public-private-vpc.html"
         },
@@ -870,6 +881,7 @@
           "name": "mapPublicIpOnLaunch",
           "viewName": "Map Public IP On Launch",
           "type": "boolean",
+          "default": false,
           "description": "If specified modify the attribute 'Map Public IP On Launch' on the subnet to true, using this command: [documentaion](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.Ifhtml#modifySubnetAttribute-property). The subnet will map a public ip address to any instance launched from it.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/modify-subnet-attribute.html"
         },
@@ -886,6 +898,7 @@
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html "
         }
@@ -920,6 +933,7 @@
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
@@ -972,6 +986,7 @@
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
@@ -1012,6 +1027,7 @@
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
@@ -1053,6 +1069,7 @@
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
@@ -1118,6 +1135,7 @@
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
@@ -1177,6 +1195,7 @@
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
@@ -1227,6 +1246,7 @@
           "name": "DryRun",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
@@ -1337,6 +1357,7 @@
           "name": "encrypted",
           "viewName": "Is Encrypted",
           "type": "boolean",
+          "default": false,
           "description": "Indicates Whether to encrypt the volume or not. Encryption type depends on the volume origin (new or from a snapshot), starting encryption state, ownership, and whether encryption by default is enabled.",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html#encryption-by-default"
         },
@@ -1352,6 +1373,7 @@
           "name": "multiAttachEnabled",
           "viewName": "Multi Attach Enabled",
           "type": "boolean",
+          "default": false,
           "description": "Indicates whether to enable Amazon EBS Multi-Attach. If you enable Multi-Attach, you can attach the volume to up to 16 Instances built on the Nitro System in the same Availability Zone. This parameter is supported with io1 and io2 volumes only.",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volumes-multi.html"
         },
@@ -1359,6 +1381,7 @@
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.",
           "learnUrl": "https://github.com/Kaholo/kaholo-plugin-amazon-ec2"
         },
@@ -1366,6 +1389,7 @@
           "name": "waitForEnd",
           "viewName": "Wait Until Operation End",
           "type": "boolean",
+          "default": false,
           "description": "Wait until the end of the operation. The operation ends when the volume is ready."
         }
       ]
@@ -1413,6 +1437,7 @@
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.",
           "learnUrl": "https://github.com/Kaholo/kaholo-plugin-amazon-ec2"
         },
@@ -1420,6 +1445,7 @@
           "name": "waitForEnd",
           "viewName": "Wait Until Operation End",
           "type": "boolean",
+          "default": false,
           "description": "Wait until the end of the operation. The operation ends when the snapshot is completed."
         }
       ]
@@ -1484,6 +1510,7 @@
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
@@ -1731,6 +1758,7 @@
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
+          "default": false,
           "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
