@@ -396,9 +396,11 @@
         {
           "name": "attribute",
           "viewName": "Attribute",
-          "required": true,
           "learnUrl": "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html",
           "type": "options",
+          "required": true,
+          "default": "InstanceType",
+          "placeholder": "please select one",
           "options": [
             {
               "id": "InstanceType",
@@ -713,7 +715,9 @@
           "name": "instanceTenancy",
           "viewName": "Instance Tenancy",
           "type": "options",
+          "required": true,
           "default": "default",
+          "placeholder": "please select one",
           "options": [
             {
               "id": "default",
@@ -725,7 +729,6 @@
             }
           ],
           "description": "The tenancy options for instances launched into the VPC. value can be \"default\" or .\"dedicated\".",
-          "placeholder": "dedicated",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/dedicated-instance.html#change-tenancy-vpc"
         },
         {
@@ -1256,6 +1259,9 @@
           "name": "volumeType",
           "viewName": "Volume Type",
           "type": "options",
+          "required": true,
+          "default": "gp3",
+          "placeholder": "please select one",
           "options": [
             {
               "id": "standard",
@@ -1287,8 +1293,7 @@
             }
           ],
           "description": "The volume type.",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html",
-          "placeholder": "st1"
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html"
         },
         {
           "name": "size",
@@ -1511,6 +1516,9 @@
           "name": "ruleType",
           "viewName": "Rule Type",
           "type": "options",
+          "required": true,
+          "default": "Ingress-Authorize",
+          "placeholder": "please select one",
           "options": [
             {
               "id": "Ingress-Authorize",
@@ -1530,7 +1538,6 @@
             }
           ],
           "description": "The type of rules to create.\nPossible Values are: Ingress-Authorize/Egress-Authorize/Ingress-Revoke/Egress-Revoke. Default Value is Ingress-Authorize.",
-          "placeholder": "Ingress-Authorize",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-groups.html"
         },
         {
@@ -1563,6 +1570,9 @@
           "name": "ipProtocol",
           "viewName": "Ip Protocol",
           "type": "options",
+          "required": true,
+          "default": "TCP",
+          "placeholder": "please select one",
           "options": [
             {
               "id": "All",
@@ -1582,7 +1592,6 @@
             }
           ],
           "description": "The IP Protocol to apply to this rule(either authorized\\revoke access for this protocol).",
-          "placeholder": "TCP",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html"
         },
         {
@@ -1590,10 +1599,11 @@
           "viewName": "ICMP Type",
           "description": "ICMP types are used to identify control messages. Use this parameter if you chose ICMP protocol.",
           "learnUrl": "https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol#Control_messages",
-          "placeholder": "All",
           "type": "options",
-          "parserType": "number",
+          "required": true,
           "default": "-1",
+          "placeholder": "please select one",
+          "parserType": "number",
           "options": [
             {
               "id": "-1",
