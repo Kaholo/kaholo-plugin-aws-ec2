@@ -37,15 +37,17 @@
         "name": "accessKeyId",
         "viewName": "Access Key ID",
         "type": "vault",
-        "description": "The default AWS Access Key ID to use for authentication.",
+        "required": true,
+        "description": "AWS Access Key ID to use for authentication",
         "placeholder": "AKIAIOSFODNN7EXAMPLE",
         "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
       },
       {
         "name": "secretAccessKey",
-        "viewName": "Access Key Secret",
+        "viewName": "Secret Access Key",
         "type": "vault",
-        "description": "The default AWS Access Key secret to use for authentication.",
+        "required": true,
+        "description": "AWS Secret Access Key to use for authentication",
         "placeholder": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
         "learnUrl": "https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html#Using_CreateAccessKey"
       }
@@ -54,10 +56,11 @@
   "settings": [
     {
       "name": "region",
-      "viewName": "Region",
+      "viewName": "Default AWS Region",
       "type": "string",
-      "description": "The ID of the default region to make requests on.",
-      "learnUrl": "https://docs.aws.amazon.com/general/latest/gr/s3.html"
+      "description": "AWS Region to use by default",
+      "placeholder": "us-west-1",
+      "learnUrl": "https://docs.aws.amazon.com/general/latest/gr/rande.html#regional-endpoints"
     }
   ],
   "methods": [
