@@ -219,20 +219,17 @@ async function describeInstances(client, params, region) {
     DescribeInstancesCommand,
     payloadFuncs.prepareDescribeInstancesPayload,
   );
-  if (!params.GET_ALL_RECURSIVELY) {
-    return awsDescribeInstances(client, params, region);
-  }
 
-  const getAllInstancesRecursively = async (nextToken) => {
+  const getAllInstancesHelper = async (nextToken) => {
     const result = await awsDescribeInstances(client, { ...params, nextToken }, region);
-    if (result.NextToken) {
-      const recursiveResult = await getAllInstancesRecursively(result.NextToken);
+    if (result.NextToken && params.GET_ALL_RECURSIVELY) {
+      const recursiveResult = await getAllInstancesHelper(result.NextToken);
       return [...result.Reservations, ...recursiveResult];
     }
     return result.Reservations;
   };
 
-  const recursiveReservations = await getAllInstancesRecursively();
+  const recursiveReservations = await getAllInstancesHelper();
 
   return {
     Reservations: recursiveReservations,
