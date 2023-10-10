@@ -47,8 +47,8 @@ const {
 } = require("./autocomplete");
 
 const {
-  resolveSecurityGroupFunction,
   parseInstanceAttributeValue,
+  resolveSecurityGroupCommand,
 } = require("./helpers");
 
 const payloadFuncs = require("./payload-functions");
@@ -530,10 +530,12 @@ async function createSnapshot(client, params, region) {
 }
 
 async function addSecurityGroupRules(client, params) {
-  const payload = payloadFuncs.prepareAddSecurityGroupRulesPayload(params);
-  const funcName = resolveSecurityGroupFunction(params.ruleType);
+  const awsSecurityMethod = awsPlugin.generateAwsMethod(
+    resolveSecurityGroupCommand(params.ruleType),
+    payloadFuncs.prepareAddSecurityGroupRulesPayload,
+  );
 
-  return client[funcName](payload).promise();
+  return awsSecurityMethod(client, params);
 }
 
 module.exports = awsPlugin.bootstrap(

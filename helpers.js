@@ -1,3 +1,9 @@
+const {
+  AuthorizeSecurityGroupEgressCommand,
+  RevokeSecurityGroupIngressCommand,
+  RevokeSecurityGroupEgressCommand,
+  AuthorizeSecurityGroupIngressCommand,
+} = require("@aws-sdk/client-ec2");
 const _ = require("lodash");
 
 function strToBase64(value) {
@@ -7,16 +13,16 @@ function strToBase64(value) {
   return Buffer.from(value).toString("base64");
 }
 
-function resolveSecurityGroupFunction(ruleType) {
+function resolveSecurityGroupCommand(ruleType) {
   switch (ruleType) {
     case "Egress-Authorize":
-      return "authorizeSecurityGroupEgress";
+      return AuthorizeSecurityGroupEgressCommand;
     case "Ingress-Revoke":
-      return "revokeSecurityGroupIngress";
+      return RevokeSecurityGroupIngressCommand;
     case "Egress-Revoke":
-      return "revokeSecurityGroupEgress";
+      return RevokeSecurityGroupEgressCommand;
     default:
-      return "authorizeSecurityGroupIngress";
+      return AuthorizeSecurityGroupIngressCommand;
   }
 }
 
@@ -78,7 +84,7 @@ function parseInstanceAttributeValue(attributeName, attributeValue) {
 
 module.exports = {
   strToBase64,
-  resolveSecurityGroupFunction,
+  resolveSecurityGroupCommand,
   tryParseJson,
   createSubnetText,
   parseSinglePortRange,
