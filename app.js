@@ -242,7 +242,8 @@ async function modifyInstanceType(client, params) {
       InstanceId: instanceId,
       InstanceType: { Value: params.instanceType },
     };
-    return client.send(new ModifySubnetAttributeCommand(payload));
+
+    return client.send(new ModifyInstanceAttributeCommand(payload));
   }));
 }
 
