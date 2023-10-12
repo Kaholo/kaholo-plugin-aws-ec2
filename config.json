@@ -72,19 +72,20 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
           "name": "IMAGE_ID",
-          "viewName": "Image id",
+          "viewName": "AMI Image ID",
           "type": "string",
           "placeholder": "ami-0effcafbe4e502297",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html",
-          "description": "Amazon Machine Image (AMI) provides the information required to launch an instance."
+          "description": "An AMI is a template that contains the software configuration (operating system, application server, and applications) required to launch an instance."
         },
         {
           "name": "INSTANCE_TYPE",
@@ -92,87 +93,88 @@
           "type": "string",
           "placeholder": "c5.large",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html",
-          "description": "The machine type you want to launch for example: t2.micro"
+          "description": "Instance type determines quantity and type of computing, memory, networking, and disk resources made available to the instance."
         },
         {
           "name": "KEY_NAME",
-          "viewName": "Key name",
+          "viewName": "Key Pair Name",
           "type": "string",
-          "placeholder": "my_max_256_chars_key_pair",
+          "placeholder": "Dev us-west-1 key",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html",
-          "description": "If specified, encrypt the volume created for this instance using the specified Key pair."
+          "description": "Key pair name determines which private .pem or .ppk key may be used to access the new instance."
         },
         {
           "name": "SECURITY_GROUP_IDS",
           "viewName": "Security Group IDs",
           "type": "text",
           "parserType": "array",
-          "placeholder": "sg-33bb22aa",
+          "placeholder": "sg-0732f974a2bb68872\nsg-0a6d722bdcf84d883",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html",
-          "description": "Connect this instance to a security group. You will have to use a code or configuration to transfer the array to the API"
+          "description": "Security Groups act as firewall rules, determining which sorts of network traffic are allowed in and out of the instance. Specify one per line."
         },
         {
           "name": "USER_DATA",
-          "viewName": "User data",
+          "viewName": "User Data",
           "type": "text",
-          "placeholder": "/folder/script.sh\n#!/bin/sh\nyum update -y",
+          "placeholder": "#!/bin/bash\nyum update -y",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html",
-          "description": "Option of passing user data to the instance that can be used to perform common automated configuration tasks and even run scripts after the instance starts."
+          "description": "User data is a command or script that is automatically run after the instance is launched."
         },
         {
           "name": "MIN_COUNT",
-          "viewName": "minimum of instances",
+          "viewName": "Minimum Instances",
           "type": "string",
           "parserType": "number",
           "required": true,
           "default": "1",
           "placeholder": "1",
-          "description": "The minimum number of instances to launch (by default 1)."
+          "description": "Minimum number of instances to launch, if launching more than one"
         },
         {
           "name": "MAX_COUNT",
-          "viewName": "maximum of instances",
+          "viewName": "Maximum Instances",
           "type": "string",
           "parserType": "number",
           "required": true,
           "default": "1",
           "placeholder": "1",
-          "description": "The maximum number of instances to launch. The default is 1."
+          "description": "Maximum number of instances to launch, if launching more than one"
         },
         {
           "name": "subnetId",
           "viewName": "Subnet ID",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listSubnets",
-          "placeholder": "192.168.255.255",
+          "placeholder": "subnet-013732bf6396ec1a3",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-subnet.html",
-          "description": "If specified, host the instance on the specified Subnet."
+          "description": "The subnet on which the new instance will be networked"
         },
         {
           "name": "NAME_TAG",
           "viewName": "Name",
           "type": "string",
-          "description": "Set the \"Name\" tag of the created instance for easier future reference.",
-          "placeholder": "my-new-instance",
+          "description": "Optionally specify the \"Name\" tag of the new instance.",
+          "placeholder": "New Instance 001",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
           "name": "rootVolumeSize",
           "viewName": "Root Volume Size",
-          "description": "The size of the root volume in GiB.",
+          "description": "The size of the root volume in GiB",
           "type": "int",
-          "default": 8,
+          "default": 50,
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/block-device-mapping-concepts.html"
         },
         {
           "name": "TAGS_SPECIFICATION",
-          "viewName": "Tags Specification",
+          "viewName": "Tags",
           "type": "text",
           "parserType": "tags",
-          "placeholder": "ResourceType=volume\nResourceEnv=dev",
+          "placeholder": "ExpDate=20250101\nEnvironment=dev",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_TagSpecification.html",
-          "description": "The tags to apply to the resources during launch. "
+          "description": "Optional tags to apply to the resources during launch, as Key=Value pairs, one per line"
         }
       ]
     },
@@ -184,21 +186,22 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
           "name": "INSTANCE_IDS",
-          "viewName": "Instance ids (array)",
+          "viewName": "Instance IDs",
           "type": "text",
           "parserType": "array",
           "required": true,
-          "placeholder": "i-1234567a",
+          "placeholder": "i-0be1543f4d4cf2736",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
-          "description": "The ID of the instance(s) to start."
+          "description": "The IDs of the instances to start, one per line"
         }
       ]
     },
@@ -210,26 +213,27 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
           "name": "INSTANCE_IDS",
-          "viewName": "Instance ids (array)",
+          "viewName": "Instance IDs",
           "type": "text",
           "parserType": "array",
           "required": true,
-          "placeholder": "i-1234567a",
+          "placeholder": "i-0be1543f4d4cf2736",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
-          "description": "The ID of the instance(s) to stop."
+          "description": "The IDs of the instances to stop, one per line"
         },
         {
           "name": "WAIT_FOR_STOP",
           "viewName": "Wait for Stopped State",
-          "description": "Wait for the specified instances to stop.",
+          "description": "Wait for the specified instances to stop completely before continuing with pipeline",
           "type": "boolean",
           "default": false
         }
@@ -243,21 +247,22 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
           "name": "INSTANCE_IDS",
-          "viewName": "Instance ids (array)",
+          "viewName": "Instance IDs",
           "type": "text",
           "parserType": "array",
           "required": true,
-          "placeholder": "i-1234567a",
+          "placeholder": "i-0be1543f4d4cf2736",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
-          "description": "The ID of the instance(s) to reboot."
+          "description": "The IDs of the instances to reboot, one per line"
         }
       ]
     },
@@ -269,21 +274,22 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
           "name": "INSTANCE_IDS",
-          "viewName": "Instance Ids",
+          "viewName": "Instance IDs",
           "type": "string",
           "parserType": "array",
           "required": true,
-          "placeholder": "i-1234567a",
+          "placeholder": "i-0be1543f4d4cf2736",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
-          "description": "The ID of the instance(s) to terminate."
+          "description": "The IDs of the instances to TERMINATE, one per line"
         }
       ]
     },
@@ -295,27 +301,28 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
           "name": "INSTANCE_IDS",
-          "viewName": "Instance Ids",
+          "viewName": "Instance IDs",
           "type": "text",
           "parserType": "array",
-          "description": "The IDs of the instances. Can be an array of instances.",
-          "placeholder": "i-1234567a",
+          "description": "Optional IDs of specific instances to describe, one per line. If empty all instances may be described.",
+          "placeholder": "i-0be1543f4d4cf2736",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html"
         },
         {
           "name": "filters",
-          "viewName": "Filters (Array)",
+          "viewName": "Filters",
           "type": "text",
           "parserType": "array",
-          "description": "Array of filters",
+          "description": "Optional array of filters to select specific instances",
           "placeholder": "[{\"Name\": \"instance-state-name\",\"Values\": [\"running\"]}]",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html"
         },
@@ -324,7 +331,7 @@
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         },
         {
@@ -332,7 +339,7 @@
           "viewName": "Get All Results",
           "type": "boolean",
           "default": false,
-          "description": "Check this if you want to more than 1000 instances at once.",
+          "description": "If enabled, retrieves all results instead of only the first 1000 instances.",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeInstances.html"
         }
       ]
@@ -345,10 +352,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -357,8 +365,8 @@
           "type": "text",
           "parserType": "array",
           "required": true,
-          "description": "Accepts either a string with one or multiple instance IDs each separated with a new line, or an array of instance ID strings passed from the code layer.",
-          "placeholder": "i-1234567a"
+          "description": "The IDs of the instances to modify, one per line",
+          "placeholder": "i-0be1ac1f3d4cf2736"
         },
         {
           "name": "instanceType",
@@ -367,7 +375,7 @@
           "required": true,
           "autocompleteType": "function",
           "functionName": "getInstanceTypes",
-          "description": "The machine type you want to launch for example: t2.micro",
+          "description": "Instance type determines quantity and type of computing, memory, networking, and disk resources made available to the instance.",
           "placeholder": "c5.large",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html"
         }
@@ -381,10 +389,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -393,8 +402,8 @@
           "type": "text",
           "parserType": "array",
           "required": true,
-          "description": "Accepts either a string with one or multiple instance IDs each separated with a new line, or an array of instance ID strings passed from the code layer.",
-          "placeholder": "i-1234567a"
+          "description": "The IDs of the instances to modify, one per line",
+          "placeholder": "i-0be1543f4d4cf2736\ni-0481e6195a720ee46"
         },
         {
           "name": "attribute",
@@ -469,19 +478,19 @@
         },
         {
           "name": "attributeValue",
-          "viewName": "Attribute value",
+          "viewName": "Attribute Value",
           "type": "string",
           "required": true,
-          "placeholder": "m1.large",
+          "placeholder": "",
           "learnUrl": "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html",
-          "description": "The new value of an attribute."
+          "description": "A new value for the attribute"
         },
         {
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ec2/modify-instance-attribute.html"
         }
       ]
@@ -494,20 +503,21 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
           "name": "KEY_PAIR_NAME",
-          "viewName": "Key pair name",
+          "viewName": "Key Pair Name",
           "type": "string",
           "required": true,
-          "placeholder": "my_max_256_chars_key_pair",
+          "placeholder": "Dev us-west-1 key",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html",
-          "description": "A descriptive name for the Key pair."
+          "description": "A name for the new key pair."
         }
       ]
     },
@@ -519,20 +529,21 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
           "name": "KEY_PAIR_NAME",
-          "viewName": "Key pair name",
+          "viewName": "Key Pair Name",
           "type": "string",
           "required": true,
-          "placeholder": "my_max_256_chars_key_pair",
+          "placeholder": "Dev us-west-1 key",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html",
-          "description": "The name of the Key pair to delete."
+          "description": "The name of the key pair to delete."
         }
       ]
     },
@@ -544,10 +555,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         }
       ]
@@ -560,10 +572,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -578,7 +591,7 @@
           "name": "PUBLICIPV4POOL",
           "viewName": "Public IPv4 Pool",
           "type": "string",
-          "placeholder": "ipv4pool-ec2-1234567890abcdef0",
+          "placeholder": "ipv4pool-ec2-0533048da7d823723",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-public-ipv4-pools.html",
           "description": "The ID of an address pool that you own. Use this parameter to let Amazon EC2 select an address from the address pool. To specify a specific address from the address pool, use the Address parameter instead."
         },
@@ -587,7 +600,7 @@
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
@@ -600,27 +613,29 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
           "name": "ALLOCATION_ID",
           "viewName": "Allocation Id",
           "type": "string",
-          "placeholder": "eipalloc-12345678",
+          "required": true,
+          "placeholder": "eipalloc-0940f67a55db34d52",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-addresses.html",
-          "description": "The allocation ID. This is required for EC2-VPC."
+          "description": "The elastic IP allocation to be associated"
         },
         {
           "name": "INSTANCE_ID",
           "viewName": "Instance Id",
           "type": "string",
-          "placeholder": "i-1234567a",
+          "placeholder": "i-0be1543f4d4cf2736",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html",
-          "description": "The IDs of the instances. Can be an array of instance IDs."
+          "description": "ID of an instance if associating to an EC2 instance"
         },
         {
           "name": "NETWORK_INTERFACE_ID",
@@ -628,7 +643,7 @@
           "type": "string",
           "placeholder": "eni-0070b14946example",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html",
-          "description": "The ID of the network interface. If the instance has more than one network interface, you must specify a network interface ID."
+          "description": "ID of an interface if associating to an elastic network interface"
         },
         {
           "name": "PRIVATE_IP_ADDRESS",
@@ -636,14 +651,14 @@
           "type": "string",
           "placeholder": "172.20.20.20",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html",
-          "description": "The primary or secondary private IP address to associate with the Elastic IP address."
+          "description": "A private IP address if associating with an IP address"
         },
         {
           "name": "DRYRUN",
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
@@ -656,34 +671,27 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
           "name": "ALLOCATION_ID",
           "viewName": "Allocation Id",
           "type": "string",
-          "description": "The allocation ID. This is required for EC2-VPC.",
-          "placeholder": "eipalloc-12345678",
+          "description": "The elastic IP allocation to be released",
+          "placeholder": "eipalloc-0940f67a55db34d52",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-addresses.html"
-        },
-        {
-          "name": "PUBLIC_IP",
-          "viewName": "Public Ip",
-          "type": "string",
-          "description": "The Elastic IP address to associate with the instance. This is required for EC2-Classic.",
-          "placeholder": "8.8.8.8",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-instance-addressing.html"
         },
         {
           "name": "DRYRUN",
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
@@ -696,10 +704,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -751,8 +760,8 @@
           "viewName": "Tags",
           "type": "text",
           "parserType": "tags",
-          "description": "If specified, tag all resources created(At least the VPC, more if checked the create box for any other resource) with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. ",
-          "placeholder": "stack=production",
+          "description": "Optional tags to apply to AWS resources, as Key or Key=Value pairs, one per line",
+          "placeholder": "stack=production\nLinux\ndevGroup=TeamA",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
@@ -760,7 +769,7 @@
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
@@ -773,10 +782,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -785,7 +795,7 @@
           "type": "string",
           "required": true,
           "description": "The ID of the VPC.",
-          "placeholder": "vpc-2f09a348",
+          "placeholder": "vpc-07afa79bb4a0da65f",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
         },
         {
@@ -806,10 +816,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -818,7 +829,7 @@
           "type": "string",
           "required": true,
           "description": "The ID of the VPC.",
-          "placeholder": "vpc-2f09a348",
+          "placeholder": "vpc-07afa79bb4a0da65f",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html "
         },
         {
@@ -833,8 +844,8 @@
           "name": "availabilityZone",
           "viewName": "Availability Zone",
           "type": "string",
-          "description": "The Availability Zone or Local Zone for the subnet.Default(if not provided):AWS selects one for you. If you create more than one subnet in your VPC, AWS does not necessarily select a different zone for each subnet.\nTo create a subnet in a Local Zone, set this value to the Local Zone ID, for example us-west-2-lax-1a. For information about the Regions that support Local Zones, see Available Regions in the Amazon Elastic Compute Cloud User Guide. To create a subnet in an Outpost, set this value to the Availability Zone for the Outpost and specify the Outpost ARN.",
-          "placeholder": "us-west-2-lax-1a",
+          "description": "The Availability Zone or Local Zone for the subnet.Default(if not provided):AWS selects one for you. If you create more than one subnet in your VPC, AWS does not necessarily select a different zone for each subnet.\nTo create a subnet in a Local Zone, set this value to the Local Zone ID, for example us-west-1c. For information about the Regions that support Local Zones, see Available Regions in the Amazon Elastic Compute Cloud User Guide. To create a subnet in an Outpost, set this value to the Availability Zone for the Outpost and specify the Outpost ARN.",
+          "placeholder": "us-west-1c",
           "learnUrl": "https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/RegionsAndAZs.html"
         },
         {
@@ -890,8 +901,8 @@
           "viewName": "Tags",
           "type": "text",
           "parserType": "tags",
-          "description": "If specified, tag all resources created(Subnet and maybe Nat Gateway) with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. ",
-          "placeholder": "stack=production",
+          "description": "Optional tags to apply to AWS resources, as Key or Key=Value pairs, one per line",
+          "placeholder": "stack=production\nLinux\ndevGroup=TeamA",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
@@ -899,7 +910,7 @@
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html "
         }
       ]
@@ -912,10 +923,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -934,7 +946,7 @@
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
@@ -947,10 +959,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -970,7 +983,7 @@
           "type": "string",
           "required": true,
           "description": "The allocation ID of an Elastic IP address to associate with the NAT gateway. If the Elastic IP address is associated with another resource, you must first disassociate it.",
-          "placeholder": "eipalloc-12345678",
+          "placeholder": "eipalloc-0940f67a55db34d52",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-addresses.html"
         },
         {
@@ -978,8 +991,8 @@
           "viewName": "Tags",
           "type": "text",
           "parserType": "tags",
-          "description": "If specified, tag the NAT Gateway with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values separate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }.",
-          "placeholder": "TeamA",
+          "description": "Optional tags to apply to AWS resources, as Key or Key=Value pairs, one per line",
+          "placeholder": "stack=production\nLinux\ndevGroup=TeamA",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
@@ -987,7 +1000,7 @@
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
@@ -1000,10 +1013,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1011,7 +1025,7 @@
           "viewName": "VPC ID",
           "type": "string",
           "description": "If specified, attach the newly created Internet Gateway to the specified VPC.",
-          "placeholder": "vpc-2f09a348",
+          "placeholder": "vpc-07afa79bb4a0da65f",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
         },
         {
@@ -1019,8 +1033,8 @@
           "viewName": "Tags",
           "type": "text",
           "parserType": "tags",
-          "description": "If specified, tag the Internet Gateway with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values seperate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }.",
-          "placeholder": "TeamA",
+          "description": "Optional tags to apply to AWS resources, as Key or Key=Value pairs, one per line",
+          "placeholder": "stack=production\nLinux\ndevGroup=TeamA",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
@@ -1028,7 +1042,7 @@
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
@@ -1041,10 +1055,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1053,7 +1068,7 @@
           "type": "string",
           "required": true,
           "description": "The ID of the internet gateway to attach to the VPC.",
-          "placeholder": "igw-c0a643a9",
+          "placeholder": "igw-0045a43e322aa82f0",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/attach-internet-gateway.html"
         },
         {
@@ -1062,7 +1077,7 @@
           "type": "string",
           "required": true,
           "description": "The ID of the VPC to attach the internet gateway to.",
-          "placeholder": "vpc-2f09a348",
+          "placeholder": "vpc-07afa79bb4a0da65f",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
         },
         {
@@ -1070,7 +1085,7 @@
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
@@ -1083,10 +1098,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1103,7 +1119,7 @@
           "viewName": "Gateway ID",
           "type": "string",
           "description": "ID of an internet gateway. If specified, make the Internet Gateway specify the target of the route.",
-          "placeholder": "igw-c0a643a9",
+          "placeholder": "igw-0045a43e322aa82f0",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/attach-internet-gateway.html"
         },
         {
@@ -1119,7 +1135,7 @@
           "viewName": "Instance ID",
           "type": "string",
           "description": "ID of an Instance. If specified, make the Instance specify the target of the route.",
-          "placeholder": "i-1234567a",
+          "placeholder": "i-0be1543f4d4cf2736",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html"
         },
         {
@@ -1136,7 +1152,7 @@
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
@@ -1149,10 +1165,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1161,7 +1178,7 @@
           "type": "string",
           "required": true,
           "description": "The VPC to create this Route Table in.",
-          "placeholder": "vpc-2f09a348",
+          "placeholder": "vpc-07afa79bb4a0da65f",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
         },
         {
@@ -1179,7 +1196,7 @@
           "viewName": "Gateway ID",
           "type": "string",
           "description": "If specified, associate the created Route Table with the specified Internet Gateway.",
-          "placeholder": "igw-c0a643a9",
+          "placeholder": "igw-0045a43e322aa82f0",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/attach-internet-gateway.html"
         },
         {
@@ -1187,8 +1204,8 @@
           "viewName": "tags",
           "type": "text",
           "parserType": "tags",
-          "description": "If specified, tag the Route Table with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values separate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }. ",
-          "placeholder": "TeamA",
+          "description": "Optional tags to apply to AWS resources, as Key or Key=Value pairs, one per line",
+          "placeholder": "stack=production\nLinux\ndevGroup=TeamA",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
@@ -1196,7 +1213,7 @@
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
@@ -1209,10 +1226,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1239,7 +1257,7 @@
           "viewName": "Gateway ID",
           "type": "string",
           "description": "If specified, associate the route table with the specified internet gateway.",
-          "placeholder": "igw-c0a643a9",
+          "placeholder": "igw-0045a43e322aa82f0",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/attach-internet-gateway.html"
         },
         {
@@ -1247,7 +1265,7 @@
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
@@ -1260,10 +1278,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1382,7 +1401,7 @@
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.",
           "learnUrl": "https://github.com/Kaholo/kaholo-plugin-amazon-ec2"
         },
         {
@@ -1402,10 +1421,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1438,7 +1458,7 @@
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources If you have the required permissions, the error response is DryRunOperation. Otherwise, it is UnauthorizedOperation.",
           "learnUrl": "https://github.com/Kaholo/kaholo-plugin-amazon-ec2"
         },
         {
@@ -1458,10 +1478,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1470,16 +1491,16 @@
           "type": "string",
           "required": true,
           "description": "The name of the new security group to create.",
-          "placeholder": "security-grp-1",
+          "placeholder": "Allow Web Traffic",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
         },
         {
           "name": "description",
-          "viewName": "Group description",
+          "viewName": "Description",
           "type": "text",
           "required": true,
-          "description": "The description of the security group.",
-          "placeholder": "This is my organization's security group.",
+          "description": "A description for the new security group",
+          "placeholder": "Allows web traffic on TCP ports 80, 443, and 8080-8090",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
         },
         {
@@ -1487,7 +1508,7 @@
           "viewName": "VPC ID",
           "type": "string",
           "description": "The ID of the VPC. Required for EC2-VPC Security Group.",
-          "placeholder": "vpc-2f09a348",
+          "placeholder": "vpc-07afa79bb4a0da65f",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html"
         },
         {
@@ -1495,8 +1516,8 @@
           "viewName": "Tags",
           "type": "text",
           "parserType": "tags",
-          "description": "If specified, tag the Security Group with the tags specified. Each tag should either be in the format of Key=Value or just Key. To enter multiple values separate each with a new line. Also accepts getting an array of objects in the form of { Key, Value } or { Key }.",
-          "placeholder": "TeamA",
+          "description": "Optional tags to apply to AWS resources, as Key or Key=Value pairs, one per line",
+          "placeholder": "stack=production\nLinux\ndevGroup=TeamA",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         },
         {
@@ -1504,14 +1525,15 @@
           "viewName": "Disallow Any Outbound Traffic",
           "description": "Disallow any outgoing traffic. Default is false.",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html",
-          "type": "boolean"
+          "type": "boolean",
+          "default": false
         },
         {
           "name": "dryRun",
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
@@ -1524,10 +1546,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1536,7 +1559,7 @@
           "type": "string",
           "required": true,
           "description": "The ID of the security group to add the rules to.",
-          "placeholder": "sg-33bb22aa",
+          "placeholder": "sg-0e8ed808c40b0f2b0",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
         },
         {
@@ -1586,16 +1609,17 @@
         },
         {
           "name": "portRanges",
-          "viewName": "Port Ranges",
+          "viewName": "Port Range(s)",
           "type": "text",
           "parserType": "array",
           "description": "Ranges of allowed ports for this rule. You can specify a range of ports or just one port. Please specify one range per line.",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-security-group-rules.html",
-          "placeholder": "8090\n9010-9015\n*"
+          "placeholder": "80\n443\n8080-8090"
         },
         {
           "name": "ipProtocol",
-          "viewName": "Ip Protocol",
+          "viewName": "Protocol",
+          "description": "The protocol to which this rule applies",
           "type": "options",
           "required": true,
           "default": "TCP",
@@ -1618,13 +1642,12 @@
               "name": "ICMP"
             }
           ],
-          "description": "The IP Protocol to apply to this rule(either authorized\\revoke access for this protocol).",
           "learnUrl": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html"
         },
         {
           "name": "icmpType",
           "viewName": "ICMP Type",
-          "description": "ICMP types are used to identify control messages. Use this parameter if you chose ICMP protocol.",
+          "description": "If specified protocol is ICMP, optionally select a specific type to target with this rule.",
           "learnUrl": "https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol#Control_messages",
           "type": "options",
           "required": true,
@@ -1750,8 +1773,8 @@
           "name": "description",
           "viewName": "Description",
           "type": "text",
-          "description": "The description of the rules created.",
-          "placeholder": "This is my organization's security group.",
+          "description": "Optional description for the rule",
+          "placeholder": "Allow web traffic",
           "learnUrl": "https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html"
         },
         {
@@ -1759,7 +1782,7 @@
           "viewName": "Dry Run",
           "type": "boolean",
           "default": false,
-          "description": "Checks whether you have the required permissions for the action, without actually making the request, and provides an error response.",
+          "description": "Checks to see if credentials have sufficient privileges for the action without having any effect on AWS resources",
           "learnUrl": "https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-help.html"
         }
       ]
@@ -1772,10 +1795,11 @@
           "name": "region",
           "viewName": "Region",
           "type": "autocomplete",
+          "required": true,
           "autocompleteType": "function",
           "functionName": "listRegions",
-          "description": "The region to execute the request in.",
-          "placeholder": "us-east-2",
+          "description": "AWS region in which the action is to be executed",
+          "placeholder": "us-west-1",
           "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html"
         },
         {
@@ -1793,9 +1817,9 @@
           "type": "text",
           "parserType": "tags",
           "required": true,
-          "placeholder": "Name=mainInstance\nenv_type=staging",
-          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html",
-          "description": "Tags key=value pairs. Existing keys will be overridden."
+          "description": "Tags to apply to AWS resources, as Key or Key=Value pairs, one per line",
+          "placeholder": "stack=production\nLinux\ndevGroup=TeamA",
+          "learnUrl": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html"
         }
       ]
     }
