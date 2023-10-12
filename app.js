@@ -1,58 +1,154 @@
 const _ = require("lodash");
-const aws = require("aws-sdk");
-const awsPlugin = require("@kaholo/aws-plugin-library");
+const awsPluginLibrary = require("@kaholo/aws-plugin-library");
+const {
+  EC2,
+  StartInstancesCommand,
+  RebootInstancesCommand,
+  TerminateInstancesCommand,
+  CreateNatGatewayCommand,
+  CreateRouteCommand,
+  ModifySubnetAttributeCommand,
+  AttachInternetGatewayCommand,
+  CreateKeyPairCommand,
+  DeleteKeyPairCommand,
+  DescribeKeyPairsCommand,
+  AllocateAddressCommand,
+  AssociateAddressCommand,
+  ReleaseAddressCommand,
+  DeleteVpcCommand,
+  DeleteSubnetCommand,
+  CreateTagsCommand,
+  DescribeTagsCommand,
+  RunInstancesCommand,
+  DescribeImagesCommand,
+  CreateSecurityGroupCommand,
+  StopInstancesCommand,
+  DescribeInstancesCommand,
+  AssociateRouteTableCommand,
+  CreateInternetGatewayCommand,
+  CreateRouteTableCommand,
+  CreateVpcCommand,
+  CreateSubnetCommand,
+  CreateVolumeCommand,
+  CreateSnapshotCommand,
+  DescribeSecurityGroupRulesCommand,
+  RevokeSecurityGroupEgressCommand,
+  ModifyInstanceAttributeCommand,
+  waitUntilInstanceStopped,
+  waitUntilNatGatewayAvailable,
+  waitUntilVolumeAvailable,
+  waitUntilSnapshotCompleted,
+  DescribeSnapshotsCommand,
+  DescribeVolumesCommand,
+} = require("@aws-sdk/client-ec2");
 
 const {
   getInstanceTypes,
   listRegions,
   listSubnets,
 } = require("./autocomplete");
-const { resolveSecurityGroupFunction, parseInstanceAttributeValue } = require("./helpers");
+
+const {
+  parseInstanceAttributeValue,
+  resolveSecurityGroupCommand,
+} = require("./helpers");
+
 const payloadFuncs = require("./payload-functions");
 
 const simpleAwsFunctions = {
-  startInstances: awsPlugin.generateAwsMethod("startInstances", payloadFuncs.prepareManageInstancesPayload),
-  rebootInstances: awsPlugin.generateAwsMethod("rebootInstances", payloadFuncs.prepareManageInstancesPayload),
-  terminateInstances: awsPlugin.generateAwsMethod("terminateInstances", payloadFuncs.prepareManageInstancesPayload),
-  createNatGateway: awsPlugin.generateAwsMethod("createNatGateway", payloadFuncs.prepareCreateNatGatewayPayload),
-  createRoute: awsPlugin.generateAwsMethod("createRoute", payloadFuncs.prepareCreateRoutePayload),
-  modifySubnetAttribute: awsPlugin.generateAwsMethod("modifySubnetAttribute"),
-  attachInternetGateway: awsPlugin.generateAwsMethod("attachInternetGateway", payloadFuncs.prepareAttachInternetGatewayPayload),
-  createKeyPair: awsPlugin.generateAwsMethod("createKeyPair", payloadFuncs.prepareManageKeyPairsPayload),
-  deleteKeyPair: awsPlugin.generateAwsMethod("deleteKeyPair", payloadFuncs.prepareManageKeyPairsPayload),
-  describeKeyPairs: awsPlugin.generateAwsMethod("describeKeyPairs"),
-  allocateAddress: awsPlugin.generateAwsMethod("allocateAddress", payloadFuncs.prepareAllocateAddressPayload),
-  associateAddress: awsPlugin.generateAwsMethod("associateAddress", payloadFuncs.prepareAssociateAddressPayload),
-  releaseAddress: awsPlugin.generateAwsMethod("releaseAddress", payloadFuncs.prepareReleaseAddressPayload),
-  deleteVpc: awsPlugin.generateAwsMethod("deleteVpc", payloadFuncs.prepareDeleteVpcPayload),
-  deleteSubnet: awsPlugin.generateAwsMethod("deleteSubnet", payloadFuncs.prepareDeleteSubnetPayload),
+  startInstances: awsPluginLibrary.generateAwsMethod(
+    StartInstancesCommand,
+    payloadFuncs.prepareManageInstancesPayload,
+  ),
+  rebootInstances: awsPluginLibrary.generateAwsMethod(
+    RebootInstancesCommand,
+    payloadFuncs.prepareManageInstancesPayload,
+  ),
+  terminateInstances: awsPluginLibrary.generateAwsMethod(
+    TerminateInstancesCommand,
+    payloadFuncs.prepareManageInstancesPayload,
+  ),
+  createNatGateway: awsPluginLibrary.generateAwsMethod(
+    CreateNatGatewayCommand,
+    payloadFuncs.prepareCreateNatGatewayPayload,
+  ),
+  createRoute: awsPluginLibrary.generateAwsMethod(
+    CreateRouteCommand,
+    payloadFuncs.prepareCreateRoutePayload,
+  ),
+  modifySubnetAttribute: awsPluginLibrary.generateAwsMethod(ModifySubnetAttributeCommand),
+  attachInternetGateway: awsPluginLibrary.generateAwsMethod(
+    AttachInternetGatewayCommand,
+    payloadFuncs.prepareAttachInternetGatewayPayload,
+  ),
+  createKeyPair: awsPluginLibrary.generateAwsMethod(
+    CreateKeyPairCommand,
+    payloadFuncs.prepareManageKeyPairsPayload,
+  ),
+  deleteKeyPair: awsPluginLibrary.generateAwsMethod(
+    DeleteKeyPairCommand,
+    payloadFuncs.prepareManageKeyPairsPayload,
+  ),
+  describeKeyPairs: awsPluginLibrary.generateAwsMethod(DescribeKeyPairsCommand),
+  allocateAddress: awsPluginLibrary.generateAwsMethod(
+    AllocateAddressCommand,
+    payloadFuncs.prepareAllocateAddressPayload,
+  ),
+  associateAddress: awsPluginLibrary.generateAwsMethod(
+    AssociateAddressCommand,
+    payloadFuncs.prepareAssociateAddressPayload,
+  ),
+  releaseAddress: awsPluginLibrary.generateAwsMethod(
+    ReleaseAddressCommand,
+    payloadFuncs.prepareReleaseAddressPayload,
+  ),
+  deleteVpc: awsPluginLibrary.generateAwsMethod(
+    DeleteVpcCommand,
+    payloadFuncs.prepareDeleteVpcPayload,
+  ),
+  deleteSubnet: awsPluginLibrary.generateAwsMethod(
+    DeleteSubnetCommand,
+    payloadFuncs.prepareDeleteSubnetPayload,
+  ),
 };
 
 async function createTags(client, params, region) {
-  const awsCreateTags = awsPlugin.generateAwsMethod("createTags", payloadFuncs.prepareCreateTagsPayload);
+  const awsCreateTags = awsPluginLibrary.generateAwsMethod(
+    CreateTagsCommand,
+    payloadFuncs.prepareCreateTagsPayload,
+  );
   await awsCreateTags(client, params, region);
 
-  const awsDescribeTags = awsPlugin.generateAwsMethod("describeTags", (describeTagsParams) => ({
-    Filters: [
-      {
-        Name: "resource-id",
-        Values: [describeTagsParams.resourceId],
-      },
-    ],
-  }));
+  const awsDescribeTags = awsPluginLibrary.generateAwsMethod(
+    DescribeTagsCommand,
+    (describeTagsParams) => ({
+      Filters: [
+        {
+          Name: "resource-id",
+          Values: [describeTagsParams.resourceId],
+        },
+      ],
+    }),
+  );
   return awsDescribeTags(client, params, region);
 }
 
 async function createInstance(client, params, region) {
-  const awsCreateInstance = awsPlugin.generateAwsMethod("runInstances", payloadFuncs.prepareCreateInstancePayload);
+  const awsCreateInstance = awsPluginLibrary.generateAwsMethod(
+    RunInstancesCommand,
+    payloadFuncs.prepareCreateInstancePayload,
+  );
 
   if (!params.rootVolumeSize) {
     return awsCreateInstance(client, params, region);
   }
 
-  const awsDescribeImages = awsPlugin.generateAwsMethod("describeImages", (describeImagesParams) => ({
-    ImageIds: [describeImagesParams.IMAGE_ID],
-  }));
+  const awsDescribeImages = awsPluginLibrary.generateAwsMethod(
+    DescribeImagesCommand,
+    (describeImagesParams) => ({
+      ImageIds: [describeImagesParams.IMAGE_ID],
+    }),
+  );
 
   const describeImagesResult = await awsDescribeImages(client, params, region);
   const {
@@ -70,7 +166,10 @@ async function createInstance(client, params, region) {
 }
 
 async function createSecurityGroup(client, params, region) {
-  const awsCreateSecurityGroup = awsPlugin.generateAwsMethod("createSecurityGroup", payloadFuncs.prepareCreateSecurityGroupPayload);
+  const awsCreateSecurityGroup = awsPluginLibrary.generateAwsMethod(
+    CreateSecurityGroupCommand,
+    payloadFuncs.prepareCreateSecurityGroupPayload,
+  );
   const securityGroup = await awsCreateSecurityGroup(client, params, region);
 
   if (!params.disallowOutboundTraffic) {
@@ -78,58 +177,64 @@ async function createSecurityGroup(client, params, region) {
   }
 
   // Get security group rules
-  const { SecurityGroupRules: groupRules } = await client.describeSecurityGroupRules({
-    Filters: [{
-      Name: "group-id",
-      Values: [securityGroup.GroupId],
-    }],
-  }).promise();
-    // Filter out the egress rules and map the ids
+  const { SecurityGroupRules: groupRules } = await client.send(
+    new DescribeSecurityGroupRulesCommand({
+      Filters: [{
+        Name: "group-id",
+        Values: [securityGroup.GroupId],
+      }],
+    }),
+  );
+
+  // Filter out the egress rules and map the ids
   const groupRuleIds = groupRules
     .filter((rule) => rule.IsEgress)
     .map((rule) => rule.SecurityGroupRuleId);
-    // Revoke the rules
-  await client.revokeSecurityGroupEgress({
+
+  // Revoke the rules
+  await client.send(new RevokeSecurityGroupEgressCommand({
     GroupId: securityGroup.GroupId,
     SecurityGroupRuleIds: groupRuleIds,
-  }).promise();
+  }));
 
   return securityGroup;
 }
 
 async function stopInstances(client, params, region) {
-  const awsStopInstances = awsPlugin.generateAwsMethod("stopInstances", payloadFuncs.prepareManageInstancesPayload);
+  const awsStopInstances = awsPluginLibrary.generateAwsMethod(
+    StopInstancesCommand,
+    payloadFuncs.prepareManageInstancesPayload,
+  );
   const stopResult = await awsStopInstances(client, params, region);
 
   if (!params.WAIT_FOR_STOP) {
     return stopResult;
   }
 
-  const waitResult = await client.waitFor(
-    "instanceStopped",
-    { InstanceIds: params.INSTANCE_IDS },
-  ).promise();
+  const waitResult = await waitUntilInstanceStopped({ client }, {
+    InstanceIds: params.INSTANCE_IDS,
+  });
 
   console.info("CurrentState is stopped for all instances.");
   return waitResult;
 }
 
 async function describeInstances(client, params, region) {
-  const awsDescribeInstances = awsPlugin.generateAwsMethod("describeInstances", payloadFuncs.prepareDescribeInstancesPayload);
-  if (!params.GET_ALL_RECURSIVELY) {
-    return awsDescribeInstances(client, params, region);
-  }
+  const awsDescribeInstances = awsPluginLibrary.generateAwsMethod(
+    DescribeInstancesCommand,
+    payloadFuncs.prepareDescribeInstancesPayload,
+  );
 
-  const getAllInstancesRecursively = async (nextToken) => {
+  const getAllInstancesHelper = async (nextToken) => {
     const result = await awsDescribeInstances(client, { ...params, nextToken }, region);
-    if (result.NextToken) {
-      const recursiveResult = await getAllInstancesRecursively(result.NextToken);
+    if (result.NextToken && params.GET_ALL_RECURSIVELY) {
+      const recursiveResult = await getAllInstancesHelper(result.NextToken);
       return [...result.Reservations, ...recursiveResult];
     }
     return result.Reservations;
   };
 
-  const recursiveReservations = await getAllInstancesRecursively();
+  const recursiveReservations = await getAllInstancesHelper();
 
   return {
     Reservations: recursiveReservations,
@@ -142,7 +247,8 @@ async function modifyInstanceType(client, params) {
       InstanceId: instanceId,
       InstanceType: { Value: params.instanceType },
     };
-    return client.modifyInstanceAttribute(payload).promise();
+
+    return client.send(new ModifyInstanceAttributeCommand(payload));
   }));
 }
 
@@ -156,13 +262,19 @@ async function modifyInstanceAttribute(client, params) {
       },
     };
 
-    return client.modifyInstanceAttribute(payload).promise();
+    return client.send(new ModifyInstanceAttributeCommand(payload));
   }));
 }
 
 async function associateRouteTable(client, params, region) {
-  const awsAssociateRouteTableToSubnet = awsPlugin.generateAwsMethod("associateRouteTable", payloadFuncs.prepareAssociateRouteTableToSubnetPayload);
-  const awsAssociateRouteTableToGateway = awsPlugin.generateAwsMethod("associateRouteTable", payloadFuncs.prepareAssociateRouteTableToGatewayPayload);
+  const awsAssociateRouteTableToSubnet = awsPluginLibrary.generateAwsMethod(
+    AssociateRouteTableCommand,
+    payloadFuncs.prepareAssociateRouteTableToSubnetPayload,
+  );
+  const awsAssociateRouteTableToGateway = awsPluginLibrary.generateAwsMethod(
+    AssociateRouteTableCommand,
+    payloadFuncs.prepareAssociateRouteTableToGatewayPayload,
+  );
 
   let result = {};
 
@@ -186,7 +298,10 @@ async function associateRouteTable(client, params, region) {
 }
 
 async function createInternetGatewayWorkflow(client, params, region) {
-  const awsCreateInternetGateway = awsPlugin.generateAwsMethod("createInternetGateway", payloadFuncs.prepareCreateInternetGatewayPayload);
+  const awsCreateInternetGateway = awsPluginLibrary.generateAwsMethod(
+    CreateInternetGatewayCommand,
+    payloadFuncs.prepareCreateInternetGatewayPayload,
+  );
   const result = { createInternetGateway: await awsCreateInternetGateway(client, params, region) };
 
   if (!params.vpcId) {
@@ -208,7 +323,10 @@ async function createInternetGatewayWorkflow(client, params, region) {
 }
 
 async function createRouteTableWorkflow(client, params, region) {
-  const awsCreateRouteTable = awsPlugin.generateAwsMethod("createRouteTable", payloadFuncs.prepareCreateRouteTablePayload);
+  const awsCreateRouteTable = awsPluginLibrary.generateAwsMethod(
+    CreateRouteTableCommand,
+    payloadFuncs.prepareCreateRouteTablePayload,
+  );
   const result = { createRouteTable: await awsCreateRouteTable(client, params, region) };
 
   if (!params.subnetId && !params.gatewayId) {
@@ -225,7 +343,10 @@ async function createRouteTableWorkflow(client, params, region) {
 }
 
 async function createVpcWorkflow(client, params, region) {
-  const awsCreateVpc = awsPlugin.generateAwsMethod("createVpc", payloadFuncs.prepareCreateVpcPayload);
+  const awsCreateVpc = awsPluginLibrary.generateAwsMethod(
+    CreateVpcCommand,
+    payloadFuncs.prepareCreateVpcPayload,
+  );
   let result = { createVpc: await awsCreateVpc(client, params, region) };
 
   const additionalParams = {
@@ -290,7 +411,10 @@ async function createVpcWorkflow(client, params, region) {
 }
 
 async function createSubnetWorkflow(client, params, region) {
-  const awsCreateSubnet = awsPlugin.generateAwsMethod("createSubnet", payloadFuncs.prepareCreateSubnetPayload);
+  const awsCreateSubnet = awsPluginLibrary.generateAwsMethod(
+    CreateSubnetCommand,
+    payloadFuncs.prepareCreateSubnetPayload,
+  );
   let result = { createSubnet: await awsCreateSubnet(client, params, region) };
 
   const additionalParams = {
@@ -333,9 +457,9 @@ async function createSubnetWorkflow(client, params, region) {
     );
 
     if (result.createNatGateway) {
-      await client.waitFor("natGatewayAvailable", {
+      await waitUntilNatGatewayAvailable({ client }, {
         NatGatewayIds: [result.createNatGateway.NatGateway.NatGatewayId],
-      }).promise();
+      });
 
       const createRouteParams = {
         ...params,
@@ -375,50 +499,63 @@ async function createSubnetWorkflow(client, params, region) {
 }
 
 async function createVolume(client, params, region) {
-  const awsCreateVolume = awsPlugin.generateAwsMethod(
-    "createVolume",
+  const awsCreateVolume = awsPluginLibrary.generateAwsMethod(
+    CreateVolumeCommand,
     payloadFuncs.prepareCreateVolumePayload,
   );
-  let result = { createVolume: await awsCreateVolume(client, params, region) };
+  const result = { createVolume: await awsCreateVolume(client, params, region) };
 
   if (!params.waitForEnd) {
     return result;
   }
 
-  result = await client.waitFor("volumeAvailable", {
-    VolumeIds: [result.createVolume.VolumeId],
-  }).promise();
+  const volumeId = result.createVolume.VolumeId;
+  await waitUntilVolumeAvailable({ client }, {
+    VolumeIds: [volumeId],
+  });
 
-  return { createVolume: result.Volumes[0] };
+  const describeVolumesResult = await client.send(new DescribeVolumesCommand({
+    VolumeIds: [volumeId],
+  }));
+
+  return { createVolume: describeVolumesResult.Volumes[0] };
 }
 
 async function createSnapshot(client, params, region) {
-  const awsCreateSnapshot = awsPlugin.generateAwsMethod(
-    "createSnapshot",
+  const awsCreateSnapshot = awsPluginLibrary.generateAwsMethod(
+    CreateSnapshotCommand,
     payloadFuncs.prepareCreateSnapshotPayload,
   );
-  let result = { createSnapshot: await awsCreateSnapshot(client, params, region) };
+  const result = { createSnapshot: await awsCreateSnapshot(client, params, region) };
 
   if (!params.waitForEnd) {
     return result;
   }
 
-  result = await client.waitFor("snapshotCompleted", {
-    SnapshotIds: [result.createSnapshot.SnapshotId],
-  }).promise();
+  const snapshotId = result.createSnapshot.SnapshotId;
 
-  return { createSnapshot: result.Snapshots[0] };
+  await waitUntilSnapshotCompleted({ client }, {
+    SnapshotIds: [snapshotId],
+  });
+
+  const describeSnapshotsResult = await client.send(new DescribeSnapshotsCommand({
+    SnapshotIds: [snapshotId],
+  }));
+
+  return { createSnapshot: describeSnapshotsResult.Snapshots[0] };
 }
 
 async function addSecurityGroupRules(client, params) {
-  const payload = payloadFuncs.prepareAddSecurityGroupRulesPayload(params);
-  const funcName = resolveSecurityGroupFunction(params.ruleType);
+  const awsSecurityMethod = awsPluginLibrary.generateAwsMethod(
+    resolveSecurityGroupCommand(params.ruleType),
+    payloadFuncs.prepareAddSecurityGroupRulesPayload,
+  );
 
-  return client[funcName](payload).promise();
+  return awsSecurityMethod(client, params);
 }
 
-module.exports = awsPlugin.bootstrap(
-  aws.EC2,
+module.exports = awsPluginLibrary.bootstrap(
+  EC2,
   {
     ...simpleAwsFunctions,
     modifyInstanceType,
