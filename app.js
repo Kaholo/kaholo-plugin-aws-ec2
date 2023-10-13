@@ -234,11 +234,7 @@ async function describeInstances(client, params, region) {
     return result.Reservations;
   };
 
-  const recursiveReservations = await getAllInstancesHelper();
-
-  return {
-    Reservations: recursiveReservations,
-  };
+  return await getAllInstancesHelper();
 }
 
 async function modifyInstanceType(client, params) {
@@ -456,7 +452,7 @@ async function createSubnetWorkflow(client, params, region) {
       await createRouteTableWorkflow(client, createRouteTableParams, region),
     );
 
-    if (result.createNatGateway) {
+    if (result.NatGateway) {
       await waitUntilNatGatewayAvailable({ client }, {
         NatGatewayIds: [result.NatGateway.NatGatewayId],
       });
@@ -464,14 +460,14 @@ async function createSubnetWorkflow(client, params, region) {
       const createRouteParams = {
         ...params,
         SubnetId: additionalParams.SubnetId,
-        RouteTableId: additionalParams.createRouteTable.RouteTable.RouteTableId,
-        NatGatewayId: additionalParams.createNatGateway.NatGateway.NatGatewayId,
+        RouteTableId: additionalParams.RouteTable.RouteTableId,
+        NatGatewayId: additionalParams.NatGateway.NatGatewayId,
         DestinationCidrBlock: "0.0.0.0/0",
       };
 
       result = _.merge(
         result,
-        { createRoute: await simpleAwsFunctions.createRoute(client, createRouteParams, region) },
+        await simpleAwsFunctions.createRoute(client, createRouteParams, region),
       );
     }
   }
@@ -518,7 +514,7 @@ async function createVolume(client, params, region) {
     VolumeIds: [volumeId],
   }));
 
-  return { createVolume: describeVolumesResult.Volumes[0] };
+  return describeVolumesResult.Volumes[0];
 }
 
 async function createSnapshot(client, params, region) {
@@ -542,7 +538,7 @@ async function createSnapshot(client, params, region) {
     SnapshotIds: [snapshotId],
   }));
 
-  return { createSnapshot: describeSnapshotsResult.Snapshots[0] };
+  return describeSnapshotsResult.Snapshots[0];
 }
 
 async function addSecurityGroupRules(client, params) {
