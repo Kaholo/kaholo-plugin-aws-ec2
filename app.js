@@ -302,7 +302,7 @@ async function createInternetGatewayWorkflow(client, params, region) {
     CreateInternetGatewayCommand,
     payloadFuncs.prepareCreateInternetGatewayPayload,
   );
-  const result = { createInternetGateway: await awsCreateInternetGateway(client, params, region) };
+  const result = await awsCreateInternetGateway(client, params, region);
 
   if (!params.vpcId) {
     return result;
@@ -310,7 +310,7 @@ async function createInternetGatewayWorkflow(client, params, region) {
 
   const attachInternetGatewayParams = {
     ...params,
-    gatewayId: result.createInternetGateway.InternetGateway.InternetGatewayId,
+    gatewayId: result.InternetGateway.InternetGatewayId,
   };
 
   const attachInternetGateway = await simpleAwsFunctions.attachInternetGateway(
@@ -327,7 +327,7 @@ async function createRouteTableWorkflow(client, params, region) {
     CreateRouteTableCommand,
     payloadFuncs.prepareCreateRouteTablePayload,
   );
-  const result = { createRouteTable: await awsCreateRouteTable(client, params, region) };
+  const result = await awsCreateRouteTable(client, params, region);
 
   if (!params.subnetId && !params.gatewayId) {
     return result;
@@ -335,7 +335,7 @@ async function createRouteTableWorkflow(client, params, region) {
 
   const associateRouteTableParams = {
     ...params,
-    routeTableId: result.createRouteTable.RouteTable.RouteTableId,
+    routeTableId: result.RouteTable.RouteTableId,
   };
   const routeTableResult = await associateRouteTable(client, associateRouteTableParams, region);
 
@@ -347,10 +347,10 @@ async function createVpcWorkflow(client, params, region) {
     CreateVpcCommand,
     payloadFuncs.prepareCreateVpcPayload,
   );
-  let result = { createVpc: await awsCreateVpc(client, params, region) };
+  let result = await awsCreateVpc(client, params, region);
 
   const additionalParams = {
-    vpcId: result.createVpc.Vpc.VpcId,
+    vpcId: result.Vpc.VpcId,
   };
 
   if (params.createInternetGateway) {
@@ -415,10 +415,10 @@ async function createSubnetWorkflow(client, params, region) {
     CreateSubnetCommand,
     payloadFuncs.prepareCreateSubnetPayload,
   );
-  let result = { createSubnet: await awsCreateSubnet(client, params, region) };
+  let result = await awsCreateSubnet(client, params, region);
 
   const additionalParams = {
-    SubnetId: result.createSubnet.Subnet.SubnetId,
+    SubnetId: result.Subnet.SubnetId,
   };
 
   if (params.allocationId) {
@@ -458,7 +458,7 @@ async function createSubnetWorkflow(client, params, region) {
 
     if (result.createNatGateway) {
       await waitUntilNatGatewayAvailable({ client }, {
-        NatGatewayIds: [result.createNatGateway.NatGateway.NatGatewayId],
+        NatGatewayIds: [result.NatGateway.NatGatewayId],
       });
 
       const createRouteParams = {
@@ -503,13 +503,13 @@ async function createVolume(client, params, region) {
     CreateVolumeCommand,
     payloadFuncs.prepareCreateVolumePayload,
   );
-  const result = { createVolume: await awsCreateVolume(client, params, region) };
+  const result = await awsCreateVolume(client, params, region);
 
   if (!params.waitForEnd) {
     return result;
   }
 
-  const volumeId = result.createVolume.VolumeId;
+  const volumeId = result.VolumeId;
   await waitUntilVolumeAvailable({ client }, {
     VolumeIds: [volumeId],
   });
@@ -526,13 +526,13 @@ async function createSnapshot(client, params, region) {
     CreateSnapshotCommand,
     payloadFuncs.prepareCreateSnapshotPayload,
   );
-  const result = { createSnapshot: await awsCreateSnapshot(client, params, region) };
+  const result = await awsCreateSnapshot(client, params, region);
 
   if (!params.waitForEnd) {
     return result;
   }
 
-  const snapshotId = result.createSnapshot.SnapshotId;
+  const snapshotId = result.SnapshotId;
 
   await waitUntilSnapshotCompleted({ client }, {
     SnapshotIds: [snapshotId],
