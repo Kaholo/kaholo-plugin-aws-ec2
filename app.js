@@ -414,9 +414,6 @@ async function createSubnetWorkflow(client, params, region) {
       ...params,
       ...additionalParams,
     };
-    console.error(`\n${JSON.stringify(createNatGatewayParams)}\n`)
-    console.error(`\ncreateNatGatewayParams.subnetId: ${createNatGatewayParams.subnetId}`)
-    console.error(`createNatGatewayParams.SubnetId: ${createNatGatewayParams.SubnetId}\n`)
     result = _.merge(
       result,
       await simpleAwsFunctions.createNatGateway(client, createNatGatewayParams, region),
@@ -428,7 +425,6 @@ async function createSubnetWorkflow(client, params, region) {
       ...params,
       ...additionalParams,
     };
-    console.error(`\nassociateRouteTableParams.subnetId: ${associateRouteTableParams?.subnetId}\n`)
     result = _.merge(
       result,
       await associateRouteTable(client, associateRouteTableParams, region),
@@ -438,16 +434,13 @@ async function createSubnetWorkflow(client, params, region) {
       ...params,
       ...additionalParams,
     };
-    console.error(`\ncreateRouteTableParams.subnetId: ${createRouteTableParams?.subnetId}\n`)
     result = _.merge(
       result,
       await createRouteTableWorkflow(client, createRouteTableParams, region),
     );
 
-    console.error(`\nRESULTISNOW: ${JSON.stringify(result)}\n`)
-
     if (result.NatGateway) {
-      console.error(`\nWaiting for NAT Gateway to become available...\n`);
+      console.error("\nWaiting for NAT Gateway to become available...\n");
       await waitUntilNatGatewayAvailable({ client }, {
         NatGatewayIds: [result.NatGateway.NatGatewayId],
       });
@@ -459,7 +452,6 @@ async function createSubnetWorkflow(client, params, region) {
         natGatewayId: result.NatGateway.NatGatewayId,
         destinationCidrBlock: "0.0.0.0/0",
       };
-      console.error(`\createRouteParams.subnetId: ${createRouteParams?.subnetId}\n`)
       result = _.merge(
         result,
         await simpleAwsFunctions.createRoute(client, createRouteParams, region),
