@@ -1145,7 +1145,7 @@
           "type": "string",
           "required": true,
           "description": "CIDR block notation of IP address range of the new route",
-          "placeholder": "127.168.0.0/16",
+          "placeholder": "0.0.0.0/0",
           "learnUrl": "https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/EC2.html#createRoute-property"
         },
         {
