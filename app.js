@@ -234,7 +234,9 @@ async function describeInstances(client, params, region) {
     return result.Reservations;
   };
 
-  return await getAllInstancesHelper();
+  return {
+    Reservations: await getAllInstancesHelper(),
+  };
 }
 
 async function modifyInstanceType(client, params) {
@@ -275,19 +277,11 @@ async function associateRouteTable(client, params, region) {
   let result = {};
 
   if (params.subnetId) {
-    const {
-      associateRouteTable: associateRouteTableToSubnet,
-    } = await awsAssociateRouteTableToSubnet(client, params, region);
-
-    result = _.merge(result, { associateRouteTableToSubnet });
+    result = _.merge(result, await awsAssociateRouteTableToSubnet(client, params, region));
   }
 
   if (params.gatewayId) {
-    const {
-      associateRouteTable: associateRouteTableToGateway,
-    } = await awsAssociateRouteTableToGateway(client, params, region);
-
-    result = _.merge(result, { associateRouteTableToGateway });
+    result = _.merge(result, await awsAssociateRouteTableToGateway(client, params, region));
   }
 
   return result;
@@ -315,7 +309,7 @@ async function createInternetGatewayWorkflow(client, params, region) {
     region,
   );
 
-  return _.merge(result, { attachInternetGateway });
+  return _.merge(result, attachInternetGateway);
 }
 
 async function createRouteTableWorkflow(client, params, region) {
@@ -335,7 +329,7 @@ async function createRouteTableWorkflow(client, params, region) {
   };
   const routeTableResult = await associateRouteTable(client, associateRouteTableParams, region);
 
-  return _.merge(result, { associateRouteTable: routeTableResult });
+  return _.merge(result, routeTableResult);
 }
 
 async function createVpcWorkflow(client, params, region) {
@@ -346,7 +340,7 @@ async function createVpcWorkflow(client, params, region) {
   let result = await awsCreateVpc(client, params, region);
 
   const additionalParams = {
-    vpcId: result.Vpc.VpcId,
+    VpcId: result.Vpc.VpcId,
   };
 
   if (params.createInternetGateway) {
@@ -374,14 +368,14 @@ async function createVpcWorkflow(client, params, region) {
     if (params.createInternetGateway) {
       const createRouteParams = {
         ...params,
-        RouteTableId: additionalParams.createRouteTable.RouteTable.RouteTableId,
+        RouteTableId: additionalParams.routeTableId,
         DestinationCidrBlock: "0.0.0.0/0",
-        GatewayId: additionalParams.createInternetGateway.InternetGateway.InternetGatewayId,
+        GatewayId: additionalParams.internetGatewayId,
       };
 
       result = _.merge(
         result,
-        { createRoute: await simpleAwsFunctions.createRoute(client, createRouteParams, region) },
+        await simpleAwsFunctions.createRoute(client, createRouteParams, region),
       );
     }
   }
@@ -396,10 +390,7 @@ async function createVpcWorkflow(client, params, region) {
 
     result = _.merge(
       result,
-      {
-        createSecurityGroup:
-          await simpleAwsFunctions.createSecurityGroup(client, createSecurityGroupParams, region),
-      },
+      await simpleAwsFunctions.createSecurityGroup(client, createSecurityGroupParams, region),
     );
   }
 
@@ -414,6 +405,7 @@ async function createSubnetWorkflow(client, params, region) {
   let result = await awsCreateSubnet(client, params, region);
 
   const additionalParams = {
+    subnetId: result.Subnet.SubnetId,
     SubnetId: result.Subnet.SubnetId,
   };
 
@@ -422,12 +414,12 @@ async function createSubnetWorkflow(client, params, region) {
       ...params,
       ...additionalParams,
     };
+    console.error(`\n${JSON.stringify(createNatGatewayParams)}\n`)
+    console.error(`\ncreateNatGatewayParams.subnetId: ${createNatGatewayParams.subnetId}`)
+    console.error(`createNatGatewayParams.SubnetId: ${createNatGatewayParams.SubnetId}\n`)
     result = _.merge(
       result,
-      {
-        createNatGateway:
-          await simpleAwsFunctions.createNatGateway(client, createNatGatewayParams, region),
-      },
+      await simpleAwsFunctions.createNatGateway(client, createNatGatewayParams, region),
     );
   }
 
@@ -436,35 +428,38 @@ async function createSubnetWorkflow(client, params, region) {
       ...params,
       ...additionalParams,
     };
-
+    console.error(`\nassociateRouteTableParams.subnetId: ${associateRouteTableParams?.subnetId}\n`)
     result = _.merge(
       result,
-      { associateRouteTable: await associateRouteTable(client, associateRouteTableParams, region) },
+      await associateRouteTable(client, associateRouteTableParams, region),
     );
   } else if (params.createPrivateRouteTable) {
     const createRouteTableParams = {
       ...params,
       ...additionalParams,
     };
-
+    console.error(`\ncreateRouteTableParams.subnetId: ${createRouteTableParams?.subnetId}\n`)
     result = _.merge(
       result,
       await createRouteTableWorkflow(client, createRouteTableParams, region),
     );
 
+    console.error(`\nRESULTISNOW: ${JSON.stringify(result)}\n`)
+
     if (result.NatGateway) {
+      console.error(`\nWaiting for NAT Gateway to become available...\n`);
       await waitUntilNatGatewayAvailable({ client }, {
         NatGatewayIds: [result.NatGateway.NatGatewayId],
       });
 
       const createRouteParams = {
         ...params,
-        SubnetId: additionalParams.SubnetId,
-        RouteTableId: additionalParams.RouteTable.RouteTableId,
-        NatGatewayId: additionalParams.NatGateway.NatGatewayId,
-        DestinationCidrBlock: "0.0.0.0/0",
+        ...additionalParams,
+        routeTableId: result.RouteTable.RouteTableId,
+        natGatewayId: result.NatGateway.NatGatewayId,
+        destinationCidrBlock: "0.0.0.0/0",
       };
-
+      console.error(`\createRouteParams.subnetId: ${createRouteParams?.subnetId}\n`)
       result = _.merge(
         result,
         await simpleAwsFunctions.createRoute(client, createRouteParams, region),
@@ -480,14 +475,11 @@ async function createSubnetWorkflow(client, params, region) {
 
     result = _.merge(
       result,
-      {
-        modifySubnetAttribute:
-          await simpleAwsFunctions.modifySubnetAttribute(
-            client,
-            modifySubnetAttributeParams,
-            region,
-          ),
-      },
+      await simpleAwsFunctions.modifySubnetAttribute(
+        client,
+        modifySubnetAttributeParams,
+        region,
+      ),
     );
   }
 
