@@ -294,7 +294,6 @@ function prepareAssociateAddressPayload(params) {
 function prepareReleaseAddressPayload(params) {
   return {
     AllocationId: params.ALLOCATION_ID,
-    PublicIp: params.PUBLIC_IP,
     DryRun: params.DRYRUN,
   };
 }

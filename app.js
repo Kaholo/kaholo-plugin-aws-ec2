@@ -234,10 +234,8 @@ async function describeInstances(client, params, region) {
     return result.Reservations;
   };
 
-  const recursiveReservations = await getAllInstancesHelper();
-
   return {
-    Reservations: recursiveReservations,
+    Reservations: await getAllInstancesHelper(),
   };
 }
 
@@ -279,19 +277,11 @@ async function associateRouteTable(client, params, region) {
   let result = {};
 
   if (params.subnetId) {
-    const {
-      associateRouteTable: associateRouteTableToSubnet,
-    } = await awsAssociateRouteTableToSubnet(client, params, region);
-
-    result = _.merge(result, { associateRouteTableToSubnet });
+    result = _.merge(result, await awsAssociateRouteTableToSubnet(client, params, region));
   }
 
   if (params.gatewayId) {
-    const {
-      associateRouteTable: associateRouteTableToGateway,
-    } = await awsAssociateRouteTableToGateway(client, params, region);
-
-    result = _.merge(result, { associateRouteTableToGateway });
+    result = _.merge(result, await awsAssociateRouteTableToGateway(client, params, region));
   }
 
   return result;
@@ -302,7 +292,7 @@ async function createInternetGatewayWorkflow(client, params, region) {
     CreateInternetGatewayCommand,
     payloadFuncs.prepareCreateInternetGatewayPayload,
   );
-  const result = { createInternetGateway: await awsCreateInternetGateway(client, params, region) };
+  const result = await awsCreateInternetGateway(client, params, region);
 
   if (!params.vpcId) {
     return result;
@@ -310,7 +300,7 @@ async function createInternetGatewayWorkflow(client, params, region) {
 
   const attachInternetGatewayParams = {
     ...params,
-    gatewayId: result.createInternetGateway.InternetGateway.InternetGatewayId,
+    gatewayId: result.InternetGateway.InternetGatewayId,
   };
 
   const attachInternetGateway = await simpleAwsFunctions.attachInternetGateway(
@@ -319,7 +309,7 @@ async function createInternetGatewayWorkflow(client, params, region) {
     region,
   );
 
-  return _.merge(result, { attachInternetGateway });
+  return _.merge(result, attachInternetGateway);
 }
 
 async function createRouteTableWorkflow(client, params, region) {
@@ -327,7 +317,7 @@ async function createRouteTableWorkflow(client, params, region) {
     CreateRouteTableCommand,
     payloadFuncs.prepareCreateRouteTablePayload,
   );
-  const result = { createRouteTable: await awsCreateRouteTable(client, params, region) };
+  const result = await awsCreateRouteTable(client, params, region);
 
   if (!params.subnetId && !params.gatewayId) {
     return result;
@@ -335,11 +325,11 @@ async function createRouteTableWorkflow(client, params, region) {
 
   const associateRouteTableParams = {
     ...params,
-    routeTableId: result.createRouteTable.RouteTable.RouteTableId,
+    routeTableId: result.RouteTable.RouteTableId,
   };
   const routeTableResult = await associateRouteTable(client, associateRouteTableParams, region);
 
-  return _.merge(result, { associateRouteTable: routeTableResult });
+  return _.merge(result, routeTableResult);
 }
 
 async function createVpcWorkflow(client, params, region) {
@@ -347,10 +337,10 @@ async function createVpcWorkflow(client, params, region) {
     CreateVpcCommand,
     payloadFuncs.prepareCreateVpcPayload,
   );
-  let result = { createVpc: await awsCreateVpc(client, params, region) };
+  let result = await awsCreateVpc(client, params, region);
 
   const additionalParams = {
-    vpcId: result.createVpc.Vpc.VpcId,
+    VpcId: result.Vpc.VpcId,
   };
 
   if (params.createInternetGateway) {
@@ -378,14 +368,14 @@ async function createVpcWorkflow(client, params, region) {
     if (params.createInternetGateway) {
       const createRouteParams = {
         ...params,
-        RouteTableId: additionalParams.createRouteTable.RouteTable.RouteTableId,
+        RouteTableId: additionalParams.routeTableId,
         DestinationCidrBlock: "0.0.0.0/0",
-        GatewayId: additionalParams.createInternetGateway.InternetGateway.InternetGatewayId,
+        GatewayId: additionalParams.internetGatewayId,
       };
 
       result = _.merge(
         result,
-        { createRoute: await simpleAwsFunctions.createRoute(client, createRouteParams, region) },
+        await simpleAwsFunctions.createRoute(client, createRouteParams, region),
       );
     }
   }
@@ -400,10 +390,7 @@ async function createVpcWorkflow(client, params, region) {
 
     result = _.merge(
       result,
-      {
-        createSecurityGroup:
-          await simpleAwsFunctions.createSecurityGroup(client, createSecurityGroupParams, region),
-      },
+      await simpleAwsFunctions.createSecurityGroup(client, createSecurityGroupParams, region),
     );
   }
 
@@ -415,10 +402,11 @@ async function createSubnetWorkflow(client, params, region) {
     CreateSubnetCommand,
     payloadFuncs.prepareCreateSubnetPayload,
   );
-  let result = { createSubnet: await awsCreateSubnet(client, params, region) };
+  let result = await awsCreateSubnet(client, params, region);
 
   const additionalParams = {
-    SubnetId: result.createSubnet.Subnet.SubnetId,
+    subnetId: result.Subnet.SubnetId,
+    SubnetId: result.Subnet.SubnetId,
   };
 
   if (params.allocationId) {
@@ -428,10 +416,7 @@ async function createSubnetWorkflow(client, params, region) {
     };
     result = _.merge(
       result,
-      {
-        createNatGateway:
-          await simpleAwsFunctions.createNatGateway(client, createNatGatewayParams, region),
-      },
+      await simpleAwsFunctions.createNatGateway(client, createNatGatewayParams, region),
     );
   }
 
@@ -440,38 +425,36 @@ async function createSubnetWorkflow(client, params, region) {
       ...params,
       ...additionalParams,
     };
-
     result = _.merge(
       result,
-      { associateRouteTable: await associateRouteTable(client, associateRouteTableParams, region) },
+      await associateRouteTable(client, associateRouteTableParams, region),
     );
   } else if (params.createPrivateRouteTable) {
     const createRouteTableParams = {
       ...params,
       ...additionalParams,
     };
-
     result = _.merge(
       result,
       await createRouteTableWorkflow(client, createRouteTableParams, region),
     );
 
-    if (result.createNatGateway) {
+    if (result.NatGateway) {
+      console.error("\nWaiting for NAT Gateway to become available...\n");
       await waitUntilNatGatewayAvailable({ client }, {
-        NatGatewayIds: [result.createNatGateway.NatGateway.NatGatewayId],
+        NatGatewayIds: [result.NatGateway.NatGatewayId],
       });
 
       const createRouteParams = {
         ...params,
-        SubnetId: additionalParams.SubnetId,
-        RouteTableId: additionalParams.createRouteTable.RouteTable.RouteTableId,
-        NatGatewayId: additionalParams.createNatGateway.NatGateway.NatGatewayId,
-        DestinationCidrBlock: "0.0.0.0/0",
+        ...additionalParams,
+        routeTableId: result.RouteTable.RouteTableId,
+        natGatewayId: result.NatGateway.NatGatewayId,
+        destinationCidrBlock: "0.0.0.0/0",
       };
-
       result = _.merge(
         result,
-        { createRoute: await simpleAwsFunctions.createRoute(client, createRouteParams, region) },
+        await simpleAwsFunctions.createRoute(client, createRouteParams, region),
       );
     }
   }
@@ -484,14 +467,11 @@ async function createSubnetWorkflow(client, params, region) {
 
     result = _.merge(
       result,
-      {
-        modifySubnetAttribute:
-          await simpleAwsFunctions.modifySubnetAttribute(
-            client,
-            modifySubnetAttributeParams,
-            region,
-          ),
-      },
+      await simpleAwsFunctions.modifySubnetAttribute(
+        client,
+        modifySubnetAttributeParams,
+        region,
+      ),
     );
   }
 
@@ -503,13 +483,13 @@ async function createVolume(client, params, region) {
     CreateVolumeCommand,
     payloadFuncs.prepareCreateVolumePayload,
   );
-  const result = { createVolume: await awsCreateVolume(client, params, region) };
+  const result = await awsCreateVolume(client, params, region);
 
   if (!params.waitForEnd) {
     return result;
   }
 
-  const volumeId = result.createVolume.VolumeId;
+  const volumeId = result.VolumeId;
   await waitUntilVolumeAvailable({ client }, {
     VolumeIds: [volumeId],
   });
@@ -518,7 +498,7 @@ async function createVolume(client, params, region) {
     VolumeIds: [volumeId],
   }));
 
-  return { createVolume: describeVolumesResult.Volumes[0] };
+  return describeVolumesResult.Volumes[0];
 }
 
 async function createSnapshot(client, params, region) {
@@ -526,13 +506,13 @@ async function createSnapshot(client, params, region) {
     CreateSnapshotCommand,
     payloadFuncs.prepareCreateSnapshotPayload,
   );
-  const result = { createSnapshot: await awsCreateSnapshot(client, params, region) };
+  const result = await awsCreateSnapshot(client, params, region);
 
   if (!params.waitForEnd) {
     return result;
   }
 
-  const snapshotId = result.createSnapshot.SnapshotId;
+  const snapshotId = result.SnapshotId;
 
   await waitUntilSnapshotCompleted({ client }, {
     SnapshotIds: [snapshotId],
@@ -542,7 +522,7 @@ async function createSnapshot(client, params, region) {
     SnapshotIds: [snapshotId],
   }));
 
-  return { createSnapshot: describeSnapshotsResult.Snapshots[0] };
+  return describeSnapshotsResult.Snapshots[0];
 }
 
 async function addSecurityGroupRules(client, params) {
