@@ -406,7 +406,6 @@ async function createSubnetWorkflow(client, params, region) {
 
   const additionalParams = {
     subnetId: result.Subnet.SubnetId,
-    SubnetId: result.Subnet.SubnetId,
   };
 
   if (params.allocationId) {
@@ -462,6 +461,7 @@ async function createSubnetWorkflow(client, params, region) {
   if (params.mapPublicIpOnLaunch) {
     const modifySubnetAttributeParams = {
       ...additionalParams,
+      SubnetId: additionalParams.subnetId,
       MapPublicIpOnLaunch: { Value: true },
     };
 
