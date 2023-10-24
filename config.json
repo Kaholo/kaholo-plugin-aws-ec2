@@ -6,7 +6,7 @@
   "execProgram": "node",
   "exposeRoute": false,
   "imgUrl": "logo.png",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "description": "Amazon Elastic Cloud Compute - compute capacity in the cloud",
   "category": [
     "Compute"
