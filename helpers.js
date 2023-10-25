@@ -1,3 +1,9 @@
+const {
+  AuthorizeSecurityGroupEgressCommand,
+  RevokeSecurityGroupIngressCommand,
+  RevokeSecurityGroupEgressCommand,
+  AuthorizeSecurityGroupIngressCommand,
+} = require("@aws-sdk/client-ec2");
 const _ = require("lodash");
 
 function strToBase64(value) {
@@ -7,16 +13,16 @@ function strToBase64(value) {
   return Buffer.from(value).toString("base64");
 }
 
-function resolveSecurityGroupFunction(ruleType) {
+function resolveSecurityGroupCommand(ruleType) {
   switch (ruleType) {
     case "Egress-Authorize":
-      return "authorizeSecurityGroupEgress";
+      return AuthorizeSecurityGroupEgressCommand;
     case "Ingress-Revoke":
-      return "revokeSecurityGroupIngress";
+      return RevokeSecurityGroupIngressCommand;
     case "Egress-Revoke":
-      return "revokeSecurityGroupEgress";
+      return RevokeSecurityGroupEgressCommand;
     default:
-      return "authorizeSecurityGroupIngress";
+      return AuthorizeSecurityGroupIngressCommand;
   }
 }
 
@@ -45,6 +51,7 @@ function parseSinglePortRange(rawPortRange) {
   if (/^\d+$/.test(rawPortRange)) {
     return { fromPort: +rawPortRange, toPort: +rawPortRange };
   }
+
   if (/^\d+-\d+$/.test(rawPortRange)) {
     const [fromPort, toPort] = rawPortRange.split("-").map(Number);
     if (fromPort > toPort) {
@@ -52,9 +59,11 @@ function parseSinglePortRange(rawPortRange) {
     }
     return { fromPort, toPort };
   }
+
   if (/^\*$/.test(rawPortRange)) {
     return { fromPort: 0, toPort: 65535 };
   }
+
   throw new Error(`Invalid Port Range string specified: "${rawPortRange}". Valid examples include "*" (all ports), "80" (one port), and "8080-8099" (a range of 20 ports). To configure multiple ports not in a range, create a separate rule for each port.`);
 }
 
@@ -75,7 +84,7 @@ function parseInstanceAttributeValue(attributeName, attributeValue) {
 
 module.exports = {
   strToBase64,
-  resolveSecurityGroupFunction,
+  resolveSecurityGroupCommand,
   tryParseJson,
   createSubnetText,
   parseSinglePortRange,

@@ -10,8 +10,8 @@
   "author": "Kaholo team (Matan Kadosh)",
   "license": "ISC",
   "dependencies": {
-    "@kaholo/aws-plugin-library": "^3.1.0",
-    "aws-sdk": "2.1109.0",
+    "@aws-sdk/client-ec2": "^3.422.0",
+    "@kaholo/aws-plugin-library": "^4.0.1",
     "lodash": "4.17.21"
   },
   "devDependencies": {
