@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const aws = require("aws-sdk");
+const { EC2Client } = require("@aws-sdk/client-ec2");
 const awsPlugin = require("@kaholo/aws-plugin-library");
 
 const {
@@ -7,7 +7,12 @@ const {
   listRegions,
   listSubnets,
 } = require("./autocomplete");
-const { resolveSecurityGroupFunction, parseInstanceAttributeValue } = require("./helpers");
+
+const {
+  resolveSecurityGroupFunction,
+  parseInstanceAttributeValue,
+} = require("./helpers");
+
 const payloadFuncs = require("./payload-functions");
 
 const simpleAwsFunctions = {
@@ -418,7 +423,7 @@ async function addSecurityGroupRules(client, params) {
 }
 
 module.exports = awsPlugin.bootstrap(
-  aws.EC2,
+  EC2Client,
   {
     ...simpleAwsFunctions,
     modifyInstanceType,
